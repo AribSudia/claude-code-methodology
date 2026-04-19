@@ -1,10 +1,10 @@
-# Claude Code Methodology
+# Claude Code Methodology (CCM)
 
 ### The Complete AI Development Operating System
 
-A professional, production-grade methodology that turns Claude Code from a code assistant into a **full development team** — with persistent memory, specialist agents, safety hooks, and a strategic architecture that governs every session.
+A production-grade methodology that turns Claude Code from a code assistant into a **full development team** — with persistent memory, 16 deep skills, 13 specialist agents, safety hooks, path-scoped rules, and an I/O channel that connects everything.
 
-Works for **new projects** (start from zero), **existing codebases** (reverse-engineer and overlay), **version upgrades** (v-old → v-new), and **legacy migrations** (old claude-code-system → methodology).
+**v3.1.0 "Deep Skills"** · 142 files · 58,000+ lines · Engineered by Abdullah x Claude Opus 4.6
 
 ```
  ╔═══════════════════════════════════════════════════════════════════╗
@@ -15,6 +15,7 @@ Works for **new projects** (start from zero), **existing codebases** (reverse-en
  ║   Existing project? ──▶  Reverse Bootstrap (auto-scan)           ║
  ║   Old CCM version?  ──▶  Upgrade Protocol (preserve + update)    ║
  ║   Old code-system?  ──▶  Migration Guide (6-phase migration)     ║
+ ║   Overlay on legacy ──▶  Reengineering Guide                     ║
  ║                                                                   ║
  ╚═══════════════════════════════════════════════════════════════════╝
 ```
@@ -29,12 +30,13 @@ This methodology solves all of that:
 
 | Problem                          | Solution                                     |
 |----------------------------------|----------------------------------------------|
-| Claude forgets between sessions  | **Persistent Memory** — 6 file types, auto-updated |
+| Claude forgets between sessions  | **Persistent Memory** — 7 file types, auto-updated |
 | No consistent code quality       | **13 Specialist Agents** — each with checklists |
 | Dangerous operations slip through| **Safety Hooks** — block before damage happens |
 | Every session starts from scratch| **Session Protocol** — read → work → write    |
 | Architecture decisions are lost  | **Decision Records** — permanent, searchable  |
 | "It works on my machine"         | **Implementation Layer** — docker, runbook, env|
+| Skills are shallow checklists    | **Deep Skills** — 7,393 lines of reference docs |
 
 ---
 
@@ -50,14 +52,14 @@ This methodology solves all of that:
 ║  L3 — HOOKS           Safety gates & automation             ║
 ║  PreToolUse · PostToolUse · PreCommit · Notification        ║
 ╠══════════════════════════════════════════════════════════════╣
-║  L2 — SKILLS          21 auto-invoked knowledge packs       ║
-║  Frontend · Debugging · Security · TDD · Git Worktrees ...  ║
+║  L2 — SKILLS          16 branded /arib-* deep reference     ║
+║  Session · Dev · Check · Docs (7,393 lines total)           ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  I/O — CHANNEL        Inter-agent nervous system            ║
 ║  Requests · Results · Signals · Pipelines · Threads         ║
 ╠══════════════════════════════════════════════════════════════╣
-║  L1 — CLAUDE.md       The Master Brain — rules everything   ║
-║  Session protocol · Memory · Constraints · Golden Rules     ║
+║  L1 — CLAUDE.md       The Master Brain (179 lines)          ║
+║  + .claude/rules/ (7 path-scoped rule files)                ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
@@ -65,190 +67,208 @@ This methodology solves all of that:
 
 ---
 
-## What's Inside
+## 5 Use Cases
 
-```
-claude-code-methodology/
-│
-├── CLAUDE.md                          ← The Master Brain
-│
-├── .claude/
-│   ├── settings.json                  ← Claude Code configuration
-│   ├── agents/                        ← 13 specialist agent definitions
-│   │   ├── architect.md               ← System design authority
-│   │   ├── security-auditor.md        ← OWASP Top 10 expert
-│   │   ├── code-reviewer.md           ← Quality gatekeeper
-│   │   ├── test-engineer.md           ← TDD specialist
-│   │   ├── debugger.md                ← Scientific debugging
-│   │   ├── refactor-specialist.md     ← Safe code improvement
-│   │   ├── language.md                ← Universal language & i18n specialist
-│   │   ├── reality-auditor.md         ← Mock data & fake API detector
-│   │   ├── database-guardian.md       ← Migration safety & schema protection
-│   │   ├── performance.md             ← N+1 detection & performance budgets
-│   │   ├── api-docs.md                ← API documentation & OpenAPI generator
-│   │   ├── accessibility.md           ← WCAG 2.1 AA compliance auditor
-│   │   └── deploy-guardian.md         ← Deployment gatekeeper
-│   └── commands/                      ← 14 slash commands
-│       ├── session-start.md           ← /session-start
-│       ├── session-end.md             ← /session-end
-│       ├── new-feature.md             ← /new-feature [name]
-│       ├── debug.md                   ← /debug [issue]
-│       ├── review.md                  ← /review [target]
-│       ├── deploy-check.md            ← /deploy-check
-│       ├── language-audit.md           ← /language-audit [component] [--locale]
-│       ├── reality-check.md           ← /reality-check [scope]
-│       ├── migrate-check.md           ← /migrate-check [migration-file]
-│       ├── perf-check.md              ← /perf-check [scope]
-│       ├── dependency-audit.md        ← /dependency-audit [--fix]
-│       ├── api-docs.md                ← /api-docs [scope]
-│       ├── a11y-audit.md              ← /a11y-audit [component|page]
-│       └── document.md                ← /document [target]
-│
-├── io/                                ← I/O Channel (inter-agent communication)
-│   ├── IO_PROTOCOL.md                 ← The law governing all I/O
-│   ├── status.md                      ← Live dashboard (queue + metrics)
-│   ├── BRIEFING_COWORK.md             ← Role brief: Cowork = the critical eye
-│   ├── BRIEFING_CLAUDE_CODE.md        ← Role brief: Claude Code = the hand
-│   ├── requests/                      ← Cowork writes requests here
-│   ├── results/                       ← Claude Code writes results here
-│   ├── signals/                       ← Emergency interrupts
-│   ├── pipelines/                     ← Multi-step chained workflows
-│   ├── threads/                       ← Follow-up conversations
-│   ├── archive/                       ← Completed pairs (monthly)
-│   └── .templates/                    ← 9 pre-built templates
-│
-├── memory/                            ← Persistent memory system
-│   ├── MEMORY_PROTOCOL.md             ← How memory works
-│   ├── project_status.md              ← Where the project stands
-│   ├── session_notes.md               ← Session handoff log
-│   ├── change_log.md                  ← Chronological changes
-│   ├── architecture_decisions.md      ← ADRs (why things are this way)
-│   ├── bugs_and_fixes.md              ← Bug pattern database
-│   └── testing_log.md                 ← Test results & coverage
-│
-├── architecture/                      ← What to build
-│   ├── CONSTRAINTS.md                 ← Rules that must never break
-│   ├── TECH_STACK.md                  ← Approved technologies only
-│   ├── CONTEXT_MAP.md                 ← Folder structure & data flows
-│   ├── ERROR_PATTERNS.md              ← 10 universal pitfalls + prevention
-│   ├── DECISIONS.md                   ← Architecture Decision Records
-│   ├── SECURITY.md                    ← Full security specification
-│   ├── WORKFLOW.md                    ← Branch strategy & conventions
-│   ├── SERVICE_MAP.md                 ← [Microservices] Service registry + dependencies
-│   └── INTER_SERVICE.md              ← [Microservices] Communication patterns + saga
-│
-├── implementation/                    ← How to start coding
-│   ├── API_ENDPOINTS.md               ← Complete route inventory
-│   ├── docker-compose.yml             ← Container orchestration
-│   ├── DOCKER_LOCAL.md                ← Local dev environment guide
-│   ├── EVENT_SCHEMA.md                ← Async event contracts
-│   ├── MIGRATION_ORDER.md             ← Database dependency graph
-│   ├── LOCAL_RUNBOOK.md               ← Clone to running in 15 min
-│   ├── GATEWAY_ROUTES.md              ← API gateway routing
-│   └── CONTRACT_TESTING.md           ← [Microservices] Inter-service contracts
-│
-├── operations/                        ← How work gets done
-│   ├── WORKFLOW.md                    ← Git flow & CI/CD pipeline
-│   ├── DEPLOYMENT.md                  ← Ship to production guide
-│   ├── OPERATIONS_LOG.md              ← Audit trail of all operations
-│   ├── INCIDENT_RESPONSE.md          ← Incident response, post-mortems, runbooks
-│   ├── MONITORING.md                 ← Production monitoring, alerting, SLOs
-│   ├── OBSERVABILITY.md              ← [Microservices] Logging, tracing, metrics
-│   └── ORCHESTRATION.md             ← [Microservices] Docker, K8s, Helm, scaling
-│
-├── hooks/
-│   └── HOOKS_PROTOCOL.md             ← 6 hook types, 7 recipes
-│
-├── bootstrap/                         ← Project instantiation
-│   ├── BOOTSTRAP.md                   ← New project → 25 questions → filled system
-│   ├── REVERSE_BOOTSTRAP.md           ← Existing project → auto-scan → filled system
-│   ├── REENGINEERING_GUIDE.md         ← How to overlay on existing code
-│   ├── UPGRADE_PROTOCOL.md            ← Safe v-old → v-new upgrade
-│   └── MIGRATION_GUIDE.md             ← Old claude-code-system → CCM migration
-│
-├── reference/
-│   ├── MASTER_GUIDE.md                ← Quick reference card
-│   ├── SKILLS_REGISTRY.md             ← 21 skills catalog
-│   └── USAGE_GUIDE.md                 ← How to use Agents, Skills, Hooks & Commands
-│
-├── scripts/
-│   ├── git-setup.sh                   ← One-time repo initialization
-│   ├── validate-system.sh             ← System integrity check
-│   ├── services-check.sh             ← [Microservices] Verify all services running
-│   └── install-claude-skills-v2.sh    ← Master skill installer (21 skills)
-│
-├── .env.example                       ← Environment variable template
-├── .gitignore                         ← Git ignore rules
-└── LICENSE                            ← MIT License
-```
+### Use Case 1: New Project (Starting from Zero)
 
-**96 files · 24 directories · ~35,000 lines of professional methodology**
-**13 agents · 14 commands · 122 features · Monolith + Microservices**
-
----
-
-## Quick Start
-
-### Case 1: New Project (Starting from Zero)
+You have an idea but no code. CCM gives you a fully structured project with all architecture, constraints, memory, and CI/CD from day one.
 
 ```bash
 # 1. Clone the methodology
-git clone https://github.com/YOUR_USERNAME/claude-code-methodology.git
+git clone https://github.com/AribSudia/claude-code-methodology.git
 cp -r claude-code-methodology/ my-new-project/
-
-# 2. Add your project specification
-#    Write a spec file describing your idea, features, tech stack
-cp my-project-spec.md my-new-project/reference/
-
-# 3. Open Claude Cowork and paste bootstrap/BOOTSTRAP.md
-#    Answer 25 questions about your project
-#    Claude generates all files filled with YOUR real data
-
-# 4. Initialize git
 cd my-new-project
-bash scripts/git-setup.sh
 
-# 5. Open Claude Code and start building
-#    Type: /session-start
+# 2. Open Claude Code and paste the bootstrap prompt from bootstrap/BOOTSTRAP.md
+#    Claude asks 25 questions about your project (name, stack, features, auth, DB...)
+#    Then generates ALL methodology files filled with YOUR real data
+
+# 3. Start building
+#    Type: /arib-session-start
 #    Claude reads everything, knows your project, and begins
 ```
 
-### Case 2: Existing Project (Reengineering)
+**What you get**: Every file populated — CONSTRAINTS.md with your rules, TECH_STACK.md with your libraries, API_ENDPOINTS.md with your routes, CONTEXT_MAP.md with your folders, and all 13 agents configured for your stack.
+
+### Use Case 2: Existing Project (Reverse Bootstrap)
+
+You have a codebase but no structure. CCM auto-scans everything and generates methodology files from your actual code.
 
 ```bash
-# 1. Clone the methodology
-git clone https://github.com/YOUR_USERNAME/claude-code-methodology.git
-
-# 2. Copy methodology into your existing project
+# 1. Copy methodology into your existing project
+git clone https://github.com/AribSudia/claude-code-methodology.git
 cp -r claude-code-methodology/* /path/to/your-existing-project/
 cd /path/to/your-existing-project
 
-# 3. Create a safety branch
+# 2. Create a safety branch
 git checkout -b methodology/overlay
 
-# 4. Open Claude Code and paste bootstrap/REVERSE_BOOTSTRAP.md
-#    Claude auto-scans your ENTIRE codebase:
-#      → Discovers tech stack from package.json / *.csproj
+# 3. Open Claude Code and paste the prompt from bootstrap/REVERSE_BOOTSTRAP.md
+#    Claude auto-scans your ENTIRE codebase (10-step analysis):
+#      → Discovers tech stack from package.json / *.csproj / requirements.txt
 #      → Extracts database entities from schema/models
 #      → Maps every API route from controllers
 #      → Analyzes auth system, business logic, git history
 #      → Generates all methodology files with YOUR REAL DATA
-#
-#    If you're renaming the project, it generates a RENAME_MAP.md
 
-# 5. Review generated files, approve, commit
-git add . && git commit -m "[chore]: add Claude Code Methodology"
-
-# 6. Start working with full context
-#    Type: /session-start
-#    Claude now knows your entire codebase intimately
+# 4. Start working with full context
+#    Type: /arib-session-start
 ```
+
+### Use Case 3: Upgrading from Older CCM Version
+
+You're on v2.x and want v3.1. The upgrade protocol preserves all your project data.
+
+```bash
+# Open Claude Code and paste bootstrap/UPGRADE_PROTOCOL.md
+# Claude:
+#   1. Backs up your current files
+#   2. Copies new structure (skills, rules, .mcp.json)
+#   3. Preserves all your memory files, architecture, and implementation
+#   4. Migrates commands → skills automatically
+#   5. Validates everything works
+```
+
+### Use Case 4: Legacy System Migration
+
+You used the old `claude-code-system` and want to move to CCM.
+
+```bash
+# Open Claude Code and paste bootstrap/MIGRATION_GUIDE.md
+# 6-phase migration: Preparation → Backup → Structure → Content → Validation → Cleanup
+```
+
+### Use Case 5: Overlay on Legacy Codebase (Reengineering)
+
+You have a legacy project with tech debt and want to gradually introduce the methodology without breaking anything.
+
+```bash
+# Open Claude Code and paste bootstrap/REENGINEERING_GUIDE.md
+# Adds methodology as an overlay — non-destructive, incremental adoption
+```
+
+---
+
+## The 16 /arib-* Skills
+
+All skills are deep reference documents (250-800 lines each) with decision trees, examples, templates, edge cases, and common mistakes. They live in `.claude/skills/arib-*/SKILL.md`.
+
+### Session Skills
+
+| Skill | Command | What It Does | Lines |
+|-------|---------|-------------|-------|
+| **Session Start** | `/arib-session-start` | Initialize session — read context, check I/O, report status, wait for approval | 302 |
+| **Session End** | `/arib-session-end` | Close session — update memory, run tests, commit, push, report next steps | 448 |
+| **I/O Channel** | `/arib-io` | Process signals from Cowork, execute requests, write results, update dashboard | 799 |
+
+### Development Skills
+
+| Skill | Command | What It Does | Lines |
+|-------|---------|-------------|-------|
+| **Feature Dev** | `/arib-dev-feature <name>` | Start feature with branch, TDD, safety snapshot, implementation plan | 253 |
+| **Code Review** | `/arib-dev-review <target>` | 8-gate review — function length, duplication, security, tests, docs | 569 |
+| **Debug** | `/arib-dev-debug <issue>` | Scientific debugging — observe, 3 hypotheses, binary search, root cause | 327 |
+
+### Check Skills (Audits & Verification)
+
+| Skill | Command | What It Does | Lines |
+|-------|---------|-------------|-------|
+| **Accessibility** | `/arib-check-a11y <component>` | WCAG 2.1 AA audit — contrast, ARIA, keyboard, screen reader | 453 |
+| **Deploy** | `/arib-check-deploy` | 7-phase pre-deployment verification — CLEARED or BLOCKED | 481 |
+| **Dependencies** | `/arib-check-deps` | CVE scan, license compliance, supply chain safety, auto-fix | 484 |
+| **Migration** | `/arib-check-migrate <file>` | Database migration safety — lock analysis, dangerous patterns, rollback | 386 |
+| **Performance** | `/arib-check-perf <scope>` | N+1 queries, bundle size, memory leaks, caching, latency budgets | 328 |
+| **Reality** | `/arib-check-reality <scope>` | Detect mock data, fake APIs, hardcoded responses — Reality Score | 412 |
+| **Services** | `/arib-check-services` | Infrastructure health — adapts to project type, checks only what exists | 414 |
+
+### Documentation Skills
+
+| Skill | Command | What It Does | Lines |
+|-------|---------|-------------|-------|
+| **API Docs** | `/arib-docs-api <scope>` | Discover endpoints, generate OpenAPI spec, detect undocumented routes | 396 |
+| **Doc Generator** | `/arib-docs-generate <target>` | Generate or update documentation — JSDoc, README, architecture docs | 575 |
+| **Language/i18n** | `/arib-docs-language <component>` | Universal i18n audit — RTL, LTR, CJK, Indic, fonts, formatting | 766 |
+
+**Total Skill Content**: 7,393 lines of deep reference documentation.
+
+### How to Use a Skill
+
+In Claude Code, just type the command:
+
+```
+/arib-session-start                    ← Start every session with this
+/arib-dev-feature user-authentication  ← Begin a new feature
+/arib-dev-review feature/user-auth     ← Review before merging
+/arib-check-perf backend              ← Performance audit
+/arib-session-end                      ← End every session with this
+```
+
+Each skill guides Claude Code through a complete protocol — reading context, checking constraints, executing the task, and documenting results.
+
+---
+
+## The 13 Specialist Agents
+
+Agents activate automatically based on keywords in your instructions. Each operates with a specific checklist and delivers a structured output.
+
+| Agent                 | Activates On                    | Delivers                                |
+|-----------------------|---------------------------------|-----------------------------------------|
+| **Architect**         | "design", "plan", "schema"      | Design → Trade-offs → Approval gate     |
+| **Security Auditor**  | auth, payments, user data       | OWASP audit report (pass/fail)          |
+| **Code Reviewer**     | "review", PRs, before merge     | APPROVED or NEEDS CHANGES               |
+| **Test Engineer**     | "test", "coverage"              | Test files + coverage report            |
+| **Debugger**          | "bug", "broken", "error"        | 3 hypotheses → isolated fix → documented|
+| **Refactor**          | "refactor", "cleanup"           | Snapshot → improve → verify behavior    |
+| **Language**          | "i18n", "RTL", any locale/script| Universal language compliance report     |
+| **Reality Auditor**   | "mock", "fake", "real data"     | Reality Score + remediation plan        |
+| **Database Guardian** | "migration", "schema", "ALTER"  | APPROVED or BLOCKED + safe alternatives |
+| **Perf Profiler**     | "slow", "N+1", "bundle size"    | Performance Audit Report + budgets      |
+| **API Docs**          | "API docs", "OpenAPI", "Swagger"| OpenAPI spec + sync report              |
+| **Accessibility**     | "a11y", "WCAG", "screen reader" | WCAG AA compliance report               |
+| **Deploy Guardian**   | "deploy", "ship", "release"     | CLEARED or BLOCKED with reasons         |
+
+Agent definitions live in `.claude/agents/`.
+
+---
+
+## Core Project Context
+
+The `core/` directory contains **living project context** — the strategic business information that shapes every technical decision.
+
+```
+core/
+└── CORE_CONTEXT.md    ← Business overview, stakeholders, domain terminology,
+                          success metrics, timeline, constraints, and strategic goals
+```
+
+This file is read during bootstrap and referenced by agents. It ensures Claude Code understands not just *what* to build but *why* — business goals, user personas, domain language, and success criteria. Updated as the project evolves.
+
+---
+
+## Training Manuals (10 Guides)
+
+The `Training/` directory contains **10 comprehensive user manuals** — everything a developer needs to learn and master the methodology.
+
+| Manual | File | What It Covers |
+|--------|------|----------------|
+| **01 — System Overview** | `Training/01-SYSTEM-OVERVIEW.md` | Complete system architecture, how all layers connect, mental model |
+| **02 — Agents Manual** | `Training/02-AGENTS-MANUAL.md` | All 13 agents explained — triggers, checklists, outputs, customization |
+| **03 — Skills Manual** | `Training/03-SKILLS-MANUAL.md` | Skills system — how they work, how to use /arib-* commands |
+| **04 — Hooks Manual** | `Training/04-HOOKS-MANUAL.md` | Safety hooks — 6 types, 7 recipes, configuration, custom hooks |
+| **05 — Commands Manual** | `Training/05-COMMANDS-MANUAL.md` | All slash commands explained with examples and workflows |
+| **06 — I/O Channel Manual** | `Training/06-IO-CHANNEL-MANUAL.md` | Inter-agent communication — requests, signals, pipelines, templates |
+| **07 — Memory Manual** | `Training/07-MEMORY-MANUAL.md` | Memory system — 7 file types, update rules, archival, continuity |
+| **08 — Bootstrap Manual** | `Training/08-BOOTSTRAP-MANUAL.md` | All 5 bootstrap methods — new, existing, upgrade, migrate, reengineer |
+| **09 — Microservices Manual** | `Training/09-MICROSERVICES-MANUAL.md` | Microservices extension — service map, contracts, orchestration |
+| **10 — Production Safety** | `Training/10-PRODUCTION-SAFETY-MANUAL.md` | Incident response, monitoring, SLOs, on-call, post-mortems |
+
+Start with **Manual 01** for the big picture, then dive into whichever area you need.
 
 ---
 
 ## The I/O Channel — Inter-Agent Nervous System
 
-The I/O Channel enables **structured, traceable communication** between Claude Cowork, Claude Code, human operators, and CI/CD — all through a single directory.
+Enables **structured, traceable communication** between Claude Cowork, Claude Code, human operators, and CI/CD.
 
 ```
 COWORK (Critical Eye)                    CLAUDE CODE (Executing Hand)
@@ -259,7 +279,7 @@ COWORK (Critical Eye)                    CLAUDE CODE (Executing Hand)
       │◀──────────────────── result ────────────┤
       │   io/results/audit-auth-...-result.md   │
       │                                         │
-      ├── 🚨 SIGNAL (emergency) ───────────────▶│
+      ├── SIGNAL (emergency) ──────────────────▶│
       │   io/signals/halt-2026-04-17-001.md     ├── DROPS everything, responds
       │                                         │
       ├── PIPELINE (multi-step) ───────────────▶│
@@ -268,16 +288,23 @@ COWORK (Critical Eye)                    CLAUDE CODE (Executing Hand)
       └── THREAD (follow-up) ◀────────────────▶└── discussion on findings
 ```
 
-| Component     | Purpose                                             |
-|---------------|-----------------------------------------------------|
-| **Requests**  | Structured audit/verify/review/analyze/compare/fix  |
-| **Results**   | Findings by severity + code refs + recommendations  |
-| **Signals**   | Emergency halt/rollback/escalate/hotfix             |
-| **Pipelines** | Chained workflows (pre-release, incident response)  |
-| **Threads**   | Follow-up conversations on specific findings        |
-| **Dashboard** | Live queue, metrics, signal board                   |
-| **Templates** | 9 pre-built templates for every request type        |
-| **Archive**   | Monthly auto-archive of completed pairs             |
+---
+
+## Path-Scoped Rules
+
+Instead of a massive CLAUDE.md, domain rules live in `.claude/rules/` and **only load when relevant files are touched**:
+
+| Rule File | Loads When | What It Governs |
+|-----------|-----------|-----------------|
+| `session-protocol.md` | Always | Session start/work/end lifecycle |
+| `memory.md` | `memory/**` touched | Memory hierarchy, update rules |
+| `io-channel.md` | `io/**` touched | I/O architecture, request types, signals |
+| `agents.md` | `.claude/agents/**` touched | Agent activation and rules |
+| `hooks.md` | `hooks/**` touched | Hook types, configuration, exit codes |
+| `architecture.md` | `architecture/**` touched | Architecture layer rules |
+| `implementation.md` | `implementation/**` touched | Implementation layer rules |
+
+This keeps CLAUDE.md at 179 lines (under the 200-line best practice) while preserving all domain knowledge.
 
 ---
 
@@ -297,13 +324,14 @@ COWORK (Critical Eye)                    CLAUDE CODE (Executing Hand)
 
 ## Session Lifecycle
 
-Every Claude Code session follows this protocol automatically:
+Every Claude Code session follows this protocol:
 
 ```
-/session-start
+/arib-session-start
     │
+    ├── SCAN: I/O channel for signals and pending requests
     ├── READ: CLAUDE.md + Constraints + Tech Stack + Memory
-    ├── CHECK: git status, branch, recent commits
+    ├── CHECK: git status, branch, recent commits, services
     ├── REPORT: current state, proposed plan
     └── WAIT: for user approval
          │
@@ -317,40 +345,168 @@ Every Claude Code session follows this protocol automatically:
     │   └── Report completion
     │
     ▼
-/session-end
+/arib-session-end
     │
     ├── WRITE: Update all memory files
     ├── TEST: Run final tests
     ├── COMMIT: Session-end commit
     ├── PUSH: To remote
-    └── REPORT: ✅ Done · ⚠️ Issues · 🎯 Next
+    └── REPORT: Completed · Issues · Next
 ```
 
 ---
 
-## Agents at a Glance
+## What's Inside (Complete File Tree)
 
-| Agent                 | Activates On                    | Delivers                                |
-|-----------------------|---------------------------------|-----------------------------------------|
-| **Architect**         | "design", "plan", "schema"      | Design → Trade-offs → Approval gate     |
-| **Security Auditor**  | auth, payments, user data       | OWASP audit report (pass/fail)          |
-| **Code Reviewer**     | "review", PRs, before merge     | APPROVED or NEEDS CHANGES               |
-| **Test Engineer**     | "test", "coverage"              | Test files + coverage report            |
-| **Debugger**          | "bug", "broken", "error"        | 3 hypotheses → isolated fix → documented|
-| **Refactor**          | "refactor", "cleanup"           | Snapshot → improve → verify behavior    |
-| **Language**          | "i18n", "RTL", any locale/script| Universal language compliance report     |
-| **Reality Auditor**   | "mock", "fake", "real data"     | Reality Score + remediation plan        |
-| **Database Guardian** | "migration", "schema", "ALTER"  | APPROVED or BLOCKED + safe alternatives |
-| **Perf Profiler**     | "slow", "N+1", "bundle size"    | Performance Audit Report + budgets      |
-| **API Docs**          | "API docs", "OpenAPI", "Swagger"| OpenAPI spec + sync report              |
-| **Accessibility**     | "a11y", "WCAG", "screen reader" | WCAG AA compliance report               |
-| **Deploy Guardian**   | "deploy", "ship", "release"     | CLEARED or BLOCKED with reasons         |
+```
+claude-code-methodology/                  ← 142 files · 58,000+ lines
+│
+├── CLAUDE.md                             ← The Master Brain (179 lines)
+├── SYSTEM.md                             ← Full system spec (135 features)
+├── VERSION.json                          ← Version metadata + stats
+├── CHANGELOG.md                          ← Full version history (v1.0 → v3.1)
+├── .mcp.json                             ← MCP server configuration
+├── .worktreeinclude                      ← Files to include in worktrees
+│
+├── .claude/
+│   ├── settings.json                     ← Claude Code configuration
+│   ├── settings.local.json               ← Personal overrides (gitignored)
+│   ├── rules/                            ← 7 path-scoped rule files
+│   │   ├── session-protocol.md           ← Always loaded
+│   │   ├── memory.md                     ← Loads on memory/** changes
+│   │   ├── io-channel.md                 ← Loads on io/** changes
+│   │   ├── agents.md                     ← Loads on agents/** changes
+│   │   ├── hooks.md                      ← Loads on hooks/** changes
+│   │   ├── architecture.md               ← Loads on architecture/** changes
+│   │   └── implementation.md             ← Loads on implementation/** changes
+│   ├── skills/                           ← 16 branded deep-reference skills
+│   │   ├── arib-session-start/SKILL.md   ← /arib-session-start (302 lines)
+│   │   ├── arib-session-end/SKILL.md     ← /arib-session-end (448 lines)
+│   │   ├── arib-io/SKILL.md              ← /arib-io (799 lines)
+│   │   ├── arib-dev-feature/SKILL.md     ← /arib-dev-feature (253 lines)
+│   │   ├── arib-dev-review/SKILL.md      ← /arib-dev-review (569 lines)
+│   │   ├── arib-dev-debug/SKILL.md       ← /arib-dev-debug (327 lines)
+│   │   ├── arib-check-a11y/SKILL.md      ← /arib-check-a11y (453 lines)
+│   │   ├── arib-check-deploy/SKILL.md    ← /arib-check-deploy (481 lines)
+│   │   ├── arib-check-deps/SKILL.md      ← /arib-check-deps (484 lines)
+│   │   ├── arib-check-migrate/SKILL.md   ← /arib-check-migrate (386 lines)
+│   │   ├── arib-check-perf/SKILL.md      ← /arib-check-perf (328 lines)
+│   │   ├── arib-check-reality/SKILL.md   ← /arib-check-reality (412 lines)
+│   │   ├── arib-check-services/SKILL.md  ← /arib-check-services (414 lines)
+│   │   ├── arib-docs-api/SKILL.md        ← /arib-docs-api (396 lines)
+│   │   ├── arib-docs-generate/SKILL.md   ← /arib-docs-generate (575 lines)
+│   │   └── arib-docs-language/SKILL.md   ← /arib-docs-language (766 lines)
+│   ├── agents/                           ← 13 specialist agent definitions
+│   │   ├── architect.md                  ← System design authority
+│   │   ├── security-auditor.md           ← OWASP Top 10 expert
+│   │   ├── code-reviewer.md              ← Quality gatekeeper
+│   │   ├── test-engineer.md              ← TDD specialist
+│   │   ├── debugger.md                   ← Scientific debugging
+│   │   ├── refactor-specialist.md        ← Safe code improvement
+│   │   ├── language.md                   ← Universal i18n specialist
+│   │   ├── reality-auditor.md            ← Mock data detector
+│   │   ├── database-guardian.md          ← Migration safety
+│   │   ├── performance.md                ← N+1 & performance budgets
+│   │   ├── api-docs.md                   ← OpenAPI generator
+│   │   ├── accessibility.md              ← WCAG 2.1 AA auditor
+│   │   └── deploy-guardian.md            ← Deployment gatekeeper
+│   ├── commands/                         ← 16 legacy commands (deprecated, backward compat)
+│   ├── agent-memory/                     ← Persistent memory per subagent
+│   └── output-styles/                    ← Custom output styles
+│
+├── core/                                 ← Living project context
+│   └── CORE_CONTEXT.md                   ← Business goals, stakeholders, domain terms
+│
+├── Training/                             ← 10 comprehensive user manuals
+│   ├── 01-SYSTEM-OVERVIEW.md             ← Complete system architecture
+│   ├── 02-AGENTS-MANUAL.md               ← All 13 agents explained
+│   ├── 03-SKILLS-MANUAL.md               ← Skills system & /arib-* commands
+│   ├── 04-HOOKS-MANUAL.md                ← Safety hooks — 6 types, 7 recipes
+│   ├── 05-COMMANDS-MANUAL.md             ← All slash commands with examples
+│   ├── 06-IO-CHANNEL-MANUAL.md           ← Inter-agent communication
+│   ├── 07-MEMORY-MANUAL.md               ← Memory system & continuity
+│   ├── 08-BOOTSTRAP-MANUAL.md            ← All 5 bootstrap methods
+│   ├── 09-MICROSERVICES-MANUAL.md        ← Microservices extension
+│   └── 10-PRODUCTION-SAFETY-MANUAL.md    ← Incident response & monitoring
+│
+├── memory/                               ← Persistent memory system
+│   ├── MEMORY_PROTOCOL.md                ← How memory works
+│   ├── project_status.md                 ← Where the project stands
+│   ├── session_notes.md                  ← Session handoff log
+│   ├── change_log.md                     ← Chronological changes
+│   ├── architecture_decisions.md         ← ADRs (why things are this way)
+│   ├── bugs_and_fixes.md                 ← Bug pattern database
+│   └── testing_log.md                    ← Test results & coverage
+│
+├── architecture/                         ← What to build
+│   ├── CONSTRAINTS.md                    ← Rules that must never break
+│   ├── TECH_STACK.md                     ← Approved technologies only
+│   ├── CONTEXT_MAP.md                    ← Folder structure & data flows
+│   ├── ERROR_PATTERNS.md                 ← Universal pitfalls + prevention
+│   ├── DECISIONS.md                      ← Architecture Decision Records
+│   ├── SECURITY.md                       ← Security specification
+│   ├── WORKFLOW.md                       ← Branch strategy & conventions
+│   ├── SERVICE_MAP.md                    ← [Microservices] Service registry
+│   └── INTER_SERVICE.md                  ← [Microservices] Communication patterns
+│
+├── implementation/                       ← How to start coding
+│   ├── API_ENDPOINTS.md                  ← Complete route inventory
+│   ├── docker-compose.yml                ← Container orchestration
+│   ├── DOCKER_LOCAL.md                   ← Local dev environment guide
+│   ├── EVENT_SCHEMA.md                   ← Async event contracts
+│   ├── MIGRATION_ORDER.md                ← Database dependency graph
+│   ├── LOCAL_RUNBOOK.md                  ← Clone to running in 15 min
+│   ├── GATEWAY_ROUTES.md                 ← API gateway routing
+│   └── CONTRACT_TESTING.md              ← [Microservices] Inter-service contracts
+│
+├── operations/                           ← How work gets done
+│   ├── WORKFLOW.md                       ← Git flow & CI/CD pipeline
+│   ├── DEPLOYMENT.md                     ← Ship to production guide
+│   ├── OPERATIONS_LOG.md                 ← Audit trail of all operations
+│   ├── INCIDENT_RESPONSE.md              ← SEV1-4, post-mortems, runbooks
+│   ├── MONITORING.md                     ← SLOs, golden signals, alerting
+│   ├── OBSERVABILITY.md                  ← [Microservices] Logging & tracing
+│   └── ORCHESTRATION.md                  ← [Microservices] K8s, Helm, scaling
+│
+├── io/                                   ← I/O Channel (inter-agent comms)
+│   ├── IO_PROTOCOL.md                    ← The law governing all I/O
+│   ├── status.md                         ← Live dashboard
+│   ├── BRIEFING_COWORK.md                ← Role brief for Cowork
+│   ├── BRIEFING_CLAUDE_CODE.md           ← Role brief for Claude Code
+│   ├── COWORK_PROMPT.md                  ← Cowork session prompt
+│   └── .templates/                       ← 9 pre-built request templates
+│
+├── hooks/
+│   └── HOOKS_PROTOCOL.md                 ← 6 hook types, 7 production recipes
+│
+├── bootstrap/                            ← Project instantiation
+│   ├── BOOTSTRAP.md                      ← New project (25 questions)
+│   ├── REVERSE_BOOTSTRAP.md              ← Existing project (10-step auto-scan)
+│   ├── REENGINEERING_GUIDE.md            ← Overlay methodology on legacy code
+│   ├── UPGRADE_PROTOCOL.md               ← Safe v-old → v-new upgrade
+│   └── MIGRATION_GUIDE.md               ← Old system → CCM migration
+│
+├── reference/                            ← Quick references
+│   ├── MASTER_GUIDE.md                   ← Quick reference card
+│   ├── SKILLS_REGISTRY.md                ← Skills catalog
+│   ├── USAGE_GUIDE.md                    ← How to use Agents, Skills, Hooks
+│   ├── COMMANDS_GUIDE.md                 ← Complete command reference
+│   └── COMMAND_PREFIX.md                 ← Branded prefix system
+│
+└── scripts/                              ← Automation
+    ├── git-setup.sh                      ← One-time repo initialization
+    ├── validate-system.sh                ← System integrity check (102 checks)
+    ├── services-check.sh                 ← Verify all services running
+    ├── io-watcher.sh                     ← I/O channel monitor
+    ├── io-archive.sh                     ← Archive completed I/O pairs
+    └── install-claude-skills-v2.sh       ← Skill installer
+```
 
 ---
 
 ## Stack Agnostic
 
-This methodology works with any tech stack. Pre-configured presets included:
+This methodology works with **any tech stack**. Pre-configured presets included:
 
 | Preset                  | Stack                                          |
 |-------------------------|------------------------------------------------|
@@ -359,54 +515,47 @@ This methodology works with any tech stack. Pre-configured presets included:
 | **Next.js**             | Next.js 14 + TypeScript + Prisma + Tailwind    |
 | **Python FastAPI**      | FastAPI + React + SQLAlchemy + PostgreSQL       |
 
-Or define your own — the methodology adapts to whatever you're building.
+Or define your own — the bootstrap asks what you're using and adapts.
 
 ---
 
-## For Existing Projects: The Reverse Bootstrap
+## Quick Reference: Daily Workflow
 
-The **Reverse Bootstrap** (`bootstrap/REVERSE_BOOTSTRAP.md`) is the key tool for existing codebases. It runs a 10-step systematic scan:
+```bash
+# Morning: Start your session
+/arib-session-start
 
-1. **Structure Discovery** — maps your entire directory tree
-2. **Tech Stack Detection** — identifies frameworks, languages, versions
-3. **Entity Extraction** — reads every database model/schema
-4. **Route Extraction** — maps every API endpoint
-5. **Auth Analysis** — understands your permission model
-6. **Config Audit** — checks environment variables and secrets
-7. **Test Assessment** — measures test coverage and framework
-8. **Git History Analysis** — finds hot spots and patterns
-9. **Business Logic Discovery** — reads services and handlers
-10. **Frontend Analysis** — components, pages, i18n, RTL
+# Build a feature
+/arib-dev-feature payment-integration
 
-Then it **auto-generates all 30+ methodology files** filled with your actual data. No templates. No placeholders. Real routes, real entities, real business rules.
+# Check your work
+/arib-dev-review feature/payment-integration
+/arib-check-perf backend
+/arib-check-deps
 
-If you're renaming your project, it also generates a **RENAME_MAP.md** showing every file and code reference that needs updating, in a safe execution order.
+# Before deploying
+/arib-check-deploy
+/arib-check-migrate migrations/add-payments.sql
 
----
-
-## File Count
-
-| Category          | Files | Lines  | Purpose                              |
-|-------------------|-------|--------|--------------------------------------|
-| Core              | 1     | ~450   | CLAUDE.md — The Master Brain         |
-| I/O Channel       | 13    | ~3,500 | Inter-agent communication system     |
-| Agents            | 8     | ~2,500 | Specialist agent definitions         |
-| Commands          | 8     | ~500   | Slash command definitions            |
-| Memory            | 7     | ~600   | Persistent memory system             |
-| Architecture      | 7     | ~2,800 | What to build (constraints, stack)   |
-| Implementation    | 8     | ~3,500 | How to start (API, docker, migrations)|
-| Operations        | 3     | ~700   | Workflow, deploy, ops log            |
-| Hooks             | 1     | ~1,200 | Safety gate protocol                 |
-| Bootstrap         | 3     | ~1,500 | Instantiation (new + existing)       |
-| Reference         | 2     | ~1,000 | Quick ref + skills catalog           |
-| Scripts & Config  | 8     | ~600   | Automation, watcher, archival        |
-| **Total**         | **69**| **~21K**| **Complete AI dev operating system** |
+# End of day: Close your session
+/arib-session-end
+```
 
 ---
 
-## Contributing
+## Version History
 
-This is currently a private repository. If you'd like to contribute or suggest improvements, open an issue or submit a pull request.
+| Version | Codename | Key Changes |
+|---------|----------|-------------|
+| v1.0 | — | 5-Layer Architecture, 8 agents, memory, bootstrap |
+| v2.0 | Connected | I/O Channel (14 files), version control |
+| v2.1-2.4 | — | Language agent, microservices, reality auditor, DB guardian |
+| v2.5 | — | Performance profiler, dependency audit, incident response |
+| v2.6 | Fortress | API docs, accessibility, monitoring, 10 training manuals, SYSTEM.md |
+| v2.7-2.8 | — | Branded arib-* commands, simplified bootstrap |
+| v2.9 | Connected | I/O bridge, Cowork integration |
+| v3.0 | Aligned | Official Claude Code architecture alignment (skills, rules, .mcp.json) |
+| **v3.1** | **Deep Skills** | **All 16 skills enriched to Anthropic-grade depth (7,393 lines)** |
 
 ---
 
@@ -416,4 +565,4 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Built by Abdullah** — powered by Claude Code Methodology v2.6.0 "Fortress"
+**Built by Abdullah x Claude Opus 4.6** — Claude Code Methodology v3.1.0 "Deep Skills"
