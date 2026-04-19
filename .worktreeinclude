@@ -1,0 +1,9 @@
+# Files to copy into new worktrees
+# Uses .gitignore syntax - only gitignored files matching these patterns are copied
+
+# Local environment
+.env
+.env.local
+
+# Local settings
+.claude/settings.local.json

@@ -1,0 +1,50 @@
+{
+  "name": "claude-code-methodology",
+  "version": "3.1.0",
+  "codename": "Deep Skills",
+  "releaseDate": "2026-04-19",
+  "previousVersion": "3.0.0",
+  "engineeredBy": "Abdullah x Claude Opus 4.6",
+  "license": "MIT",
+  "repository": "https://github.com/YOUR_USERNAME/claude-code-methodology",
+  "stats": {
+    "totalFiles": 120,
+    "totalDirectories": 35,
+    "totalLines": 44300,
+    "totalSizeKB": 1500,
+    "features": 135,
+    "agents": 13,
+    "skills": 16,
+    "skillPrefix": "arib",
+    "skillCategories": 4,
+    "rules": 7,
+    "legacyCommands": 16,
+    "hookTypes": 6,
+    "hookRecipes": 7,
+    "memoryFiles": 7,
+    "ioTemplates": 9,
+    "architectureFiles": 9,
+    "implementationFiles": 9,
+    "operationsFiles": 7,
+    "scripts": 6,
+    "bootstrapMethods": 5,
+    "trainingManuals": 10
+  },
+  "compatibility": {
+    "minClaudeCodeVersion": "1.0.0",
+    "minNodeVersion": "18.0.0",
+    "minGitVersion": "2.30.0",
+    "requiredTools": ["git", "node"],
+    "optionalTools": ["gh", "docker", "bun"]
+  },
+  "useCases": [
+    "new-project",
+    "existing-project-reengineering",
+    "version-upgrade",
+    "legacy-system-migration"
+  ],
+  "changelog": "CHANGELOG.md",
+  "upgradeGuide": "bootstrap/UPGRADE_PROTOCOL.md",
+  "skillReference": "reference/COMMAND_PREFIX.md",
+  "systemSpec": "SYSTEM.md"
+}

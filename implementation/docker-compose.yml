@@ -1,0 +1,329 @@
+version: '3.9'
+
+# Production-quality docker-compose configuration for [PROJECT]
+# For local development, see DOCKER_LOCAL.md
+
+services:
+  # ============================================================================
+  # PRIMARY SERVICES (required for all environments)
+  # ============================================================================
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: ${PROJECT_NAME:-project}-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: ${DB_USER:-dev}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-devpass}
+      POSTGRES_DB: ${DB_NAME:-project_dev}
+      # Disable verbose logging in production
+      POSTGRES_INITDB_ARGS: ${DB_INIT_ARGS:--q}
+
+    # Port exposure (only for development; remove in production)
+    ports:
+      - "${DB_PORT:-5432}:5432"
+
+    # Health check ensures container is ready before app starts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-dev} -d ${DB_NAME:-project_dev}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+    volumes:
+      # Persist database data across container restarts
+      - postgres_data:/var/lib/postgresql/data
+      # Optional: mount initialization scripts
+      # - ./database/init:/docker-entrypoint-initdb.d
+
+    networks:
+      - [PROJECT]_network
+
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  redis:
+    image: redis:7-alpine
+    container_name: ${PROJECT_NAME:-project}-redis
+    restart: unless-stopped
+
+    # Start Redis with persistence enabled
+    command: redis-server --appendonly yes --appendfsync everysec
+
+    # Port exposure (only for development; remove in production)
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    volumes:
+      # Persist Redis data across restarts
+      - redis_data:/data
+
+    networks:
+      - [PROJECT]_network
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ${APP_BUILD_TARGET:-development}
+
+    container_name: ${PROJECT_NAME:-project}-app
+    restart: unless-stopped
+
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DATABASE_URL: postgresql://${DB_USER:-dev}:${DB_PASSWORD:-devpass}@postgres:5432/${DB_NAME:-project_dev}
+      REDIS_URL: redis://redis:6379
+      API_PORT: ${API_PORT:-3000}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+
+    ports:
+      - "${API_PORT:-3000}:3000"
+
+    # Health check with startup probe
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    volumes:
+      # Mount source code for hot-reload in development
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - node_modules:/app/node_modules
+
+      # Exclude node_modules from bind mount
+      - /app/node_modules
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    networks:
+      - [PROJECT]_network
+
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '1'
+          memory: 512M
+
+  # ============================================================================
+  # OPTIONAL SERVICES (uncomment as needed)
+  # ============================================================================
+
+  # RabbitMQ: Message broker for async tasks and event streaming
+  # Uncomment to enable for projects with queuing requirements
+  # rabbitmq:
+  #   image: rabbitmq:3.12-alpine
+  #   container_name: ${PROJECT_NAME:-project}-rabbitmq
+  #   restart: unless-stopped
+  #
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+  #     RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+  #
+  #   ports:
+  #     - "5672:5672"      # AMQP port
+  #     - "15672:15672"    # Management UI
+  #
+  #   healthcheck:
+  #     test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #
+  #   volumes:
+  #     - rabbitmq_data:/var/lib/rabbitmq
+  #
+  #   networks:
+  #     - [PROJECT]_network
+
+  # Elasticsearch: Full-text search and analytics
+  # Uncomment for projects requiring advanced search capabilities
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0
+  #   container_name: ${PROJECT_NAME:-project}-elasticsearch
+  #   restart: unless-stopped
+  #
+  #   environment:
+  #     discovery.type: single-node
+  #     xpack.security.enabled: "false"
+  #     ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+  #
+  #   ports:
+  #     - "9200:9200"
+  #
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q 'green\\|yellow'"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #
+  #   volumes:
+  #     - elasticsearch_data:/usr/share/elasticsearch/data
+  #
+  #   networks:
+  #     - [PROJECT]_network
+
+  # MinIO: S3-compatible object storage
+  # Uncomment for projects requiring file uploads and object storage
+  # minio:
+  #   image: minio/minio:latest
+  #   container_name: ${PROJECT_NAME:-project}-minio
+  #   restart: unless-stopped
+  #
+  #   environment:
+  #     MINIO_ROOT_USER: ${MINIO_USER:-minioadmin}
+  #     MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD:-minioadmin}
+  #
+  #   ports:
+  #     - "9000:9000"      # API
+  #     - "9001:9001"      # Console
+  #
+  #   command: server /data --console-address ":9001"
+  #
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+  #     interval: 30s
+  #     timeout: 20s
+  #     retries: 3
+  #
+  #   volumes:
+  #     - minio_data:/data
+  #
+  #   networks:
+  #     - [PROJECT]_network
+
+  # MailHog: Email capture for development
+  # Uncomment to enable email testing without sending real emails
+  # mailhog:
+  #   image: mailhog/mailhog:latest
+  #   container_name: ${PROJECT_NAME:-project}-mailhog
+  #   restart: unless-stopped
+  #
+  #   ports:
+  #     - "1025:1025"   # SMTP
+  #     - "8025:8025"   # UI
+  #
+  #   networks:
+  #     - [PROJECT]_network
+
+# ============================================================================
+# NAMED VOLUMES
+# Data persists even when containers are removed
+# ============================================================================
+
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/postgres
+
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIR:-./data}/redis
+
+  node_modules:
+    driver: local
+
+  # Uncomment if using RabbitMQ
+  # rabbitmq_data:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     o: bind
+  #     device: ${DATA_DIR:-./data}/rabbitmq
+
+  # Uncomment if using Elasticsearch
+  # elasticsearch_data:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     o: bind
+  #     device: ${DATA_DIR:-./data}/elasticsearch
+
+  # Uncomment if using MinIO
+  # minio_data:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     o: bind
+  #     device: ${DATA_DIR:-./data}/minio
+
+# ============================================================================
+# NETWORKS
+# Services communicate via [PROJECT]_network
+# ============================================================================
+
+networks:
+  [PROJECT]_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+# ============================================================================
+# ENV FILE REFERENCE
+# Create .env.local from .env.example, customize for your environment:
+#
+# NODE_ENV=development
+# PROJECT_NAME=myproject
+# DATA_DIR=./data
+#
+# DATABASE
+# DB_USER=dev
+# DB_PASSWORD=devpass
+# DB_NAME=myproject_dev
+# DB_PORT=5432
+#
+# REDIS
+# REDIS_PORT=6379
+#
+# APPLICATION
+# API_PORT=3000
+# LOG_LEVEL=debug
+#
+# Uncomment and configure optional services as needed:
+# RABBITMQ_USER=guest
+# RABBITMQ_PASSWORD=guest
+# MINIO_USER=minioadmin
+# MINIO_PASSWORD=minioadmin
+# ============================================================================

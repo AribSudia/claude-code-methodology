@@ -1,0 +1,62 @@
+# ── Environment & Secrets ─────────────────────────────────
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+*.pem
+*.key
+credentials.json
+service-account.json
+
+# ── Dependencies ─────────────────────────────────────────
+node_modules/
+vendor/
+.venv/
+__pycache__/
+*.pyc
+
+# ── Build Output ─────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+bin/
+obj/
+*.dll
+*.exe
+
+# ── IDE & OS ─────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Logs ─────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+
+# ── Testing ──────────────────────────────────────────────
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# ── Docker ───────────────────────────────────────────────
+docker-compose.override.yml
+
+# ── Temporary ────────────────────────────────────────────
+tmp/
+temp/
+*.tmp
+
+# ── Claude Code Local (personal, not shared) ────────────
+.claude/settings.local.json
+.claude/agent-memory-local/
+
+# ── Memory Archives (keep in git, but ignore temp) ──────
+memory/archive/*.tmp

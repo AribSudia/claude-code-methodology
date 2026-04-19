@@ -1,0 +1,75 @@
+{
+  "permissions": {
+    "allow": [
+      "Read:*",
+      "Glob:*",
+      "Grep:*",
+      "Bash(git *)",
+      "Bash(npm run *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(dotnet *)",
+      "Bash(docker compose *)",
+      "Bash(docker-compose *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
+      "Bash(git push --force *)",
+      "Bash(git reset --hard *)",
+      "Bash(chmod 777 *)",
+      "Write:.env",
+      "Write:.env.local",
+      "Write:.env.production"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Pre-Bash check: ensuring safe command'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Post-Write: file written successfully'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "context": {
+    "include": [
+      "CLAUDE.md",
+      "architecture/CONSTRAINTS.md",
+      "architecture/TECH_STACK.md",
+      "architecture/CONTEXT_MAP.md",
+      "architecture/ERROR_PATTERNS.md",
+      "architecture/DECISIONS.md",
+      "architecture/SECURITY.md",
+      "implementation/API_ENDPOINTS.md",
+      "implementation/EVENT_SCHEMA.md",
+      "implementation/MIGRATION_ORDER.md",
+      "memory/project_status.md",
+      "memory/session_notes.md",
+      "operations/WORKFLOW.md"
+    ]
+  },
+  "MAX_THINKING_TOKENS": 16000,
+  "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50"
+}
