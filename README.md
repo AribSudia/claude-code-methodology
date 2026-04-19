@@ -147,6 +147,30 @@ You have a legacy project with tech debt and want to gradually introduce the met
 # Adds methodology as an overlay — non-destructive, incremental adoption
 ```
 
+### Copy-Paste Prompts (Ready to Use)
+
+Just paste one of these directly into Claude Code to get started:
+
+**New Project:**
+```
+Read claude-code-methodology/bootstrap/BOOTSTRAP.md and execute the full bootstrap protocol for this new project.
+```
+
+**Existing Project:**
+```
+Read claude-code-methodology/bootstrap/REVERSE_BOOTSTRAP.md and execute the full reverse bootstrap protocol on this existing codebase.
+```
+
+**Version Upgrade:**
+```
+Read claude-code-methodology/bootstrap/UPGRADE_PROTOCOL.md and execute the full upgrade protocol.
+```
+
+**Legacy Migration:**
+```
+Read claude-code-methodology/bootstrap/MIGRATION_GUIDE.md and execute the full migration protocol.
+```
+
 ---
 
 ## The 16 /arib-* Skills
