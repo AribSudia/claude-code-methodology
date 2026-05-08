@@ -1,10 +1,22 @@
 # Claude Code Methodology (CCM)
 
-### The Complete AI Development Operating System
+### An opinionated methodology and skill pack for Claude Code
 
-A production-grade methodology that turns Claude Code from a code assistant into a **full development team** — with persistent memory, 16 deep skills, 13 specialist agents, safety hooks, path-scoped rules, and an I/O channel that connects everything.
+A convention layer for serious work in Claude Code: 16 branded `/arib-*` skills,
+13 specialist agents, kernel-level enforcement hooks, path-scoped rules, persistent
+memory files, and a 5-mode bootstrap. It is **not** a runtime, an orchestrator,
+or a kernel — it is a set of conventions that make multi-session Claude Code
+work durable.
 
-**v3.1.0 "Deep Skills"** · 142 files · 58,000+ lines · Engineered by Abdullah x Claude Opus 4.6
+**v3.2.0 "Honest"** · Engineered by Abdullah · Token cost on session start: ~39K
+(measure yours: `./scripts/token-audit.sh`)
+
+> **What changed in v3.2** — hooks under `.claude/hooks/` are now real
+> executables that block tool calls outside `architecture/CONTEXT_MAP.md`
+> `allowed_write_paths`, scan for secrets, and stop dangerous bash commands.
+> The README no longer claims "Operating System". The token-audit script is
+> committed so the cost of CCM scaffolding is visible, not hidden.
+> See [CHANGELOG](CHANGELOG.md) and [`CCM-v3.2-Minimal-Counter-Proposal.md`](CCM-v3.2-Minimal-Counter-Proposal.md).
 
 ```
  ╔═══════════════════════════════════════════════════════════════════╗
@@ -579,7 +591,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v2.7-2.8 | — | Branded arib-* commands, simplified bootstrap |
 | v2.9 | Connected | I/O bridge, Cowork integration |
 | v3.0 | Aligned | Official Claude Code architecture alignment (skills, rules, .mcp.json) |
-| **v3.1** | **Deep Skills** | **All 16 skills enriched to Anthropic-grade depth (7,393 lines)** |
+| v3.1 | Deep Skills | All 16 skills enriched to Anthropic-grade depth |
+| **v3.2** | **Honest** | **Real hook enforcement, token-audit script, README rewrite — docs match disk** |
 
 ---
 
