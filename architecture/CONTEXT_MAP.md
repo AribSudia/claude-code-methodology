@@ -337,6 +337,7 @@ clear error message. Hard-denied paths (`.git/`, `.env*`, `~/.ssh/`, `~/.aws/`,
 - memory/
 - io/
 - waves/
+- compliance/
 - architecture/
 - implementation/
 - operations/

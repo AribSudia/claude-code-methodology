@@ -415,7 +415,7 @@ See memory/archive/ for entries before [DATE]
 
 - **`/arib-session-start`** — The counterpart that reads what session-end writes. Reads memory files, understands context, and plans the session.
 - **`/arib-io`** — If there are I/O channel updates or signals to send before closing.
-- **`/arib-consolidate-memory`** — If memory files are cluttered or have duplicates, use this to clean them up.
+- **`/arib-memory-search`** — If you need to confirm a decision before recording it, search prior sessions first.
 
 ---
 

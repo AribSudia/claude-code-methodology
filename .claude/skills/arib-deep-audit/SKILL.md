@@ -50,7 +50,7 @@ deeper reference) or a new check that this skill owns directly.
 
 | # | Section | Owner | Severity if FAIL |
 |---|---------|-------|------------------|
-| 1 | Security — OWASP Top 10 | `arib-check-security` (new in #7) + Item #5 | BLOCK |
+| 1 | Security — OWASP Top 10 + supply chain | `arib-check-security` (delegates to security-auditor agent + arib-check-deps) | BLOCK |
 | 2 | Security — supply chain (deps + CVEs) | `arib-check-deps` | BLOCK on critical |
 | 3 | Performance — N+1, latency budgets, bundle | `arib-check-perf` | WARN |
 | 4 | Accessibility — WCAG 2.1 AA | `arib-check-a11y` | WARN |
@@ -131,9 +131,40 @@ sha256sum -- "${REPORT_FILE}"
 
 ### Step 5 — Write report + log
 
+Output file: `io/ledger/audit-<YYYY-MM-DD>-<short-hash>.md`.
+
+The report **MUST** start with the following YAML-style header. The
+`pre-tool-use.sh` wave-merge gate greps for `wave: <name>` and the
+`arib-wave-end` skill greps for `audit-hash: <sha>` — both keys are part
+of the contract.
+
+```markdown
+# Deep Audit Report
+
+- audit-hash: <full sha256>
+- short-hash: <first 8 of sha>
+- timestamp: <YYYY-MM-DDTHH:MM:SSZ>
+- branch: <git current branch>
+- head-sha: <full git HEAD>
+- wave: <wave-name | none>
+- verdict: PASS | WARN | BLOCK
+- mode: audit | implement-from-file
+- findings-count: <int>
+- block-count: <int>
+- warn-count: <int>
+
+## Findings
+
+(... per-section findings — see Step 3 ...)
 ```
-io/ledger/audit-<YYYY-MM-DD>-<short-hash>.md
-operations/OPERATIONS_LOG.md  (append a one-line summary)
+
+If the audit is not tied to a wave (default branch), write `wave: none`.
+The wave-merge gate only fires on `wave/*` branches, so `none` is safe.
+
+Then append a single line to `operations/OPERATIONS_LOG.md`:
+
+```markdown
+2026-05-08 | deep-audit | <wave-or-none> | <verdict> | <short-hash> | <one-line-summary>
 ```
 
 ### Step 6 — Verdict
