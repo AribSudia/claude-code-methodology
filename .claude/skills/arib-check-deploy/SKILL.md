@@ -257,8 +257,29 @@ Verify:
 - No private credentials committed
 - All secrets use environment variables
 
-### Step 4: Verify Environment Configuration
-Check environment setup:
+### Step 4: Cloud Test Run + Environment Configuration
+
+**v3.2 Item #9 — TestSprite gate.**
+
+If `TESTSPRITE_API_KEY` is set and the `testsprite` MCP is reachable, this
+phase is **a real cloud test run**, not a checklist. CLEARED requires a
+passing run ID, which is then pinned into `operations/DEPLOYMENT.md` for
+this release as the auditable trail.
+
+```text
+1. Trigger:    testsprite-mcp.run --suite=pre-deploy --branch=<HEAD>
+2. Wait for:   verdict in {PASS, FAIL, TIMEOUT}
+3. On PASS:    record run ID, attach to operations/DEPLOYMENT.md
+4. On FAIL:    block CLEARED; surface failing tests to user
+5. On TIMEOUT: block CLEARED; investigate before retry
+```
+
+If TestSprite is **not** configured, fall back to the local checklist
+(below) and mark this section `LOCAL-ONLY` in the verdict so the audit
+trail is honest about what ran. **Do NOT silently skip the cloud gate** —
+the verdict must reflect what actually executed.
+
+**Local environment configuration checklist (always runs):**
 - Required environment variables documented
 - .env.example contains all required keys
 - No production secrets in .env.example

@@ -515,3 +515,24 @@ For a single-service application, start with:
 - [ ] Review error budget consumption (burning too fast? slow down features)
 - [ ] Update dashboards for new features/services
 - [ ] Practice incident response (game day / chaos engineering)
+
+---
+
+## Synthetic Monitoring (v3.2 — Item #9)
+
+If TestSprite is configured (`TESTSPRITE_API_KEY` set), it doubles as a
+synthetic-monitor for production canaries:
+
+- **Pre-deploy:** the `arib-check-deploy` Phase 4 gate runs the pre-deploy
+  test suite. Result is pinned to the release in `operations/DEPLOYMENT.md`.
+- **Post-deploy canary:** schedule a `production-canary` suite to run every
+  N minutes against the new release for the first 30 minutes after deploy.
+  Failures page the on-call rotation via the same alerting pipeline as
+  any other production alert.
+- **Pre-rollback signal:** if the canary fails twice in 5 minutes, surface a
+  `signals/canary-failure-*.md` entry into `io/signals/` so a Claude Code
+  session that comes online can react before a human gets paged.
+
+When TestSprite is **not** configured, this section is informational only —
+the deploy gate falls back to a local checklist (see `arib-check-deploy`),
+and synthetic monitoring is whatever you've wired up separately.
