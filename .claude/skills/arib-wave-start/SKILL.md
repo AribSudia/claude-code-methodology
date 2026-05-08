@@ -96,9 +96,165 @@ Announce to user:
 - **Working tree dirty:** warn but allow; the wave commit will be the first
   commit on the new branch.
 
+## Examples
+
+### Example 1 — Greenfield wave
+
+```text
+User: /arib-wave-start payment-integration
+
+Step 1 — Pre-flight
+  Working tree: clean ✓
+  Wave name: payment-integration (kebab-case ✓)
+  waves/payment-integration/: doesn't exist ✓
+  branch wave/payment-integration: doesn't exist ✓
+
+Step 2 — Scaffold
+  Created waves/payment-integration/
+  Copied .templates/PLAN.md
+  Checked out branch wave/payment-integration
+
+Step 3 — Dispatch (parallel)
+  Task(architect)  → returned scope decomposition + risk register
+  Task(planner)    → returned sequence + dependencies + blockers
+
+Step 4 — Populate PLAN.md
+  Goal: Integrate Stripe for one-time payments + subscriptions.
+  In scope: webhook handler, checkout session, subscription mgmt.
+  Out of scope (explicit): refund automation, invoicing, tax calc.
+  Exit criteria: 3 in-scope items shipped + /arib-deep-audit PASS.
+  Risks: Stripe API key rotation (mitigated via env vars + KMS).
+         Webhook reliability (mitigated via DLQ + replay).
+  Plan: (1) checkout flow; (2) webhooks; (3) subscriptions.
+
+Step 5 — Commit + announce
+  PR-able commit landed. Branch ready.
+```
+
+### Example 2 — Architect and planner disagree on sequencing
+
+```text
+User: /arib-wave-start auth-rewrite
+
+Architect proposes: build new flow alongside old, switch in step 3.
+Planner identifies: new flow can't share schema with old; concurrent
+  build means duplicate test fixtures and migration ordering risk.
+
+Resolution path: don't pick a side; surface the conflict to the user.
+
+Skill output:
+  PLAN.md is partially populated (scope + exit criteria are agreed).
+  Sequencing has a conflict — see PLAN.md "Sequencing options" section.
+  Architect prefers parallel build; planner prefers cutover.
+  Resolution required before work begins.
+
+User decides → planner updates PLAN, work proceeds.
+```
+
+### Example 3 — User skips planner (wave-name only goal stated)
+
+```text
+User: /arib-wave-start cleanup
+
+Pre-flight: wave name is too vague for a non-trivial wave.
+  Skill prompts: "What does 'cleanup' include? Specifically which areas?"
+  User responds with detail → re-dispatch architect+planner.
+
+Or, if the user insists "just basic cleanup", proceed with a single
+architect call (skip planner) and a thin PLAN.md. Note the deferral
+in the wave's risk register so it's not invisible later.
+```
+
+## Decision tree
+
+```
+/arib-wave-start <name>
+    |
+    v
+[Wave name valid (kebab-case, no collision)?]
+    |
+    +-- no  --> abort with clear error; suggest a valid name
+    +-- yes --> continue
+    |
+    v
+[Working tree clean?]
+    |
+    +-- no  --> warn (don't abort); offer to stash or commit
+    +-- yes --> continue
+    |
+    v
+[Goal clear enough for architect+planner to act?]
+    |
+    +-- no  --> ask user for refinement; do not dispatch yet
+    +-- yes --> continue
+    |
+    v
+Scaffold dir + branch
+    |
+    v
+Dispatch architect AND planner in single Task message
+    |
+    v
+[Both returned non-empty plans?]
+    |
+    +-- one empty --> ask user to refine wave goal; retry
+    +-- both ok    --> merge into PLAN.md
+    |
+    v
+[Architect and planner agree on sequence?]
+    |
+    +-- no  --> populate PLAN.md with both options labeled;
+    |          surface conflict to user; do not pick a side
+    +-- yes --> single sequence in PLAN.md
+    |
+    v
+Commit + announce
+```
+
+## Edge cases
+
+- **Wave goal touches regulated data.** The PLAN must cite the
+  relevant compliance frameworks in `compliance/frameworks/` (GDPR for
+  EU, PDPL for KSA, etc.). The planner agent should flag this in its
+  risk register.
+
+- **Wave depends on unmerged work in another wave.** Document the
+  dependency in PLAN's "Dependencies" section. The wave-merge gate will
+  not block on it (gates are per-wave), but the dependency may push
+  the exit date.
+
+- **The wave is a refactor with no new feature.** Set "What shipped"
+  expectations correctly — the stakeholder REPORT will list reduced
+  complexity, removed dead code, and improved test coverage rather
+  than user-visible features.
+
+- **The architect agent fails or returns empty.** Don't proceed with
+  planner-only output — the wave's scope is the architect's domain.
+  Ask the user to refine the goal and retry both.
+
+- **The planner agent identifies a cyclic dependency.** Surface the
+  cycle to the user immediately and require resolution before the wave
+  starts. Cyclic plans never complete.
+
+## Failure modes
+
+- **Wave name collides with existing dir or branch:** abort. Pick a
+  different name. Do not overwrite.
+- **Architect or planner returns empty:** ask the user to refine the
+  wave goal, then retry both agents.
+- **Working tree dirty:** warn but allow; the wave commit will be the
+  first commit on the new branch. The user may want to commit-then-
+  branch or stash-then-branch instead.
+- **No PLAN template found:** abort with a clear error pointing to
+  `waves/.templates/PLAN.md`. The bootstrap should have installed it.
+- **Goal genuinely ambiguous:** refuse to start. A wave without a
+  defined goal sprawls. Better to push back than ship a broken wave.
+
 ## Related
 
 - `waves/README.md` — wave concept and lifecycle.
 - `arib-wave-end` — wave-end gate.
 - `arib-deep-audit` — runs at /arib-wave-end.
 - `architecture/AGENT_ARCHITECTURE.md` — parallel-dispatch governance.
+- `.claude/agents/architect.md` — what to build.
+- `.claude/agents/planner.md` — sequence, dependencies, risks, blockers.

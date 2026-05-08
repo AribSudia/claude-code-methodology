@@ -108,10 +108,204 @@ with REPORT.md as the body.
 - **Audit hash not found in io/ledger/:** /arib-deep-audit didn't write the
   ledger entry; investigate why before retrying. Do not skip the gate.
 
+## Stakeholder REPORT generation — depth
+
+The auto-generated REPORT.md is what a non-engineering reader sees.
+Generation rules:
+
+- **"What shipped"** — list user-visible outcomes, not commit names.
+  "Stripe checkout works for one-time payments" beats
+  "feat(payment): add CheckoutSession handler".
+- **"What did NOT ship"** — every in-scope PLAN item that didn't ship,
+  plus an honest one-line reason. Silent deferrals erode trust faster
+  than the missed item itself.
+- **"Audit summary"** — the 21-section table from `/arib-deep-audit`.
+  Show severity per section (PASS/WARN/BLOCK), not raw findings.
+- **"Stakeholder summary"** — 3-5 bullets, plain English, lead with
+  outcomes. Test: would a non-engineer read this and understand what
+  changed?
+- **"Risks for next wave"** — carry-forward items, unknown unknowns,
+  dependencies that slipped. Include the risks the wave didn't get to
+  resolve.
+- **"Commits"** — `git log --oneline` for the wave window. Append-only;
+  don't curate.
+
+If the audit verdict is WARN (not BLOCK), the report includes a
+"Watch list" section calling out the WARN findings that should be
+addressed in the next wave. WARNs accumulate if ignored.
+
+## PR opening — when to and when not to
+
+Step 7 (optional PR) depends on project policy:
+
+- **Use `gh pr create`** when the project uses GitHub PR workflow and
+  `gh` is installed/authed. Use REPORT.md as the PR body.
+- **Skip PR creation** when the project merges directly to main from
+  the wave branch (rare; sometimes solo-maintainer workflows).
+- **Skip PR creation** when the project uses a different code-review
+  tool (GitLab MR, Gerrit, Phabricator). Generate the appropriate
+  artifact instead.
+
+Tag the audit hash regardless of PR mechanism. The tag is the proof
+the wave passed; the PR is a workflow detail.
+
+## Examples
+
+### Example 1 — Clean wave, PASS verdict, PR opened
+
+```text
+User: /arib-wave-end (on branch wave/payment-integration)
+
+Step 1: pre-flight ✓ (clean tree, PLAN exists, branch matches)
+Step 2: /arib-deep-audit payment-integration
+        → 21 sections; verdict PASS; audit hash 7f3a8c2d
+Step 3: REPORT.md generated
+        - 3 features shipped (checkout, webhooks, subscriptions)
+        - 0 deferred
+        - audit table all PASS or WARN
+        - stakeholder summary in plain English
+        - 14 commits over 12 days
+Step 4: WAVE_HISTORY appended
+        2026-05-15 | payment-integration | PASS | 7f3a8c2d | Stripe checkout, webhooks, subscriptions live
+Step 5: tag wave/payment-integration/end-7f3a8c2d
+Step 6: commit + announce
+Step 7: gh pr create with REPORT.md body
+```
+
+### Example 2 — BLOCK verdict, halt
+
+```text
+User: /arib-wave-end (on branch wave/auth-rewrite)
+
+Step 1: pre-flight ✓
+Step 2: /arib-deep-audit auth-rewrite
+        → section 5 (reality) BLOCK: 3 mock auth endpoints found in
+          src/auth/__tests__/ that look like prod handlers.
+          Section 1 (security) BLOCK: hardcoded JWT secret in
+          src/lib/jwt.ts.
+        → Verdict: BLOCK
+
+Step 3 onward: HALTED.
+
+Skill outputs:
+  Wave NOT closed. Two BLOCK findings:
+    1. src/lib/jwt.ts — hardcoded JWT secret. Move to env var.
+    2. src/auth/__tests__/* — mock handlers may be reachable in prod.
+  Recommended actions:
+    - Fix in-place and re-run /arib-wave-end.
+    - Or open a follow-up wave (wave/auth-rewrite-2) for the
+      mock-handler removal if scope grew.
+  Audit hash NOT tagged. Wave-merge gate remains active.
+```
+
+### Example 3 — PLAN scope changed mid-wave
+
+```text
+User: /arib-wave-end (on branch wave/i18n-rollout)
+
+Pre-flight: PLAN.md scope was "Arabic + Hebrew + CJK" but only
+Arabic shipped. Hebrew and CJK are referenced in commits as deferred.
+
+Skill behavior:
+  REPORT.md "What did NOT ship" lists Hebrew and CJK with reasons:
+    - Hebrew: deferred to next wave; RTL infra reusable from Arabic.
+    - CJK: out of MVP scope; recorded as risk for v2.
+  Audit may PASS even with deferrals — the deferrals are honest.
+  Wave closes; next wave can pick up the deferred items.
+```
+
+## Decision tree
+
+```
+/arib-wave-end (no args)
+    |
+    v
+[On a wave/* branch?]
+    |
+    +-- no  --> abort with instruction to checkout the wave branch
+    +-- yes --> extract <wave-name>
+    |
+    v
+[Working tree clean?]
+    |
+    +-- no  --> abort; user must commit or stash first
+    +-- yes --> continue
+    |
+    v
+Run /arib-deep-audit <wave-name>
+    |
+    v
+[Verdict]
+    |
+    +-- BLOCK --> HALT. Report findings. Suggest fix-in-place
+    |             or follow-up wave. Do not tag, do not write
+    |             REPORT, do not append to history.
+    +-- WARN  --> proceed (warnings are acceptable wave exits)
+    +-- PASS  --> proceed
+    |
+    v
+Generate REPORT.md from PLAN + audit + commit log
+    |
+    v
+Append one line to WAVE_HISTORY.md
+    |
+    v
+Tag commit as wave/<name>/end-<short-hash>
+    |
+    v
+Commit + announce
+    |
+    v
+[Project uses PR workflow?]
+    |
+    +-- yes --> offer to gh pr create with REPORT body
+    +-- no  --> done; user merges per their workflow
+```
+
+## Edge cases
+
+- **Audit hash already exists for this wave.** This means /arib-wave-end
+  was previously run and wrote a hash. Re-run with caution: confirm
+  with the user whether to re-audit (creates a new hash, supersedes
+  the prior one) or use the existing hash to generate the REPORT.
+  Default: re-audit, since branch state may have changed.
+
+- **PLAN.md has unchecked exit criteria.** Surface the unchecked
+  criteria to the user before proceeding to /arib-deep-audit. The
+  audit will catch some of these; the user should confirm the rest
+  manually.
+
+- **Branch has commits but no /arib-wave-start record.** This wave was
+  started without the skill (manual branch). REPORT generation can
+  still work but `waves/<name>/PLAN.md` may be missing — fall back to
+  using the branch's first commit as the wave start point.
+
+- **Wave-end runs in autonomy mode.** The autonomy guard requires a
+  wave/<name>/end-<hash> tag for the push-to-main check. /arib-wave-end
+  produces exactly this tag. Sequence is: autonomy session → /arib-
+  wave-end PASS → tag created → push allowed.
+
+## Failure modes
+
+- **Not on a wave/* branch:** abort with clear instruction to check
+  out the wave branch first.
+- **Audit BLOCK:** halt. Do not partial-write artifacts. Do not tag.
+  Do not append to history. The wave is not closed.
+- **/arib-deep-audit doesn't write `audit-hash:` to ledger:** the skill
+  fails to extract the hash and tags with empty. This is the bug Phase
+  1 fixed — keep the contract.
+- **gh not authed and PR is requested:** skip PR creation; tell the
+  user to push and open the PR manually using REPORT.md as the body.
+- **Concurrent /arib-wave-end calls (same branch):** only the first
+  succeeds; the second sees the new tag and aborts as duplicate.
+
 ## Related
 
 - `waves/README.md` — wave concept.
 - `arib-wave-start` — opens a wave.
-- `arib-deep-audit` — the gate.
+- `arib-deep-audit` — the gate. Defines the ledger format with
+  `wave: <name>` and `audit-hash: <sha>` keys this skill greps for.
 - `.claude/hooks/pre-tool-use.sh` — enforces the hash-on-merge rule.
 - `waves/WAVE_HISTORY.md` — append-only history.
+- `.claude/hooks/autonomy-guard.sh` — refuses push to main without
+  wave/*/end-* tag during CCM_AUTONOMY=1 sessions.
