@@ -65,6 +65,17 @@ EOF
 # Clean up the start-SHA marker for next session.
 rm -f "$START_SHA_FILE"
 
+# Item #3 — best-effort export of the semantic memory layer to the markdown
+# audit trail. No-op when CLAUDE_MEM_API_KEY is unset (script returns 0 with a
+# notice). Run in background so we never block session exit on a slow export.
+if [[ -x "${CCM_ROOT}/scripts/memory-export.sh" ]]; then
+  ( "${CCM_ROOT}/scripts/memory-export.sh" >/dev/null 2>&1 & ) || true
+fi
+
+# Item #10 — clear autonomy runtime state so the next CCM_AUTONOMY=1 run
+# starts fresh. Safe to run unconditionally (rm -rf on a missing dir is a no-op).
+rm -rf "${CCM_ROOT}/io/.autonomy" 2>/dev/null || true
+
 log INFO "ledger written: ${LEDGER_FILE}"
 notify_cowork "session-end" "commits=${COMMITS_THIS_SESSION} files=${FILES_CHANGED}"
 

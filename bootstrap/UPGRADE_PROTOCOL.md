@@ -485,5 +485,40 @@ This is the most asked-about part, so here's a concrete example:
 
 ---
 
+---
+
+## v3.3 "Operating" upgrade addendum
+
+If upgrading from v3.1 or v3.2 to v3.3:
+
+1. **Install the enforcement layer** — this is the single most important
+   step. v3.3 hooks live as real bash scripts under `.claude/hooks/`,
+   not as documentation:
+
+   ```bash
+   ./scripts/install-hooks.sh
+   ```
+
+2. **Verify `architecture/CONTEXT_MAP.md` allowed_write_paths**
+   includes `compliance/` and `waves/`. Without these, the path-scoping
+   hook will reject writes to the new directories.
+
+3. **Optional MCPs** — set the env vars only for the ones you use.
+   See `.mcp.json` for the list and `compliance/README.md` for the
+   honesty principle (CCM never requires any MCP).
+
+4. **Run `./scripts/token-audit.sh`** to record your project's session-
+   start cost. Commit the number in your changelog as a baseline.
+
+5. **Review the new compliance docs** at `compliance/README.md` and
+   the framework files. Note especially that ISO 27001 and SOC 2 docs
+   are alignment-only — CCM never claims certification.
+
+6. **Existing memory files are untouched.** v3.3 adds a hybrid memory
+   *layer* (claude-mem MCP) but does not modify the markdown audit
+   trail. If you skip the MCP, behavior matches v3.1 exactly.
+
+---
+
 > **End of Upgrade Protocol**
 > Your data is sacred. The system evolves around it.

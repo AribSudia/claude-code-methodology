@@ -557,3 +557,25 @@ session history).
 ### Q: How long does the scan take?
 **A**: Typically 5-10 minutes for a medium project (50-200 files).
 Larger projects may take longer due to the deep read of each entity/route.
+
+---
+
+## After scan completes — activate v3.3 enforcement
+
+The reverse bootstrap maps your existing project to CCM structure but
+does not install the enforcement hooks. Do this once after the scan:
+
+```bash
+./scripts/install-hooks.sh
+```
+
+Then review `architecture/CONTEXT_MAP.md` `allowed_write_paths` — the
+default list may be wider than your project needs. Tighten it to match
+the directories you actually want Claude to write into.
+
+Optional MCPs (`claude-mem`, `cowork`, `testsprite`) stay opt-in.
+Set the env vars only for the ones you use; everything degrades
+gracefully without them.
+
+See `compliance/README.md` for the honesty principle if your project
+has compliance obligations (PDPL, GDPR, ISO 27001, SOC 2, OWASP).

@@ -329,7 +329,48 @@ cp claude-code-methodology/.claude/commands/arib-*.md .claude/commands/
 
 ---
 
-## STEP 4 — Deployment Verification
+## STEP 4 — Activate v3.3 enforcement layer
+
+Before verification, **install the hooks**. Without this step, the
+methodology ships as docs only — every "blocked by hook" claim in
+v3.3 is honor-system until the scripts are wired.
+
+```bash
+# Make hooks executable, install git pre-commit hook delegate, smoke-test.
+./scripts/install-hooks.sh
+```
+
+The installer is idempotent (safe to re-run), verifies dependencies
+(`jq`, `git`, `curl`), and exits non-zero if anything is missing.
+
+**Wire optional MCP servers (skip any you don't use):**
+
+```bash
+# Hybrid memory (Item #3) — semantic search across sessions.
+export CLAUDE_MEM_API_KEY=...
+
+# Push notifications (Item #4) — Slack / Discord / Telegram / WhatsApp.
+export CCM_NOTIFY_WEBHOOK=https://your-webhook-endpoint
+
+# Cloud test gate (Item #9) — pre-deploy verification.
+export TESTSPRITE_API_KEY=...
+```
+
+If you skip them, CCM falls back gracefully — see `compliance/README.md`
+for the honesty principle. The MCPs are opt-in by design.
+
+**Populate `architecture/CONTEXT_MAP.md` `allowed_write_paths`:**
+
+The path-scoping hook reads this list. The bootstrap writes a default
+covering `apps/`, `packages/`, `services/`, `src/`, `migrations/`,
+`tests/`, `docs/`, `memory/`, `io/`, `waves/`, `compliance/`,
+`architecture/`, `implementation/`, `operations/`, `core/`,
+`bootstrap/`, `reference/`, `scripts/`, `hooks/`, `Training/`,
+`.claude/`. Adjust per project.
+
+---
+
+## STEP 5 — Deployment Verification
 
 After writing ALL files to the project root, verify the deployment:
 

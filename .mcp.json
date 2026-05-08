@@ -1,7 +1,9 @@
 {
-  "_comment": "MCP servers are OPTIONAL. CCM works without them. Each entry below is a stub — set the corresponding env var to activate. Skills that depend on these MCPs degrade gracefully (arib-memory-search falls back to grep on memory/*.md when claude-mem is unavailable, etc.). Package names are placeholders — verify and update when wiring against real upstream packages.",
+  "_comment": "MCP servers are OPTIONAL. CCM works without them. Skills that depend on these MCPs degrade gracefully (e.g., arib-memory-search falls back to grep on memory/*.md when claude-mem is unavailable). Package names verified against npm 2026-05-08 — see _package_status per entry. ALWAYS re-verify before relying in production.",
   "mcpServers": {
     "github": {
+      "_purpose": "Standard Model Context Protocol GitHub server.",
+      "_package_status": "verified",
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-github"],
       "env": {
@@ -11,8 +13,9 @@
     "claude-mem": {
       "_purpose": "Item #3 — semantic memory layer. Falls back to markdown grep if absent.",
       "_optional": true,
+      "_package_status": "Real upstream is the unscoped 'claude-mem' package (https://www.npmjs.com/package/claude-mem). Args updated accordingly. Verify CLI surface matches scripts/memory-export.sh expectations.",
       "command": "npx",
-      "args": ["-y", "@claude-mem/mcp-server"],
+      "args": ["-y", "claude-mem"],
       "env": {
         "CLAUDE_MEM_API_KEY": "${CLAUDE_MEM_API_KEY:-}",
         "CLAUDE_MEM_PROJECT": "ccm"
@@ -21,6 +24,7 @@
     "cowork": {
       "_purpose": "Item #4 — push-based I/O transport. Falls back to filesystem polling.",
       "_optional": true,
+      "_package_status": "PLACEHOLDER. No npm package matches @anthropic/cowork-mcp as of 2026-05-08. CCM falls back to CCM_NOTIFY_WEBHOOK / CCM_COWORK_WEBHOOK env vars regardless. If/when an MCP package ships, update args here.",
       "command": "npx",
       "args": ["-y", "@anthropic/cowork-mcp"],
       "env": {
@@ -30,8 +34,9 @@
     "testsprite": {
       "_purpose": "Item #9 — cloud test execution gate. arib-check-deploy degrades to local checks if absent.",
       "_optional": true,
+      "_package_status": "Real upstream is @testsprite/testsprite-mcp (https://www.npmjs.com/package/@testsprite/testsprite-mcp). Updated.",
       "command": "npx",
-      "args": ["-y", "@testsprite/mcp"],
+      "args": ["-y", "@testsprite/testsprite-mcp"],
       "env": {
         "TESTSPRITE_API_KEY": "${TESTSPRITE_API_KEY:-}"
       }
