@@ -7,6 +7,60 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.2.0] "Honest" — 2026-05-08
+
+The "Honest" release closes the gap between CCM's marketing and what shipped on
+disk. Three items: hooks enforcement (advisory rules become enforced rules),
+token discipline + README rewrite (positioning matches reality), and agent
+architecture documentation (parallel review is a documented capability rather
+than a buried possibility).
+
+Eight items from the v3.2 "Enforced" proposal were deliberately deferred — see
+`CCM-v3.2-Minimal-Counter-Proposal.md` for the rationale.
+
+### Added — Hooks Enforcement Layer (Item A)
+- `.claude/hooks/lib/common.sh` — shared helpers (logging, JSON payload parsing,
+  path scoping, opt-in CoWork webhook).
+- `.claude/hooks/pre-tool-use.sh` — secret detection, path scoping via
+  CONTEXT_MAP `allowed_write_paths`, dangerous bash command blocklist.
+  Test/fixture paths exempted from secret scans.
+- `.claude/hooks/pre-commit.sh` — blocks credential files, secret patterns,
+  oversized files, and debug statements in production source files.
+- `.claude/hooks/session-start.sh` — CLAUDE.md drift detection, protected-branch
+  warning, captures session-start SHA for accurate stop-hook diffs.
+- `.claude/hooks/stop.sh` — writes per-session ledger to `io/ledger/` using the
+  start-SHA marker (no fragile `HEAD~N` math).
+- `scripts/install-hooks.sh` — idempotent installer; wires git pre-commit hook,
+  verifies dependencies, smoke-tests session-start.
+- `architecture/CONTEXT_MAP.md` — `allowed_write_paths` block defining which
+  directories Claude may write into.
+
+### Added — Token Discipline (Item B)
+- `scripts/token-audit.sh` — measures tokens consumed by CCM scaffolding on a
+  cold session start. Target: <8K tokens.
+
+### Added — Agent Architecture (Item C)
+- `architecture/AGENT_ARCHITECTURE.md` — all 13 agents with parallel-dispatch
+  safety, state surfaces, and trigger keywords.
+- `arib-dev-review` skill refactored to dispatch reviewer + security + tester
+  in a single parallel Task call instead of sequential invocations.
+
+### Changed
+- `README.md` rewritten to drop "AI Development Operating System" framing in
+  favor of "opinionated methodology + skill pack". Lines-of-markdown removed
+  as a featured metric.
+- `.claude/settings.json` hooks block now wires real enforcement scripts
+  (previous version was a placeholder echoing log lines).
+- `.gitignore` adds `io/hook-logs/` and `io/.session-start-sha`. `io/ledger/`
+  is intentionally **not** ignored — it's the audit trail.
+
+### Why
+v3.1.0 documented an enforcement layer that did not exist on disk. v3.2.0
+ships the layer the documentation already promised, and rewrites the parts of
+the README that the layer alone could not redeem.
+
+---
+
 ## [3.1.0] "Deep Skills" — 2026-04-19
 
 ### Changed

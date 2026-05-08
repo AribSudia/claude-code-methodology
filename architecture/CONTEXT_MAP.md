@@ -315,3 +315,36 @@ Examples:
 Last updated: [DATE]  
 Next review: [DATE + 6 months]  
 Owner: [PROJECT] Tech Lead
+
+---
+
+## Write Path Scoping (enforced by `.claude/hooks/pre-tool-use.sh`)
+
+The pre-tool-use hook reads the block below. To allow Claude to write into a new
+top-level directory, add it here. Paths outside this list are blocked with a
+clear error message. Hard-denied paths (`.git/`, `.env*`, `~/.ssh/`, `~/.aws/`,
+`/etc/`, `/usr/`) cannot be overridden via this list — see `pre-tool-use.sh`.
+
+<!-- allowed_write_paths:start -->
+- apps/
+- packages/
+- services/
+- src/
+- migrations/
+- prisma/
+- tests/
+- docs/
+- memory/
+- io/
+- waves/
+- architecture/
+- implementation/
+- operations/
+- core/
+- bootstrap/
+- reference/
+- scripts/
+- hooks/
+- Training/
+- .claude/
+<!-- allowed_write_paths:end -->

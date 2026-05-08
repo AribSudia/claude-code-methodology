@@ -1,5 +1,83 @@
-# Claude Code Methodology v2.6.0
+# Claude Code Methodology v3.2.0
 ## Hooks Manual: Complete User Guide
+
+---
+
+## v3.2 "Honest" — Active Hooks (read this first)
+
+CCM ships actual enforcement hooks as of v3.2. Before v3.2, this manual described
+patterns. As of v3.2, the patterns are wired up and running on every session.
+
+### Advisory vs enforced
+
+| Kind | Where | How it works | Bypassable? |
+|------|-------|--------------|-------------|
+| **Advisory** | `architecture/CONSTRAINTS.md`, `.claude/rules/*.md` | Claude reads them and *should* comply | Yes — model can violate |
+| **Enforced** | `.claude/hooks/*.sh` | Run outside the agent loop, can block tool calls | No — kernel-level |
+
+### Active hooks in v3.2
+
+| Event | Script | What it does |
+|-------|--------|--------------|
+| `SessionStart` | `session-start.sh` | Hash CLAUDE.md (drift detection), warn on protected branch, capture session-start SHA |
+| `PreToolUse` (Write/Edit/MultiEdit) | `pre-tool-use.sh` | Hard-deny `.git/`, `.env*`, `~/.ssh/`, `~/.aws/`; soft-scope via `architecture/CONTEXT_MAP.md` `allowed_write_paths`; secret-pattern scan (test/fixture paths exempt) |
+| `PreToolUse` (Bash) | `pre-tool-use.sh` | Block dangerous commands (`rm -rf /`, fork bombs, force-push to main, `DROP DATABASE`, `curl \| sh`, etc.) |
+| Git pre-commit | `pre-commit.sh` | Block credential files, secret patterns, oversized files (>1 MB), `console.log`/`debugger` in production source |
+| `Stop` | `stop.sh` | Write per-session ledger entry to `io/ledger/`, optional CoWork ping |
+
+### Installation
+
+```bash
+./scripts/install-hooks.sh
+```
+
+Idempotent. Verifies `jq`, `git`, `curl`. Smoke-tests `session-start.sh`. Wires
+the git pre-commit hook to delegate to `.claude/hooks/pre-commit.sh`.
+
+### CoWork notifications (opt-in)
+
+```bash
+export CCM_COWORK_WEBHOOK='https://your-cowork-endpoint/hook'
+```
+
+Empty/unset = no-op. The hooks never call out to anything by default.
+
+### Adjusting allowed write paths
+
+Edit `architecture/CONTEXT_MAP.md` between the markers:
+
+```markdown
+<!-- allowed_write_paths:start -->
+- apps/
+- packages/
+<!-- allowed_write_paths:end -->
+```
+
+Paths are matched as prefixes against the absolute path resolved from
+repo root. Hard-denied paths cannot be overridden through this list.
+
+### Audit trail
+
+- `io/hook-logs/YYYY-MM-DD.log` — every hook invocation. **Gitignored** (high volume).
+- `io/ledger/session-<timestamp>.md` — per-session summary. **Committed** (this is the trail).
+
+### Bypassing — when you must
+
+1. **Update CONTEXT_MAP** for legitimate new directories.
+2. **Run manually outside Claude Code** for one-off operations.
+3. **`git commit --no-verify`** as a last resort. Leaves an audit gap; explain in the commit body.
+
+Never edit hook scripts to lower the bar. If a hook is wrong, fix the hook.
+
+---
+
+## Legacy reference (pre-v3.2 patterns)
+
+The sections below predate the v3.2 enforcement layer. They remain useful as a
+reference catalog of hook patterns, but the canonical list of *currently active*
+hooks is the table above.
+
+---
 
 ---
 

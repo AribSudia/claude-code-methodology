@@ -60,3 +60,11 @@ temp/
 
 # ── Memory Archives (keep in git, but ignore temp) ──────
 memory/archive/*.tmp
+
+# ── CCM Hook Artifacts ──────────────────────────────────
+# High-volume hook logs — not committed.
+io/hook-logs/
+# Per-session marker file used by stop.sh to compute accurate diffs.
+io/.session-start-sha
+# NOTE: io/ledger/ is intentionally NOT ignored — it's the audit trail.
+# Rotate old ledgers manually if they accumulate.
