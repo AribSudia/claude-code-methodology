@@ -63,6 +63,28 @@ if [[ "$TOOL_NAME" == "Write" || "$TOOL_NAME" == "Edit" || "$TOOL_NAME" == "Mult
     fi
   done
 
+  # ---------- Design-token enforcement (Item #8) ----------
+  # Hardcoded check, opt-in via existence of architecture/DESIGN_SYSTEM.md.
+  # If you need different rules for your project, edit this block directly.
+  # The DESIGN_SYSTEM.md file documents the contract for humans; this is the
+  # machine enforcement.
+  if [[ -f "${CCM_ROOT}/architecture/DESIGN_SYSTEM.md" ]] \
+     && [[ "$TOOL_NAME" =~ ^(Write|Edit|MultiEdit)$ ]] \
+     && [[ "$TARGET_PATH" =~ \.(tsx|jsx|vue|svelte)$ ]] \
+     && [[ "$TARGET_PATH" != *node_modules* ]] \
+     && [[ "$TARGET_PATH" != *tokens* ]] \
+     && [[ "$TARGET_PATH" != *theme* ]] \
+     && [[ "$TARGET_PATH" != *.generated.* ]] \
+     && ! is_test_or_fixture_path "$TARGET_PATH"; then
+    NEW_CONTENT="$(payload_get '.tool_input.content // .tool_input.new_string')"
+    if [[ -n "$NEW_CONTENT" ]]; then
+      if printf '%s' "$NEW_CONTENT" | grep -Eq -- '#[0-9a-fA-F]{3,8}\b|\brgb[a]?\([^)]*\)|\bhsl[a]?\([^)]*\)'; then
+        notify_cowork "design-token-block" "$TARGET_PATH"
+        block "Design-token violation in '$TARGET_PATH'. Raw color literal detected (hex/rgb/hsl). Use a Tailwind token or import from your theme. See architecture/DESIGN_SYSTEM.md."
+      fi
+    fi
+  fi
+
   # Soft-scope: if CONTEXT_MAP.md declares allowed_write_paths, enforce it.
   CONTEXT_MAP="${CCM_ROOT}/architecture/CONTEXT_MAP.md"
   if [[ -f "$CONTEXT_MAP" ]]; then
