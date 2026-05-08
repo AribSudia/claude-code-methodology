@@ -348,5 +348,6 @@ clear error message. Hard-denied paths (`.git/`, `.env*`, `~/.ssh/`, `~/.aws/`,
 - scripts/
 - hooks/
 - Training/
+- .github/
 - .claude/
 <!-- allowed_write_paths:end -->

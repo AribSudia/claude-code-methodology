@@ -550,6 +550,66 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-012: CI/PR Governance Model
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** v3.3 shipped one hooks regression workflow. Otherwise the
+repo had no PR template, no CODEOWNERS, no issue templates, no
+vulnerability disclosure policy, no contributor guide. A repo that
+pushes straight to main can't credibly recommend PR discipline to
+projects bootstrapped from it. The post-shipment audit also flagged a
+real BSD-vs-GNU bash drift risk in `autonomy-guard.sh` that local
+macOS testing couldn't catch — Linux CI would.
+
+**Decision.** Adopt GitHub's PR/CI governance best practices, integrated
+into CCM methodology:
+
+- PR template (`.github/PULL_REQUEST_TEMPLATE.md`) requiring summary,
+  type, ADR/issue links, test plan, token-budget impact, wave audit
+  hash, compliance impact.
+- Issue templates for bug, feature, security (with private-advisory
+  routing for high-severity).
+- CODEOWNERS auto-routing review for hooks, architecture records,
+  compliance, gate skills, methodology brain, .github itself.
+- Three CI workflows beyond hooks regression: JSON validation
+  (every committed JSON file + VERSION.json semver shape +
+  .mcp.json + settings.json), token-budget (base vs head, comments
+  delta, fails at >10K regression), markdown lint (markdownlint-cli2
+  + TODO/FIXME detection in shipped docs).
+- Dependabot for github-actions and npm, weekly, security-patches
+  grouped.
+- CONTRIBUTING.md as the binding contract: branch naming, conventional
+  commits, test discipline, branch protection settings to apply.
+- Repo-root SECURITY.md (separate from architecture/SECURITY.md) with
+  vulnerability disclosure policy and SLA per severity.
+- CODE_OF_CONDUCT.md (Contributor Covenant 2.1).
+- `.claude/rules/ci-pr.md` — path-scoped rules for `.github/**` work.
+- `Training/11-CI-PR-MANUAL.md` — user-facing manual matching the
+  existing 10-manual structure.
+
+Branch protection settings (require PR, require approvals, require
+status checks, linear history, no direct pushes except by maintainer
+for emergencies) are documented in CONTRIBUTING.md §6 and applied
+once in the GitHub web UI.
+
+**Consequences.** PR governance becomes a first-class methodology
+artifact alongside hooks, waves, and compliance. New projects
+bootstrapped from CCM inherit the scaffolding by default. CI catches
+regressions at PR time instead of post-shipment. The maintainer's
+direct-to-main push pattern (used during the v3.2/v3.3 push) is now
+a documented exception, not the norm.
+
+**Alternatives rejected.** "Skip CI entirely" — re-creates the
+documentation/disk gap v3.2 was specifically designed to close.
+"Only hooks workflow, no governance docs" — leaves contributors
+guessing about branch naming, commit conventions, review process,
+and security disclosure. "Use a third-party governance service like
+Renovate or Mergify" — unnecessary dependency for what GitHub
+provides natively.
+
+---
+
 # ADR-011: Override of v3.2 "Honest" Counter-Proposal
 
 **Status:** Accepted   **Date:** 2026-05-08
@@ -596,6 +656,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-009 | Autonomy Mode Protocol | Accepted | 2026-05-08 |
 | ADR-010 | MCP Placeholder Strategy | Accepted | 2026-05-08 |
 | ADR-011 | Override of v3.2 "Honest" Counter-Proposal | Accepted | 2026-05-08 |
+| ADR-012 | CI/PR Governance Model | Accepted | 2026-05-08 |
 
 ---
 

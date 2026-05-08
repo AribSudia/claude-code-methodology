@@ -329,11 +329,12 @@ cp claude-code-methodology/.claude/commands/arib-*.md .claude/commands/
 
 ---
 
-## STEP 4 — Activate v3.3 enforcement layer
+## STEP 4 — Activate v3.4 enforcement layer + CI/PR governance
 
-Before verification, **install the hooks**. Without this step, the
-methodology ships as docs only — every "blocked by hook" claim in
-v3.3 is honor-system until the scripts are wired.
+Before verification, **install the hooks AND wire CI/PR governance**.
+Without these, the methodology ships as docs only — every "blocked by
+hook" or "required check" claim is honor-system until the scripts and
+workflows are wired.
 
 ```bash
 # Make hooks executable, install git pre-commit hook delegate, smoke-test.
@@ -364,9 +365,32 @@ for the honesty principle. The MCPs are opt-in by design.
 The path-scoping hook reads this list. The bootstrap writes a default
 covering `apps/`, `packages/`, `services/`, `src/`, `migrations/`,
 `tests/`, `docs/`, `memory/`, `io/`, `waves/`, `compliance/`,
-`architecture/`, `implementation/`, `operations/`, `core/`,
-`bootstrap/`, `reference/`, `scripts/`, `hooks/`, `Training/`,
-`.claude/`. Adjust per project.
+`proposals/`, `architecture/`, `implementation/`, `operations/`,
+`core/`, `bootstrap/`, `reference/`, `scripts/`, `hooks/`, `Training/`,
+`.github/`, `.claude/`. Adjust per project.
+
+**Wire CI/PR governance (v3.4):**
+
+The bootstrap should copy:
+- `.github/PULL_REQUEST_TEMPLATE.md`
+- `.github/ISSUE_TEMPLATE/`
+- `.github/CODEOWNERS` (replace `@AribSudia` with the project's owner)
+- `.github/dependabot.yml`
+- `.github/workflows/{hooks,json-validate,token-budget,markdown-lint}.yml`
+- `CONTRIBUTING.md`
+- `SECURITY.md`
+- `CODE_OF_CONDUCT.md`
+- `.markdownlint.json`
+
+Then in the GitHub repo Settings → Branches, apply branch protection
+to `main` per `CONTRIBUTING.md` §6:
+- Require PR + 1 approval + Code Owner review
+- Require status checks: hooks regression, JSON validate, token
+  budget, markdown lint
+- Require linear history (squash or rebase)
+- No bypass; direct push reserved for maintainer emergencies
+
+See `Training/11-CI-PR-MANUAL.md` for the full integration guide.
 
 ---
 

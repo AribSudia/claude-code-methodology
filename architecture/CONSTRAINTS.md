@@ -267,6 +267,14 @@ when modifying the methodology repo or shipping a new release.
    `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` may be documented but must
    never be required for CCM to function.
 
+10. **PRs through CI green and CODEOWNERS-approved.** Direct pushes to
+    `main` are reserved for emergencies (hotfixes, broken CI on main).
+    Every emergency direct push is logged in
+    `operations/OPERATIONS_LOG.md` with reason and rollback plan.
+    Required CI checks: hooks regression, JSON validation, token
+    budget, markdown lint. CODEOWNERS routes review by path. Branch
+    protection settings live in `CONTRIBUTING.md` §6.
+
 ---
 
 ## Review Schedule

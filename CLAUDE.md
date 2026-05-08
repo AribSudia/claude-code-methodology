@@ -173,6 +173,9 @@ The 14 agents: `architect`, `code-reviewer`, `security-auditor`,
 | Wave delivery              | `waves/README.md` + `arib-wave-start` / `arib-wave-end` skills |
 | Autonomy mode              | `operations/AUTONOMY_MODE.md`                |
 | Token cost on session start| run `./scripts/token-audit.sh`               |
+| CI / PR governance         | `CONTRIBUTING.md` + `.github/` + `Training/11-CI-PR-MANUAL.md` |
+| Vulnerability disclosure   | `SECURITY.md` (repo-root)                    |
+| Code of Conduct            | `CODE_OF_CONDUCT.md`                         |
 | Agent definitions          | `.claude/agents/*.md`                        |
 | Skill definitions          | `.claude/skills/*/SKILL.md`                  |
 | Bootstrap new project      | `bootstrap/BOOTSTRAP.md`                     |
