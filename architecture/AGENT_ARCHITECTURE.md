@@ -54,8 +54,10 @@ whether it is safe to dispatch alongside others.
 | `language` | i18n strings, locale configs | locale audit | Yes | Read-only. |
 | `refactor-specialist` | source under refactor | rewritten files | No | Direct file writes. Always run alone for the duration of the refactor. |
 | `deploy-guardian` | `operations/DEPLOYMENT.md`, CI config, env files | deploy gate verdict | Yes | Read-only review of deploy readiness. |
+| `planner` | architect output, `architecture/DECISIONS.md`, memory | sequence + dependencies + risks + blockers (returned to parent) | Yes | Read-only. Pairs with `architect` during `/arib-wave-start`. |
+| `ci-pr-engineer` | `.github/**`, `CONTRIBUTING.md`, `SECURITY.md`, ADR-012, optional `gh api` | CI/PR audit report (returned to parent); proposes init scaffolding | Conditional | Read-only by default (audit/review/branch-protection modes). Sequential in `init` mode while parent applies writes. |
 
-**Total:** 13 agents (matches `.claude/agents/` count, excluding `README.txt`).
+**Total:** 15 agents (matches `.claude/agents/` count, excluding `README.txt`).
 
 ---
 
@@ -98,6 +100,31 @@ Task(reality-auditor)
 
 Architect proposes; reality-auditor verifies the proposal against the actual
 codebase. Both read-only.
+
+### Recipe 4 — Wave start (used by `arib-wave-start`)
+
+```
+Task(architect)
+Task(planner)
+```
+
+Architect proposes scope; planner sequences it with risks. Both read-only.
+Parent merges into `waves/<name>/PLAN.md`.
+
+### Recipe 5 — CI/PR audit (used by `arib-ci-audit`)
+
+```
+Task(ci-pr-engineer, mode=audit)
+```
+
+Single agent. Can run in parallel with other read-only audits (e.g.,
+section 9 of `/arib-deep-audit` documentation completeness):
+
+```
+Task(ci-pr-engineer, mode=audit)
+Task(api-docs, mode=audit)
+Task(language)
+```
 
 ---
 
