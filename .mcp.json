@@ -1,10 +1,39 @@
 {
+  "_comment": "MCP servers are OPTIONAL. CCM works without them. Each entry below is a stub — set the corresponding env var to activate. Skills that depend on these MCPs degrade gracefully (arib-memory-search falls back to grep on memory/*.md when claude-mem is unavailable, etc.). Package names are placeholders — verify and update when wiring against real upstream packages.",
   "mcpServers": {
     "github": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-github"],
       "env": {
         "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "claude-mem": {
+      "_purpose": "Item #3 — semantic memory layer. Falls back to markdown grep if absent.",
+      "_optional": true,
+      "command": "npx",
+      "args": ["-y", "@claude-mem/mcp-server"],
+      "env": {
+        "CLAUDE_MEM_API_KEY": "${CLAUDE_MEM_API_KEY:-}",
+        "CLAUDE_MEM_PROJECT": "ccm"
+      }
+    },
+    "cowork": {
+      "_purpose": "Item #4 — push-based I/O transport. Falls back to filesystem polling.",
+      "_optional": true,
+      "command": "npx",
+      "args": ["-y", "@anthropic/cowork-mcp"],
+      "env": {
+        "COWORK_TOKEN": "${COWORK_TOKEN:-}"
+      }
+    },
+    "testsprite": {
+      "_purpose": "Item #9 — cloud test execution gate. arib-check-deploy degrades to local checks if absent.",
+      "_optional": true,
+      "command": "npx",
+      "args": ["-y", "@testsprite/mcp"],
+      "env": {
+        "TESTSPRITE_API_KEY": "${TESTSPRITE_API_KEY:-}"
       }
     }
   }

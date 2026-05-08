@@ -294,6 +294,44 @@ git log --all --oneline -- path/to/file
 
 ---
 
+## Hybrid Memory (v3.2 — Item #3)
+
+The seven markdown files described above remain the **audit layer**. They are
+human-readable, git-versioned, and authoritative. v3.2 adds an **optional
+semantic layer** for retrieval at scale.
+
+### Layer 1 — semantic (optional)
+
+The `claude-mem` MCP server (configured in `.mcp.json`) provides vector search
+across session memory. Activated by setting `CLAUDE_MEM_API_KEY`. When active,
+the `/arib-memory-search` skill queries it first. When inactive, the skill
+falls back to grep over `memory/*.md` and reports the same answer with no
+loss of correctness — only loss of recall on novel paraphrases.
+
+### Layer 2 — audit (always)
+
+The seven markdown files. The semantic layer is exported into
+`memory/semantic_export.md` by `scripts/memory-export.sh`, run nightly via
+cron or on the Stop hook. This is the contract that keeps git the source of
+truth even when an external service holds the live index.
+
+### Failure semantics
+
+- If Layer 1 fails, Layer 2 still works. CCM never fails closed on memory.
+- If `memory-export.sh` fails (MCP unreachable), the existing
+  `semantic_export.md` stays as the last-known-good snapshot.
+- If `claude-mem` ever changes its API surface, only `memory-export.sh` and
+  the `arib-memory-search` skill need updating — `memory/*.md` is unchanged.
+
+### Privacy note
+
+If your project handles regulated data (PII, PHI, payment data), think before
+turning Layer 1 on. The semantic store is third-party. Markdown stays local.
+The fallback path is deliberately preserved so you can opt out without losing
+function.
+
+---
+
 > **End of Memory Protocol**
 > Memory is what separates a productive Claude Code session from a fresh start.
 > Follow this protocol rigorously.
