@@ -1,0 +1,61 @@
+name: Security disclosure
+description: Report a security issue (use private disclosure for high-severity)
+title: "[security] "
+labels: ["security", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Read this first
+
+        For **high-severity** issues (auth bypass, RCE, data exposure):
+        **do NOT file a public issue**. Use GitHub's private vulnerability
+        disclosure: https://github.com/AribSudia/claude-code-methodology/security/advisories/new
+
+        Public issues are appropriate for:
+        - Bypass paths in CCM hooks that don't expose user data
+        - Documentation gaps about security posture
+        - Hardening suggestions
+        - Concerns about the v3.3 honesty principle vs. shipped behavior
+
+        See `SECURITY.md` for the full disclosure policy.
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Estimated severity
+      options:
+        - Low (hardening / docs)
+        - Medium (bypass that doesn't expose data)
+        - High (NEEDS PRIVATE DISCLOSURE — close this and use the link above)
+        - Critical (NEEDS PRIVATE DISCLOSURE — close this and use the link above)
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: Issue
+      description: One-paragraph description.
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: What can an attacker do? Who is affected?
+
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: Suggested mitigation
+      description: Optional. If you have a fix in mind, share it.
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: This is LOW or MEDIUM severity (or I have already filed a private advisory and am using this issue for tracking)
+          required: true

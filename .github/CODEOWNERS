@@ -1,0 +1,47 @@
+# CODEOWNERS
+#
+# GitHub auto-requests review from the listed owner(s) when matching files
+# change. The default catch-all comes last; specific patterns override it.
+#
+# Branch protection should be configured to "Require review from Code
+# Owners" — see CONTRIBUTING.md for the full set of branch protection
+# settings to apply in repo Settings > Branches.
+
+# Default — everything not matched below
+*                               @AribSudia
+
+# Enforcement layer — security-sensitive
+/.claude/hooks/                 @AribSudia
+/.claude/settings.json          @AribSudia
+/scripts/install-hooks.sh       @AribSudia
+/scripts/test-hooks.sh          @AribSudia
+
+# Architectural records — decisions go through review
+/architecture/DECISIONS.md      @AribSudia
+/architecture/CONSTRAINTS.md    @AribSudia
+/architecture/SECURITY.md       @AribSudia
+/architecture/AGENT_ARCHITECTURE.md  @AribSudia
+
+# Compliance — honesty principle is load-bearing
+/compliance/                    @AribSudia
+/compliance/README.md           @AribSudia
+/compliance/frameworks/         @AribSudia
+
+# Wave / autonomy — gate behavior
+/.claude/skills/arib-deep-audit/      @AribSudia
+/.claude/skills/arib-wave-start/      @AribSudia
+/.claude/skills/arib-wave-end/        @AribSudia
+/.claude/hooks/autonomy-guard.sh      @AribSudia
+/operations/AUTONOMY_MODE.md          @AribSudia
+
+# Methodology brain
+/CLAUDE.md                      @AribSudia
+/SYSTEM.md                      @AribSudia
+/VERSION.json                   @AribSudia
+/CHANGELOG.md                   @AribSudia
+
+# CI/PR governance — meta-discipline
+/.github/                       @AribSudia
+/CONTRIBUTING.md                @AribSudia
+/SECURITY.md                    @AribSudia
+/CODE_OF_CONDUCT.md             @AribSudia

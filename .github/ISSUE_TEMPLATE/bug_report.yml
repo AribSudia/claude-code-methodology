@@ -1,0 +1,82 @@
+name: Bug report
+description: Report something broken in CCM
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. The more concrete the
+        repro, the faster the fix. If you suspect a security issue,
+        please use the **Security disclosure** template instead.
+
+  - type: textarea
+    id: what-broke
+    attributes:
+      label: What broke?
+      description: One-sentence summary of the unexpected behavior.
+      placeholder: "Hook X blocks Y when it shouldn't"
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: Concrete steps. A fixture under `tests/fixtures/payloads/` is ideal.
+      placeholder: |
+        1. echo '{...}' | .claude/hooks/pre-tool-use.sh
+        2. exit code is 1; expected 0
+      render: bash
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+
+  - type: input
+    id: ccm-version
+    attributes:
+      label: CCM version
+      description: From VERSION.json or `git describe --tags`.
+      placeholder: "3.4.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - macOS
+        - Linux
+        - Windows (WSL)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: bash-version
+    attributes:
+      label: Bash version
+      description: Run `bash --version | head -1`.
+
+  - type: textarea
+    id: hook-log
+    attributes:
+      label: Relevant io/hook-logs/ tail (if applicable)
+      render: text
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: I ran `./scripts/test-hooks.sh` and noted the result
+          required: false
+        - label: I checked CHANGELOG.md to see if this was already addressed
+          required: true

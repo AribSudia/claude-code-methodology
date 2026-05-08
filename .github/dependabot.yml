@@ -1,0 +1,41 @@
+version: 2
+updates:
+  # GitHub Actions — keep workflow runner versions current
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Riyadh
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+    labels:
+      - dependencies
+      - github-actions
+
+  # npm — only present if a project under CCM has a package.json. The
+  # methodology repo itself has none today, but new bootstrapped projects
+  # will inherit this config.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Riyadh
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+    labels:
+      - dependencies
+      - npm
+    # Group security updates into a single PR for faster turnaround
+    groups:
+      security-patches:
+        applies-to: security-updates
+        patterns:
+          - "*"

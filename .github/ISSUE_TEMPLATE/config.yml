@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security advisory (private)
+    url: https://github.com/AribSudia/claude-code-methodology/security/advisories/new
+    about: Use this for HIGH or CRITICAL severity vulnerabilities. Do not file a public issue.
+  - name: Discussions
+    url: https://github.com/AribSudia/claude-code-methodology/discussions
+    about: Open-ended questions, methodology guidance, "is this the right approach"
+  - name: Compliance honesty principle
+    url: https://github.com/AribSudia/claude-code-methodology/blob/main/compliance/README.md
+    about: Before reporting "this isn't ISO 27001 / SOC 2 / GDPR compliant" — read this first. CCM produces alignment reports, never certification claims.

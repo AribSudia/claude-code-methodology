@@ -1,0 +1,85 @@
+name: Feature request
+description: Propose a new capability for CCM
+title: "[feat] "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Non-trivial features should propose an ADR, not just a feature.
+        Read `architecture/DECISIONS.md` for the existing ADRs first —
+        this proposal may already be answered.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Lead with the user pain, not the implementation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: Concrete shape — files, hooks, skills, agents, ADRs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: At least one. "Do nothing" is a valid alternative.
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: Which CCM layers does this touch?
+      multiple: true
+      options:
+        - L1 (CLAUDE.md, rules)
+        - L2 (skills)
+        - L3 (hooks)
+        - L4 (agents)
+        - I/O channel
+        - Memory
+        - Compliance
+        - Wave overlay
+        - Bootstrap
+        - Other
+
+  - type: dropdown
+    id: vendor
+    attributes:
+      label: Does this introduce a new vendor / MCP / external dependency?
+      options:
+        - "No"
+        - "Yes, opt-in (env-var gated, graceful fallback)"
+        - "Yes, required"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: compliance
+    attributes:
+      label: Compliance honesty check
+      description: Does this change any framework alignment claims?
+      options:
+        - No compliance impact
+        - Adds real code-checkable enforcement (OWASP / GDPR-codeable / PDPL Arabic)
+        - Adds operational/manual control documentation only
+        - Risk of overclaiming — needs review against compliance/README.md
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: I've read CLAUDE.md and CCM is the right place for this
+          required: true
+        - label: If this is non-trivial, I'm prepared to draft an ADR
+          required: false

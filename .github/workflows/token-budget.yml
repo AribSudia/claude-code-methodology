@@ -1,0 +1,102 @@
+name: Token budget
+
+on:
+  pull_request:
+    paths:
+      - 'CLAUDE.md'
+      - '.claude/settings.json'
+      - '.claude/rules/**'
+      - 'architecture/**'
+      - 'implementation/**'
+      - 'memory/MEMORY_PROTOCOL.md'
+      - 'operations/WORKFLOW.md'
+      - 'scripts/token-audit.sh'
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+
+      - uses: actions/checkout@v4
+        with:
+          path: head
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Measure base
+        id: base
+        working-directory: base
+        run: |
+          chmod +x scripts/token-audit.sh
+          set +e
+          out=$(./scripts/token-audit.sh 2>&1)
+          base_total=$(echo "$out" | awk '/^TOTAL/ {print $NF}')
+          echo "total=$base_total" >> "$GITHUB_OUTPUT"
+          echo "$out"
+
+      - name: Measure head
+        id: head
+        working-directory: head
+        run: |
+          chmod +x scripts/token-audit.sh
+          set +e
+          out=$(./scripts/token-audit.sh 2>&1)
+          head_total=$(echo "$out" | awk '/^TOTAL/ {print $NF}')
+          echo "total=$head_total" >> "$GITHUB_OUTPUT"
+          echo "$out"
+
+      - name: Compute delta
+        id: delta
+        run: |
+          base="${{ steps.base.outputs.total }}"
+          head="${{ steps.head.outputs.total }}"
+          delta=$(( head - base ))
+          sign=$([[ $delta -ge 0 ]] && echo "+" || echo "")
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+          echo "head=$head" >> "$GITHUB_OUTPUT"
+          echo "delta=${sign}${delta}" >> "$GITHUB_OUTPUT"
+          echo "## Token-budget impact" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Branch | Tokens at session start |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------------------------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| base   | $base |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| head   | $head |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| delta  | ${sign}${delta} |" >> "$GITHUB_STEP_SUMMARY"
+          # Warn if head is >5K worse than base; fail if >10K worse.
+          if (( delta > 10000 )); then
+            echo "::error::Token budget regressed by more than 10K tokens. Trim or move out of context.include."
+            exit 1
+          elif (( delta > 5000 )); then
+            echo "::warning::Token budget regressed by more than 5K tokens."
+          fi
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const base = "${{ steps.delta.outputs.base }}";
+            const head = "${{ steps.delta.outputs.head }}";
+            const delta = "${{ steps.delta.outputs.delta }}";
+            const body = [
+              "**Token-budget impact**",
+              "",
+              `| Branch | Tokens at session start |`,
+              `|--------|-------------------------|`,
+              `| base   | ${base} |`,
+              `| head   | ${head} |`,
+              `| delta  | ${delta} |`,
+              "",
+              "Target: `<8000` per ADR-007 / Item #11. Current ceiling reflects honest scaffolding cost."
+            ].join("\n");
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
