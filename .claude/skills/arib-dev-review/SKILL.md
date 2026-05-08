@@ -13,6 +13,36 @@ Why this matters: Code reviews prevent cascading failures. A 10-minute review th
 
 Claude Code acts as the CODE REVIEWER during this skill — thorough, specific, and fair.
 
+## Parallel Dispatch (v3.2 "Honest")
+
+For non-trivial diffs (>5 files, or any change touching auth/payment/data
+boundaries), open the review by dispatching three subagents **in a single
+message** — all in parallel — instead of running the gates sequentially.
+
+```text
+Task(code-reviewer)        — runs Gates 1-4 (structure, maintainability)
+Task(security-auditor)     — runs Gate 5 (security) deeper than this skill alone
+Task(test-engineer, mode=report-only)
+                           — runs Gate 7 (tests) deeper than this skill alone
+```
+
+All three are read-only on the diff and write nothing to disk. Per
+`architecture/AGENT_ARCHITECTURE.md`, this fan-out is parallel-safe.
+
+**Merge their findings:** wait for all three reports, then write the unified
+review report yourself. Conflicts (one agent says ship, another blocks) are
+resolved by the more conservative call — when in doubt, block.
+
+Wall-clock: ~90 seconds parallel vs. ~5–10 minutes sequential.
+
+**When NOT to fan out:**
+- Single-file or trivial diffs — overhead exceeds the saving.
+- Diffs that include test-engineer asking to *write* tests, not report on
+  them. In that case run reviewer + security in parallel, then test-engineer
+  sequentially with the merged findings as input.
+- Refactor-specialist work in flight — never overlap a fan-out review with an
+  agent that's actively rewriting files.
+
 ## When to Use
 
 - **Before merging any feature branch** into develop or main
