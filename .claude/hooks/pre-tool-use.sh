@@ -98,6 +98,36 @@ if [[ "$TOOL_NAME" == "Write" || "$TOOL_NAME" == "Edit" || "$TOOL_NAME" == "Mult
   fi
 fi
 
+# ---------- OWASP A03 write-time enforcement (Item #7) ----------
+# Blocks `eval()` and `new Function()` on user input in non-test code.
+# Conservative — these patterns are almost never legitimate in app code
+# outside of build tooling. Test/fixture paths exempt via is_test_or_fixture_path.
+if [[ "$TOOL_NAME" =~ ^(Write|Edit|MultiEdit)$ ]] \
+   && [[ -n "$TARGET_PATH" ]] \
+   && [[ "$TARGET_PATH" =~ \.(ts|tsx|js|jsx|mjs|cjs)$ ]] \
+   && [[ "$TARGET_PATH" != *node_modules* ]] \
+   && [[ "$TARGET_PATH" != *.config.* ]] \
+   && ! is_test_or_fixture_path "$TARGET_PATH"; then
+  NEW_CONTENT_OWASP="$(payload_get '.tool_input.content // .tool_input.new_string')"
+  if [[ -n "$NEW_CONTENT_OWASP" ]]; then
+    # eval(<not a literal string>)
+    if printf '%s' "$NEW_CONTENT_OWASP" | grep -Eq -- '\beval\s*\(\s*[^"'"'"']'; then
+      notify_cowork "owasp-eval-block" "$TARGET_PATH"
+      block "OWASP A03 (Injection): eval() on a non-literal in '$TARGET_PATH'. Refactor or move to a sandboxed worker. See compliance/frameworks/owasp.md."
+    fi
+    # new Function(<anything>)
+    if printf '%s' "$NEW_CONTENT_OWASP" | grep -Eq -- '\bnew\s+Function\s*\('; then
+      notify_cowork "owasp-newfunction-block" "$TARGET_PATH"
+      block "OWASP A03 (Injection): new Function() in '$TARGET_PATH'. Refactor; this is rarely safe in application code."
+    fi
+    # child_process.exec with template literal containing variable
+    if printf '%s' "$NEW_CONTENT_OWASP" | grep -Eq -- '\bexec\s*\(\s*`[^`]*\$\{'; then
+      notify_cowork "owasp-exec-block" "$TARGET_PATH"
+      block "OWASP A03 (Injection): child_process.exec with template-literal interpolation in '$TARGET_PATH'. Use execFile with an args array."
+    fi
+  fi
+fi
+
 # ---------- 3. Dangerous bash command detection ----------
 if [[ "$TOOL_NAME" == "Bash" ]]; then
   CMD="$(payload_get '.tool_input.command')"

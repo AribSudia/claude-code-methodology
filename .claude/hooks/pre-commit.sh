@@ -39,6 +39,15 @@ while IFS= read -r file; do
     FAILURES+=("File exceeds 1 MB (likely accidental): $file. Use Git LFS or .gitignore.")
   fi
 
+  # 4a. PII in log lines (Item #7 — GDPR Art. 32 / ISO 27001 A.8.12)
+  # Conservative regex: log calls with field names that suggest PII.
+  # Test/fixture paths exempt via is_test_or_fixture_path above.
+  if [[ "$file" =~ \.(ts|tsx|js|jsx)$ ]] && ! is_test_or_fixture_path "$file"; then
+    if grep -EHn '(console\.(log|info|warn|error|debug)|logger\.(info|warn|error|debug))[^)]*\b(password|secret|token|api_?key|ssn|credit_?card|cvv|email|phone)\b' "$file" 2>/dev/null; then
+      FAILURES+=("PII-in-log pattern in: $file. Redact before logging — see compliance/frameworks/gdpr.md.")
+    fi
+  fi
+
   # 4. console.log / debugger in production source files
   if [[ "$file" =~ \.(ts|tsx|js|jsx)$ ]] && [[ "$file" != *test* && "$file" != *spec* && "$file" != *.config.* ]]; then
     if grep -EHn '^\s*(console\.(log|debug)|debugger;)' "$file" 2>/dev/null; then
