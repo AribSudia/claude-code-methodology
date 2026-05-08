@@ -1,9 +1,9 @@
 {
   "name": "claude-code-methodology",
-  "version": "3.3.0",
-  "codename": "Operating",
+  "version": "3.4.0",
+  "codename": "Reviewed",
   "releaseDate": "2026-05-08",
-  "previousVersion": "3.1.0",
+  "previousVersion": "3.3.0",
   "engineeredBy": "Abdullah x Claude Opus 4.6 / Opus 4.7",
   "license": "MIT",
   "repository": "https://github.com/AribSudia/claude-code-methodology",
@@ -24,7 +24,9 @@
     "complianceFrameworks": 5,
     "scripts": 8,
     "bootstrapMethods": 5,
-    "trainingManuals": 10,
+    "trainingManuals": 11,
+    "githubWorkflows": 4,
+    "issueTemplates": 3,
     "tokenCostOnSessionStart": 39560
   },
   "compatibility": {

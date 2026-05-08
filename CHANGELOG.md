@@ -7,6 +7,78 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.4.0] "Reviewed" — 2026-05-08
+
+The "Reviewed" release closes the loop: CCM now lives by the discipline
+it teaches. A repo that recommends PR governance to its users while
+pushing straight to main can't be taken seriously. v3.4 adopts GitHub's
+PR/CI best practices as a first-class methodology artifact alongside
+hooks, waves, and compliance.
+
+### Added — GitHub plumbing
+- `.github/PULL_REQUEST_TEMPLATE.md` — binding contract for every PR:
+  summary, type, ADR/issue links, test plan, token-budget delta, wave
+  audit hash, compliance impact, reviewer checklist.
+- `.github/ISSUE_TEMPLATE/{bug_report,feature_request,security}.yml` +
+  `config.yml` — structured triage. Security template explicitly
+  routes HIGH/CRITICAL severity to GitHub private advisories.
+- `.github/CODEOWNERS` — auto-routes review for hooks, architecture
+  records, compliance, gate skills, methodology brain, and `.github/`.
+- `.github/dependabot.yml` — weekly updates for github-actions and
+  npm; security patches grouped.
+- `.github/workflows/json-validate.yml` — validates every committed
+  JSON file plus VERSION.json semver shape, .mcp.json, settings.json.
+- `.github/workflows/token-budget.yml` — measures session-start cost
+  on PRs (base vs head), comments delta, fails at >10K regression.
+- `.github/workflows/markdown-lint.yml` — markdownlint-cli2 + TODO/
+  FIXME detection in shipped docs.
+- `.markdownlint.json` — lint config tuned for the project's style.
+
+### Added — Governance docs
+- `CONTRIBUTING.md` — full workflow: branch naming, Conventional
+  Commits, test discipline, branch protection settings to apply, how
+  to add hooks/skills/agents, release procedure.
+- `SECURITY.md` (repo-root) — vulnerability disclosure policy. Threat
+  surface, out-of-scope, reporting paths (private advisory for
+  HIGH/CRITICAL), SLA per severity.
+- `CODE_OF_CONDUCT.md` — Contributor Covenant 2.1.
+
+### Added — Methodology integration
+- `.claude/rules/ci-pr.md` — path-scoped rules that auto-load when
+  editing `.github/**`, `CONTRIBUTING.md`, `SECURITY.md`,
+  `CODE_OF_CONDUCT.md`, or workflow files. 10 binding rules.
+- `architecture/DECISIONS.md` ADR-012 — CI/PR Governance Model.
+- `architecture/CONSTRAINTS.md` constraint #10 — PRs through CI green
+  and CODEOWNERS-approved; direct pushes to main reserved for
+  emergencies and logged in `operations/OPERATIONS_LOG.md`.
+- `Training/11-CI-PR-MANUAL.md` — user-facing manual matching the
+  existing 10-manual structure.
+- `bootstrap/BOOTSTRAP.md` STEP 4 — now activates CI/PR governance
+  alongside hook installation; enumerates files to copy and branch
+  protection settings to apply.
+
+### Changed
+- `architecture/CONTEXT_MAP.md` — adds `.github/` to allowed_write_paths
+  so the path-scoping hook permits workflow edits.
+- README, CLAUDE.md, SYSTEM.md, Training/01, VERSION.json bumped to
+  v3.4.0 "Reviewed".
+
+### Why
+v3.3 "Operating" was the system shipped. v3.4 "Reviewed" is the
+discipline that keeps it shipping correctly. Bootstrapped projects
+inherit the scaffolding by default — CCM models the governance it
+recommends.
+
+### Honesty notes
+- Branch protection rules are GitHub web-UI settings, not files. They
+  are documented in `CONTRIBUTING.md` §6 and applied once by the repo
+  owner. The maintainer's prior direct-push-to-main pattern is now an
+  emergency-only exception, not the norm.
+- The MCP package names from v3.3 remain placeholders (cowork) /
+  verified (claude-mem, testsprite). No change here.
+
+---
+
 ## [3.3.0] "Operating" — 2026-05-08
 
 The "Operating" release ships the eight items from the original v3.2
