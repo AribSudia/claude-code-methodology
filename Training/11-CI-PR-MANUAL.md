@@ -1,4 +1,4 @@
-# Claude Code Methodology v3.4.0 "Reviewed"
+# Claude Code Methodology v3.5.0 "Engineered"
 ## Training Manual 11 — CI / PR Governance
 
 > **Purpose.** v3.4 makes the discipline CCM teaches into the discipline
@@ -22,7 +22,78 @@ catch automatic.
 
 ---
 
-## What v3.4 ships (artifact map)
+## What v3.5 adds: agent + skill
+
+v3.4 shipped CI/PR plumbing as static configuration. v3.5 makes it an
+executable capability with the standard CCM agent+skill pair.
+
+### Agent: `ci-pr-engineer`
+
+Lives at `.claude/agents/ci-pr-engineer.md`. Owns the **review of the
+review process** — workflows, PR/issue templates, CODEOWNERS, branch
+protection, dependabot, secret scanning, and the binding rules in
+`CONTRIBUTING.md` and `SECURITY.md`. Read-only by default; conditional
+sequential in `init` mode while the parent applies writes.
+
+Severity ladder:
+
+| Finding | Severity |
+|---------|----------|
+| Required workflow missing | BLOCK |
+| Workflow uses unpinned `@main` action | WARN |
+| Workflow has no `paths:` filter | WARN |
+| `permissions:` block missing | WARN |
+| Script injection sink (`${{ github.event.* }}` into `run:`) | BLOCK |
+| CODEOWNERS path with no living reviewer | BLOCK |
+| Branch protection missing required check | BLOCK |
+| Branch protection allows admin bypass | WARN |
+| Branch protection requires < 1 approval | BLOCK |
+| `SECURITY.md` missing or has no private-advisory link | WARN |
+| `.markdownlint.json` missing while markdown-lint workflow runs | BLOCK |
+
+### Skill: `/arib-ci-audit`
+
+Single user-facing entry point. Four modes:
+
+```bash
+/arib-ci-audit                                       # full audit (default)
+/arib-ci-audit init                                  # bootstrap CI/PR for a fresh project
+/arib-ci-audit review .github/workflows/hooks.yml    # focused review of one file
+/arib-ci-audit branch-protection                     # query GitHub API for live BP state
+```
+
+Output: `io/ledger/ci-pr-<mode>-<date>.md` with the same YAML-style
+header as `/arib-deep-audit` (audit-hash, short-hash, timestamp,
+branch, head-sha, mode, target, verdict, finding counts).
+
+Recipe for parallel use as section 9 of `/arib-deep-audit`:
+
+```text
+Task(ci-pr-engineer, mode=audit)
+Task(api-docs, mode=audit)
+Task(language)
+```
+
+All three are read-only; safe to fan out in a single Task batch.
+
+### When to run
+
+- **Quarterly** — catches drift between CONTRIBUTING.md and the
+  workflows.
+- **Before a release** — verify required checks still match branch
+  protection.
+- **After a CI failure that should have been caught earlier** —
+  diagnose the gap.
+- **When bootstrapping CCM into a fresh project** — `init` mode
+  scaffolds the full set.
+- **As a PR review aid** when a contributor touches `.github/**` —
+  `review <file>` mode focuses on one file.
+- **Before delegating PR access** — `branch-protection` mode confirms
+  the GitHub web-UI settings match the binding rule (constraint #10).
+
+---
+
+## What v3.4 shipped (artifact map)
 
 ```
 .github/

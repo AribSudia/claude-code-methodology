@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.4.0 "Reviewed"                         |
+| Version           | 3.5.0 "Engineered"                       |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7         |
@@ -137,22 +137,23 @@ your-project/
 | /arib-check-arabic          | Check      | Arabic/RTL audit (typography, mirroring, MENA)       |
 | /arib-check-security        | Check      | OWASP Top 10 + supply chain                          |
 | /arib-check-compliance      | Check      | Framework alignment (OWASP/GDPR/ISO/SOC2/PDPL)       |
+| /arib-ci-audit              | CI         | Audit, init, review, or branch-protection check (v3.5) |
 | /arib-docs-api              | Docs       | API documentation + OpenAPI                          |
 | /arib-docs-generate         | Docs       | Generate documentation                               |
 | /arib-docs-language         | Docs       | i18n/RTL/LTR compliance (generic)                    |
 
 ---
 
-## 5. Agents (14 specialists)
+## 5. Agents (15 specialists)
 
 Agents auto-activate based on task type. Each has its own context file
 in `.claude/agents/`. See `architecture/AGENT_ARCHITECTURE.md` for the
 full read/write surface table and parallel-dispatch governance.
 
-The 14 agents: `architect`, `code-reviewer`, `security-auditor`,
+The 15 agents: `architect`, `code-reviewer`, `security-auditor`,
 `test-engineer`, `debugger`, `reality-auditor`, `database-guardian`,
 `performance`, `accessibility`, `api-docs`, `language`,
-`refactor-specialist`, `deploy-guardian`, `planner`.
+`refactor-specialist`, `deploy-guardian`, `planner`, `ci-pr-engineer`.
 
 ---
 

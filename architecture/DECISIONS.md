@@ -550,6 +550,60 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-013: CI/PR as a Standalone Technique (v3.5)
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** ADR-012 (v3.4) made CI/PR a first-class methodology
+artifact via templates, workflows, CODEOWNERS, and governance docs.
+But the artifacts were *static*: no agent owned them, no skill made
+them executable, no path-scoped rules guided edits. Quarterly review
+of CI/PR posture had no methodology-side entry point. Bootstrapping
+CI/PR into a new project meant copying files manually rather than
+running `/arib-ci-audit init`. The plumbing existed; the active layer
+did not.
+
+**Decision.** Promote CI/PR to a full CCM capability with the standard
+agent + skill pair, matching the pattern used for code review
+(`code-reviewer` + `/arib-dev-review`), compliance (`security-auditor`
++ `/arib-check-compliance`), and waves (`architect`/`planner` +
+`/arib-wave-start`/`/arib-wave-end`).
+
+- New agent: `.claude/agents/ci-pr-engineer.md`. Read-only by default;
+  conditional sequential in `init` mode while the parent applies
+  writes. Reads `.github/**`, `CONTRIBUTING.md`, `SECURITY.md`,
+  ADR-012, optional `gh api` for live branch-protection state.
+- New skill: `.claude/skills/arib-ci-audit/SKILL.md`. Four modes:
+  `audit` (default), `init`, `review <file>`, `branch-protection`.
+  Output goes to `io/ledger/ci-pr-<mode>-<date>.md` using the same
+  YAML-style header as `/arib-deep-audit` for shared audit-trail
+  format.
+- New parallel-dispatch recipe (Recipe 5 in AGENT_ARCHITECTURE.md).
+- Training/11-CI-PR-MANUAL.md updated to document the agent + skill.
+- AGENT_ARCHITECTURE.md inventory grows to 15 (added planner from
+  earlier work + ci-pr-engineer now).
+
+**Consequences.** CI/PR audits become routine and reproducible. Init
+mode means new projects bootstrap CI/PR through `/arib-ci-audit init`
+instead of manual file copying. Branch protection — the only
+GitHub-web-UI-only setting — gains an on-demand verification path via
+`gh api`. The agent is parallel-safe in audit mode, so it composes
+into `/arib-deep-audit` as section 9 (documentation completeness).
+
+**Alternatives rejected.**
+- "Multiple skills (`arib-ci-init`, `arib-ci-review`, etc.)" — splits
+  related operations across files; CCM's established pattern is
+  modes-on-one-skill (see `arib-deep-audit` audit/IMPLEMENT-FROM-FILE,
+  `arib-check-compliance` per-framework).
+- "New hook for session-start CI health check" — duplicates
+  `json-validate.yml` work and adds noise on every session start;
+  on-demand `branch-protection` mode in the skill is sufficient.
+- "Make ci-pr-engineer a write-by-default agent" — violates the
+  parallel-safety principle (only read-only agents fan out cleanly);
+  init-mode sequential is the right exception, not the default.
+
+---
+
 # ADR-012: CI/PR Governance Model
 
 **Status:** Accepted   **Date:** 2026-05-08
@@ -657,6 +711,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-010 | MCP Placeholder Strategy | Accepted | 2026-05-08 |
 | ADR-011 | Override of v3.2 "Honest" Counter-Proposal | Accepted | 2026-05-08 |
 | ADR-012 | CI/PR Governance Model | Accepted | 2026-05-08 |
+| ADR-013 | CI/PR as a Standalone Technique (v3.5) | Accepted | 2026-05-08 |
 
 ---
 

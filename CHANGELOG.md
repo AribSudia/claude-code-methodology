@@ -7,6 +7,62 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.5.0] "Engineered" — 2026-05-08
+
+The "Engineered" release promotes CI/PR from static configuration to
+an executable methodology subsystem. v3.4 shipped templates, workflows,
+and governance docs. v3.5 makes CI/PR review repeatable and bootstrap-
+able through the established CCM agent+skill pattern.
+
+### Added — Agent + skill
+- `.claude/agents/ci-pr-engineer.md` — new agent (15th in inventory).
+  Owns review of the review process: workflows, PR/issue templates,
+  CODEOWNERS, branch protection, dependabot, secret scanning, the
+  binding rules in CONTRIBUTING.md and SECURITY.md. Read-only by
+  default; conditional sequential in `init` mode while parent
+  applies writes. Severity ladder maps every finding type to
+  BLOCK/WARN/INFO with ADR-012 references.
+- `.claude/skills/arib-ci-audit/SKILL.md` — single user-facing entry
+  point with four modes:
+  - `audit` (default) — full posture check.
+  - `init` — bootstrap CI/PR for a fresh project (replaces manual
+    file copying).
+  - `review <file>` — focused PR-review aid for a single workflow,
+    template, or governance doc.
+  - `branch-protection` — live query via `gh api` against the binding
+    settings in CONTRIBUTING.md §6 and constraint #10.
+  Output: `io/ledger/ci-pr-<mode>-<date>.md` using the same YAML-style
+  header as `/arib-deep-audit` for shared audit-trail format.
+
+### Added — Records
+- `architecture/DECISIONS.md` ADR-013: CI/PR as a Standalone Technique.
+  Documents why agent+skill pair was chosen over alternatives
+  (multiple skills, write-by-default agent, session-start hook).
+- `architecture/AGENT_ARCHITECTURE.md` — agent inventory grows from
+  13 to 15 (added `planner` from earlier work + `ci-pr-engineer`).
+  New parallel-dispatch Recipe 4 (wave start: architect+planner) and
+  Recipe 5 (CI/PR audit composing into deep-audit section 9).
+- `Training/11-CI-PR-MANUAL.md` — gains "What v3.5 adds" section
+  documenting the agent and skill, severity ladder, when to run.
+
+### Changed
+- README, CLAUDE.md, SYSTEM.md, Training/01, VERSION.json bumped to
+  v3.5.0 "Engineered".
+- CLAUDE.md §4 skills table grows from 24 to 25 entries (added
+  `/arib-ci-audit`); §5 agents from 14 to 15.
+
+### Why
+ADR-012 (v3.4) made CI/PR a first-class artifact. But the artifacts
+were static — no agent owned them, no skill made them executable.
+Quarterly review and project bootstrap had no methodology-side entry
+point. v3.5 closes that gap with the standard CCM extension pattern.
+
+The agent is read-only and parallel-safe in audit mode, so it composes
+into `/arib-deep-audit` as section 9. The skill's `init` mode replaces
+manual file copying when bootstrapping CCM into fresh projects.
+
+---
+
 ## [3.4.0] "Reviewed" — 2026-05-08
 
 The "Reviewed" release closes the loop: CCM now lives by the discipline

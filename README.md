@@ -8,29 +8,29 @@ memory files, and a 5-mode bootstrap. It is **not** a runtime, an orchestrator,
 or a kernel — it is a set of conventions that make multi-session Claude Code
 work durable.
 
-**v3.4.0 "Reviewed"** · Engineered by Abdullah x Claude · Token cost on session start: ~39.6K
+**v3.5.0 "Engineered"** · Engineered by Abdullah x Claude · Token cost on session start: ~39.6K
 (measure yours: `./scripts/token-audit.sh`)
 
-> **What changed in v3.4** — CCM now lives by the discipline it teaches.
-> Adopts GitHub PR/CI governance as a first-class methodology artifact:
-> PR template, issue templates, CODEOWNERS, four CI workflows (hooks
-> regression, JSON validation, token-budget delta, markdown lint),
-> Dependabot, CONTRIBUTING.md, repo-root SECURITY.md, CODE_OF_CONDUCT.md,
-> path-scoped `.claude/rules/ci-pr.md`, Training/11-CI-PR-MANUAL.md,
-> and ADR-012. New constraint: PRs through CI green and CODEOWNERS-
-> approved; direct pushes to main are emergency-only. Bootstrapped
-> projects inherit the scaffolding by default. See
-> [Training/11-CI-PR-MANUAL.md](Training/11-CI-PR-MANUAL.md) and
-> [CONTRIBUTING.md](CONTRIBUTING.md).
+> **What changed in v3.5** — CI/PR is now an executable subsystem, not
+> just static configuration. New `ci-pr-engineer` agent (15th in the
+> inventory) and `/arib-ci-audit` skill with four modes: `audit`
+> (default), `init` (bootstrap CI/PR for a fresh project), `review
+> <file>` (focused PR-review aid), `branch-protection` (live `gh api`
+> check against the binding settings). Output goes to
+> `io/ledger/ci-pr-<mode>-<date>.md` with the same audit-trail format
+> as `/arib-deep-audit`. ADR-013 records the decision. CCM now follows
+> the same agent+skill pattern for CI/PR as it uses for code review,
+> compliance, and waves.
 >
-> v3.3 "Operating" (previous): the 8 items from the original "Enforced"
-> proposal — hybrid memory, real I/O transport, `/arib-deep-audit`,
-> wave delivery overlay, design system, TestSprite gate, autonomy mode,
-> and the expanded MENA/OWASP/GDPR/ISO27001/SOC2 compliance layer —
-> shipped with **honest framing**. See
-> [CHANGELOG](CHANGELOG.md), [compliance/README.md](compliance/README.md)
-> for the honesty principle, and
-> [proposals/archive/](proposals/archive/) for context.
+> v3.4 "Reviewed" (previous): adopted GitHub PR/CI governance as
+> first-class methodology — PR template, issue templates, CODEOWNERS,
+> four CI workflows, Dependabot, CONTRIBUTING.md, repo-root SECURITY.md,
+> CODE_OF_CONDUCT.md. v3.3 "Operating" (before that): the 8 deferred
+> items from the original Enforced proposal shipped with honest framing.
+> See [Training/11-CI-PR-MANUAL.md](Training/11-CI-PR-MANUAL.md),
+> [CONTRIBUTING.md](CONTRIBUTING.md),
+> [CHANGELOG](CHANGELOG.md), [compliance/README.md](compliance/README.md),
+> and [proposals/archive/](proposals/archive/) for context.
 
 ```
  ╔═══════════════════════════════════════════════════════════════════╗
@@ -608,7 +608,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.1 | Deep Skills | All 16 skills enriched to Anthropic-grade depth |
 | v3.2 | Honest | Real hook enforcement, token-audit script, README rewrite — docs match disk |
 | v3.3 | Operating | 8 deferred items shipped: hybrid memory, real I/O transport, deep-audit, waves, design system, TestSprite gate, autonomy mode, compliance (OWASP/GDPR/ISO/SOC2/PDPL) |
-| **v3.4** | **Reviewed** | **GitHub PR/CI governance: PR template, CODEOWNERS, 4 CI workflows, Dependabot, CONTRIBUTING, repo-root SECURITY, COC. CCM now lives by the discipline it teaches.** |
+| v3.4 | Reviewed | GitHub PR/CI governance as static configuration: PR template, CODEOWNERS, 4 CI workflows, Dependabot, CONTRIBUTING, repo-root SECURITY, COC |
+| **v3.5** | **Engineered** | **CI/PR as an executable subsystem: `ci-pr-engineer` agent + `/arib-ci-audit` skill with audit/init/review/branch-protection modes** |
 
 ---
 
