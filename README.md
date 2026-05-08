@@ -8,15 +8,19 @@ memory files, and a 5-mode bootstrap. It is **not** a runtime, an orchestrator,
 or a kernel — it is a set of conventions that make multi-session Claude Code
 work durable.
 
-**v3.2.0 "Honest"** · Engineered by Abdullah · Token cost on session start: ~39K
+**v3.3.0 "Operating"** · Engineered by Abdullah x Claude · Token cost on session start: ~39.6K
 (measure yours: `./scripts/token-audit.sh`)
 
-> **What changed in v3.2** — hooks under `.claude/hooks/` are now real
-> executables that block tool calls outside `architecture/CONTEXT_MAP.md`
-> `allowed_write_paths`, scan for secrets, and stop dangerous bash commands.
-> The README no longer claims "Operating System". The token-audit script is
-> committed so the cost of CCM scaffolding is visible, not hidden.
-> See [CHANGELOG](CHANGELOG.md) and [`CCM-v3.2-Minimal-Counter-Proposal.md`](CCM-v3.2-Minimal-Counter-Proposal.md).
+> **What changed in v3.3** — the eight items from the "Enforced" proposal that
+> were originally deferred (hybrid memory, real I/O transport, `/arib-deep-audit`,
+> wave delivery overlay, design system, TestSprite gate, autonomy mode protocol,
+> and the expanded MENA/OWASP/GDPR/ISO27001/SOC2 compliance layer) now ship —
+> with **honest framing**: code-checkable rules become real hooks; operational
+> frameworks (ISO 27001, SOC 2) are documented as alignment + audit-trail
+> support, **not** as bash-enforceable. CCM never claims certification.
+> See [CHANGELOG](CHANGELOG.md), [compliance/README.md](compliance/README.md)
+> for the honesty principle, and the original
+> [proposal + counter-proposal](CCM-v3.2-Enforced-Proposal.md) for context.
 
 ```
  ╔═══════════════════════════════════════════════════════════════════╗
@@ -592,7 +596,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v2.9 | Connected | I/O bridge, Cowork integration |
 | v3.0 | Aligned | Official Claude Code architecture alignment (skills, rules, .mcp.json) |
 | v3.1 | Deep Skills | All 16 skills enriched to Anthropic-grade depth |
-| **v3.2** | **Honest** | **Real hook enforcement, token-audit script, README rewrite — docs match disk** |
+| v3.2 | Honest | Real hook enforcement, token-audit script, README rewrite — docs match disk |
+| **v3.3** | **Operating** | **8 deferred items shipped: hybrid memory, real I/O transport, deep-audit, waves, design system, TestSprite gate, autonomy mode, compliance (OWASP/GDPR/ISO/SOC2/PDPL)** |
 
 ---
 

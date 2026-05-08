@@ -7,6 +7,117 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.3.0] "Operating" — 2026-05-08
+
+The "Operating" release ships the eight items from the original v3.2
+"Enforced" proposal that the v3.2 "Honest" counter-proposal had deferred.
+
+**Why the override?** After v3.2 "Honest" landed, the maintainer reversed
+the deferral and asked for the full proposal scope. The work was completed
+with the safeguards from the counter-proposal carried forward — every new
+MCP server stays opt-in, every framework doc states honestly what CCM can
+and cannot enforce, no false certification claims.
+
+A 20-agent parallel audit then verified the implementation against the
+proposal. This release also fixes the gaps that audit surfaced: the
+wave-merge gate ledger format, the missing `compliance/` write-path, the
+missing `planner` agent, the missing `arib-check-security` skill, version
+drift across 5 files, and 7 unregistered skills.
+
+### Added — Hybrid Memory (Item #3)
+- `.mcp.json` — opt-in `claude-mem` MCP stub.
+- `scripts/memory-export.sh` — exports semantic store to
+  `memory/semantic_export.md`. No-op when MCP unavailable.
+- `.claude/skills/arib-memory-search/SKILL.md` — semantic-first with
+  grep fallback.
+- `memory/MEMORY_PROTOCOL.md` — hybrid section + privacy note.
+
+### Added — Real I/O Transport (Item #4)
+- `.mcp.json` — opt-in `cowork` MCP stub.
+- `.claude/hooks/notification.sh` — Notification event hook.
+- `.claude/hooks/lib/common.sh` — `notify_cowork()` fans out to both
+  `CCM_COWORK_WEBHOOK` and `CCM_NOTIFY_WEBHOOK`.
+- `io/IO_PROTOCOL.md` — Transport+Ledger split documented.
+
+### Added — Deep Audit (Item #5)
+- `.claude/skills/arib-deep-audit/SKILL.md` — 21-section audit with
+  IMPLEMENT-FROM-FILE mode and a defined ledger format
+  (`wave: <name>` + `audit-hash: <sha>` keys are the contract that the
+  wave-merge gate and `arib-wave-end` skill grep for).
+
+### Added — Wave Delivery Overlay (Item #6)
+- `waves/README.md`, `WAVE_HISTORY.md`, `.templates/{PLAN,REPORT}.md`.
+- `.claude/skills/arib-wave-start/SKILL.md` — scaffolds wave + parallel
+  architect+planner dispatch.
+- `.claude/skills/arib-wave-end/SKILL.md` — runs `/arib-deep-audit`,
+  generates REPORT, tags audit hash.
+- `.claude/agents/planner.md` — sequence, dependencies, risks, blockers.
+- `.claude/hooks/pre-tool-use.sh` — wave-merge gate blocks `git push|merge`
+  to main from `wave/*` without an audit-hash matching the wave.
+
+### Added — Compliance Layer (Item #7 expanded)
+- `compliance/README.md` — explicit honesty principle.
+- `compliance/COMPLIANCE.md` — cross-framework controls map.
+- `compliance/frameworks/{owasp,gdpr,iso27001,soc2,mena-pdpl}.md` —
+  per-framework alignment with code-checkable vs operational distinction.
+- `.claude/skills/arib-check-arabic/SKILL.md` — typography, RTL,
+  numerals, mirroring, KSA institutional checks.
+- `.claude/skills/arib-check-compliance/SKILL.md` — meta-skill across
+  all frameworks; outputs alignment reports, never "compliant" claims.
+- `.claude/skills/arib-check-security/SKILL.md` — OWASP + supply chain
+  entry point, delegates to security-auditor agent + arib-check-deps.
+- `.claude/rules/i18n-ar.md` — path-scoped Arabic rules.
+- `.claude/hooks/pre-tool-use.sh` — OWASP A03 write-time blocks
+  (eval, new Function, exec template-literal).
+- `.claude/hooks/pre-commit.sh` — PII-in-log-line patterns.
+
+### Added — Design System (Item #8)
+- `architecture/DESIGN_SYSTEM.md` — visual contract.
+- `.claude/skills/arib-check-design/SKILL.md` — token discipline,
+  component baseline, typography, dark-default, motion.
+- `.claude/hooks/pre-tool-use.sh` — write-time block on raw color
+  literals in components (exempts tokens/theme/test paths).
+
+### Added — TestSprite Gate (Item #9)
+- `.mcp.json` — opt-in `testsprite` MCP stub.
+- `arib-check-deploy/SKILL.md` Step 4 — real cloud test run when
+  configured, honest LOCAL-ONLY fall-through otherwise.
+- `operations/MONITORING.md` — synthetic monitoring section.
+
+### Added — Autonomy Mode (Item #10)
+- `operations/AUTONOMY_MODE.md` — preconditions, guardrails,
+  post-conditions, recovery protocol.
+- `.claude/hooks/autonomy-guard.sh` — fast-path no-op unless
+  `CCM_AUTONOMY=1`. Wall-clock cap, calls-since-commit cap, BLOCK rate
+  cap, refuses unsanctioned push to main.
+
+### Added — Operational records
+- `architecture/AGENT_ARCHITECTURE.md` — 14 agents with read/write
+  surfaces and parallel-dispatch governance.
+- `scripts/token-audit.sh` — measured baseline 39,560 tokens (target 8K).
+
+### Changed
+- README and CLAUDE.md identity table bumped to v3.3.0 "Operating".
+- VERSION.json bumped (was 3.1.0; skipped 3.2.0 in this file).
+- SYSTEM.md bumped (was 2.6.0).
+- Training/01-SYSTEM-OVERVIEW.md bumped (was 2.6.0).
+- CLAUDE.md §3 project structure now lists `compliance/` and `waves/`.
+- CLAUDE.md §4 skills table grew from 16 to 24 entries.
+- CLAUDE.md §5 agents from 13 to 14 (added `planner`).
+- `architecture/CONTEXT_MAP.md` — adds `compliance/` to allowed_write_paths.
+- `arib-session-end/SKILL.md` — replaces dangling `/arib-consolidate-memory`
+  reference with `/arib-memory-search`.
+
+### Honesty notes
+- Three MCP package names in `.mcp.json` are placeholders — verify
+  against npm before relying on them. Marked clearly in the `_comment`
+  field. Skills degrade gracefully without them.
+- Token cost remains far above the proposal's 8K target. The audit
+  script is committed so the gap stays visible. Trim recommendations
+  in commit `edf1acb` (Item B).
+
+---
+
 ## [3.2.0] "Honest" — 2026-05-08
 
 The "Honest" release closes the gap between CCM's marketing and what shipped on

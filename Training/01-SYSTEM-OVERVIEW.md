@@ -1,4 +1,4 @@
-# Claude Code Methodology v2.6.0 "Fortress" — System Overview & User Manual
+# Claude Code Methodology v3.3.0 "Operating" — System Overview & User Manual
 
 > **Complete Training Manual for the AI Development Operating System**
 
@@ -54,10 +54,10 @@ It works like an operating system for your project:
 
 | Attribute | Value |
 |-----------|-------|
-| **Version** | 2.6.0 |
-| **Codename** | "Fortress" |
-| **Release Date** | 2026-04-18 |
-| **Engineered By** | Abdullah × Claude Opus 4.6 |
+| **Version** | 3.3.0 |
+| **Codename** | "Operating" |
+| **Release Date** | 2026-05-08 |
+| **Engineered By** | Abdullah × Claude Opus 4.6 / 4.7 |
 | **License** | MIT |
 | **Status** | Production-Ready |
 
@@ -1180,10 +1180,10 @@ claude-code-methodology/
 
 | Attribute | Value |
 |-----------|-------|
-| **Current Version** | 2.6.0 |
-| **Codename** | "Fortress" |
-| **Release Date** | 2026-04-18 |
-| **Previous Version** | 2.5.0 |
+| **Current Version** | 3.3.0 |
+| **Codename** | "Operating" |
+| **Release Date** | 2026-05-08 |
+| **Previous Version** | 3.1.0 |
 | **Status** | Production-Ready |
 | **License** | MIT |
 

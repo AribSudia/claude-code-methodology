@@ -10,12 +10,12 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.0.0 "Aligned"                          |
-| Type              | AI Development Operating System          |
+| Version           | 3.3.0 "Operating"                        |
+| Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
-| Engineered By     | Abdullah x Claude Opus 4.6               |
+| Engineered By     | Abdullah x Claude Opus 4.6 / 4.7         |
 | Created           | 2026-04-15                               |
-| Last Updated      | 2026-04-19                               |
+| Last Updated      | 2026-05-08                               |
 | Language Support   | Universal (RTL, LTR, CJK, Indic, Bidi)  |
 | Methodology       | 5-Layer Architecture + Persistent Memory |
 | Status            | Production-Ready                         |
@@ -96,68 +96,90 @@ your-project/
 |   |-- agents/                        <- 13 specialist subagents
 |   |-- agent-memory/                  <- Persistent memory per agent
 |   +-- output-styles/                 <- Custom output styles
-|-- io/                                <- I/O Channel (inter-agent comms)
-|-- memory/                            <- Persistent memory (6 files)
-|-- architecture/                      <- Layer A - what to build
+|-- io/                                <- I/O Channel (inter-agent comms + ledger)
+|-- memory/                            <- Persistent memory (7 files)
+|-- architecture/                      <- Layer A - what to build (incl. AGENT_ARCHITECTURE, DESIGN_SYSTEM)
 |-- implementation/                    <- Layer B - how to start coding
-|-- operations/                        <- How work gets done
-|-- hooks/                             <- Hook definitions + docs
+|-- operations/                        <- How work gets done (incl. AUTONOMY_MODE)
+|-- waves/                             <- Multi-session delivery overlay (PLAN/REPORT/HISTORY)
+|-- compliance/                        <- Framework alignment (OWASP/GDPR/ISO/SOC2/PDPL) + honesty principle
+|-- hooks/                             <- Hook protocol docs (executables in .claude/hooks/)
 |-- core/                              <- Living project context (user files)
 |-- bootstrap/                         <- 5 project instantiation methods
 |-- reference/                         <- Read-only reference material
-+-- scripts/                           <- Automation scripts
++-- scripts/                           <- Automation scripts (install-hooks, token-audit, memory-export)
 ```
 
 ---
 
 ## 4. Skills (branded /arib-*)
 
-| Skill                  | Category | Purpose                                   |
-|------------------------|----------|-------------------------------------------|
-| /arib-session-start    | Session  | Initialize session, read context           |
-| /arib-session-end      | Session  | Close session, update memory, commit       |
-| /arib-io               | Session  | Process I/O Channel (Cowork bridge)        |
-| /arib-dev-feature      | Dev      | New feature with branch + TDD              |
-| /arib-dev-debug        | Dev      | Scientific debugging (3 hypotheses)        |
-| /arib-dev-review       | Dev      | Code review with quality gates             |
-| /arib-check-deploy     | Check    | Pre-deployment 7-phase verification        |
-| /arib-check-services   | Check    | Infrastructure health (adaptive)           |
-| /arib-check-reality    | Check    | Scan for mock/fake data                    |
-| /arib-check-migrate    | Check    | DB migration safety review                 |
-| /arib-check-perf       | Check    | Performance audit                          |
-| /arib-check-deps       | Check    | Dependency audit                           |
-| /arib-check-a11y       | Check    | Accessibility WCAG 2.1 AA                  |
-| /arib-docs-api         | Docs     | API documentation + OpenAPI                |
-| /arib-docs-generate    | Docs     | Generate documentation                     |
-| /arib-docs-language    | Docs     | i18n/RTL/LTR compliance                    |
+| Skill                       | Category   | Purpose                                              |
+|-----------------------------|------------|------------------------------------------------------|
+| /arib-session-start         | Session    | Initialize session, read context                     |
+| /arib-session-end           | Session    | Close session, update memory, commit                 |
+| /arib-io                    | Session    | Process I/O Channel (Cowork bridge)                  |
+| /arib-memory-search         | Session    | Semantic search across memory (claude-mem + grep)    |
+| /arib-dev-feature           | Dev        | New feature with branch + TDD                        |
+| /arib-dev-debug             | Dev        | Scientific debugging (3 hypotheses)                  |
+| /arib-dev-review            | Dev        | Code review with parallel agent fan-out              |
+| /arib-wave-start            | Wave       | Start a multi-session wave (architect + planner)     |
+| /arib-wave-end              | Wave       | Close a wave (deep-audit gate + stakeholder report)  |
+| /arib-deep-audit            | Audit      | 21-section wave-end audit + IMPLEMENT-FROM-FILE      |
+| /arib-check-deploy          | Check      | Pre-deployment 7-phase verification + TestSprite     |
+| /arib-check-services        | Check      | Infrastructure health (adaptive)                     |
+| /arib-check-reality         | Check      | Scan for mock/fake data                              |
+| /arib-check-migrate         | Check      | DB migration safety review                           |
+| /arib-check-perf            | Check      | Performance audit                                    |
+| /arib-check-deps            | Check      | Dependency audit                                     |
+| /arib-check-a11y            | Check      | Accessibility WCAG 2.1 AA                            |
+| /arib-check-design          | Check      | Design system contract (tokens, components)          |
+| /arib-check-arabic          | Check      | Arabic/RTL audit (typography, mirroring, MENA)       |
+| /arib-check-security        | Check      | OWASP Top 10 + supply chain                          |
+| /arib-check-compliance      | Check      | Framework alignment (OWASP/GDPR/ISO/SOC2/PDPL)       |
+| /arib-docs-api              | Docs       | API documentation + OpenAPI                          |
+| /arib-docs-generate         | Docs       | Generate documentation                               |
+| /arib-docs-language         | Docs       | i18n/RTL/LTR compliance (generic)                    |
 
 ---
 
-## 5. Agents (13 specialists)
+## 5. Agents (14 specialists)
 
 Agents auto-activate based on task type. Each has its own context file
-in `.claude/agents/`. See `.claude/rules/agents.md` for activation table.
+in `.claude/agents/`. See `architecture/AGENT_ARCHITECTURE.md` for the
+full read/write surface table and parallel-dispatch governance.
+
+The 14 agents: `architect`, `code-reviewer`, `security-auditor`,
+`test-engineer`, `debugger`, `reality-auditor`, `database-guardian`,
+`performance`, `accessibility`, `api-docs`, `language`,
+`refactor-specialist`, `deploy-guardian`, `planner`.
 
 ---
 
 ## 6. Where to Find Everything
 
-| Need                    | Read                                         |
-|-------------------------|----------------------------------------------|
-| Hard rules              | `architecture/CONSTRAINTS.md`                |
-| Tech decisions          | `architecture/DECISIONS.md`                  |
-| API routes              | `implementation/API_ENDPOINTS.md`            |
-| Session protocol        | `.claude/rules/session-protocol.md`          |
-| I/O Channel details     | `.claude/rules/io-channel.md` + `io/IO_PROTOCOL.md` |
-| Memory protocol         | `.claude/rules/memory.md` + `memory/MEMORY_PROTOCOL.md` |
-| Hook setup              | `.claude/rules/hooks.md` + `hooks/HOOKS_PROTOCOL.md` |
-| Agent definitions       | `.claude/agents/*.md`                        |
-| Skill definitions       | `.claude/skills/*/SKILL.md`                  |
-| Bootstrap new project   | `bootstrap/BOOTSTRAP.md`                     |
-| Reverse-engineer project| `bootstrap/REVERSE_BOOTSTRAP.md`             |
-| Upgrade from older CCM  | `bootstrap/UPGRADE_PROTOCOL.md`              |
-| Project context files   | `core/` (your specs, designs, schemas)       |
-| Full methodology guide  | `reference/MASTER_GUIDE.md`                  |
+| Need                       | Read                                         |
+|----------------------------|----------------------------------------------|
+| Hard rules                 | `architecture/CONSTRAINTS.md`                |
+| Tech decisions             | `architecture/DECISIONS.md`                  |
+| Agent dispatch governance  | `architecture/AGENT_ARCHITECTURE.md`         |
+| Design system contract     | `architecture/DESIGN_SYSTEM.md`              |
+| API routes                 | `implementation/API_ENDPOINTS.md`            |
+| Session protocol           | `.claude/rules/session-protocol.md`          |
+| I/O Channel details        | `.claude/rules/io-channel.md` + `io/IO_PROTOCOL.md` |
+| Memory protocol            | `.claude/rules/memory.md` + `memory/MEMORY_PROTOCOL.md` |
+| Hook setup                 | `.claude/rules/hooks.md` + `hooks/HOOKS_PROTOCOL.md` + `Training/04-HOOKS-MANUAL.md` |
+| Compliance frameworks      | `compliance/README.md` + `compliance/COMPLIANCE.md` + `compliance/frameworks/*.md` |
+| Wave delivery              | `waves/README.md` + `arib-wave-start` / `arib-wave-end` skills |
+| Autonomy mode              | `operations/AUTONOMY_MODE.md`                |
+| Token cost on session start| run `./scripts/token-audit.sh`               |
+| Agent definitions          | `.claude/agents/*.md`                        |
+| Skill definitions          | `.claude/skills/*/SKILL.md`                  |
+| Bootstrap new project      | `bootstrap/BOOTSTRAP.md`                     |
+| Reverse-engineer project   | `bootstrap/REVERSE_BOOTSTRAP.md`             |
+| Upgrade from older CCM     | `bootstrap/UPGRADE_PROTOCOL.md`              |
+| Project context files      | `core/` (your specs, designs, schemas)       |
+| Full methodology guide     | `reference/MASTER_GUIDE.md`                  |
 
 ---
 
