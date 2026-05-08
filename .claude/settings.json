@@ -61,6 +61,17 @@
           }
         ]
       }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/notification.sh",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "context": {

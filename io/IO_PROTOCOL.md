@@ -362,5 +362,68 @@ io/archive/
 
 ---
 
+## Transport + Ledger Split (v3.2 — Item #4)
+
+The original I/O Channel (sections above) used the filesystem for both
+**transport** (inter-agent message-passing) and **audit** (the historical
+record). Polling-based transport is slow and cannot pre-empt a running tool
+call. v3.2 separates the two concerns.
+
+### Transport — push-based (configurable)
+
+```
+transport: cowork | webhook | mcp-server | filesystem
+```
+
+| Transport | When to use | How |
+|-----------|-------------|-----|
+| `cowork` (preferred when configured) | Production multi-agent runs | `cowork` MCP in `.mcp.json`; set `COWORK_TOKEN` |
+| `webhook` | Lightweight push without an MCP | Set `CCM_NOTIFY_WEBHOOK` to any HTTPS endpoint |
+| `mcp-server` | Custom MCP transport | Wire your server in `.mcp.json` and set `CCM_TRANSPORT=mcp-server` |
+| `filesystem` (default fallback) | Solo work, offline, or no MCP available | The `io/requests/` ↔ `io/results/` flow remains as today |
+
+The session-start hook detects which transports are reachable. The pre-tool-use
+and stop hooks honor `notify_cowork` (`.claude/hooks/lib/common.sh`); to use a
+generic webhook instead, set `CCM_COWORK_WEBHOOK` to your endpoint.
+
+### Ledger — `io/` as immutable record
+
+Regardless of transport, every session-end writes a markdown ledger entry to
+`io/ledger/session-<ts>.md` (this already ships in v3.2 Item A). When push
+transport is configured, the ledger also captures **who pushed what when** so
+the audit trail is complete:
+
+```text
+io/ledger/session-<ts>.md
+  - branch, start_sha, end_sha, files_changed
+  - transport: <cowork|webhook|filesystem>
+  - notifications_sent: [event, ts]...
+  - notifications_received: [from, event, ts]...
+```
+
+### Notification routing (Notification hook)
+
+The optional `Notification` hook can route push events into any chat surface
+so the human stays informed while away from the session. Recommended channels:
+
+- **Slack / Discord / Telegram** — incoming-webhook URL via `CCM_NOTIFY_WEBHOOK`.
+- **WhatsApp Business** — via the standard Cloud API; the same webhook env var.
+- **Email** — via any SMTP relay; not recommended for per-tool-call signals
+  (too noisy) — only for session-end and BLOCK events.
+
+Routing is **opt-in**. Empty env var = silent. The Notification hook does not
+ship with a default endpoint; this is deliberate so CCM never leaks anything
+to a third party without explicit configuration.
+
+### Failure semantics
+
+- If push transport is configured but unreachable, the hooks degrade to
+  filesystem mode and log the failure. They do not retry indefinitely.
+- The ledger is written regardless. Audit trail survives transport failure.
+- If both push and filesystem fail (extreme — disk full or permission lost),
+  the hooks return a clear error to the user. They never silently drop.
+
+---
+
 > **End of I/O Protocol**
 > The I/O Channel is the nervous system. Keep it clean, keep it honest, keep it flowing.

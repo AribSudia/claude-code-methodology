@@ -93,16 +93,45 @@ is_test_or_fixture_path() {
   return 1
 }
 
-# ---------- CoWork notification (best-effort, non-blocking, opt-in) ----------
-# Set CCM_COWORK_WEBHOOK to enable. Empty/unset => no-op.
-notify_cowork() {
+# ---------- Notification fan-out (best-effort, non-blocking, opt-in) ----------
+# Sends a structured event to whichever transports are configured. All optional;
+# unset env vars => no-op for that transport. Each transport runs independently
+# and never blocks or fails the calling hook.
+#
+#   CCM_COWORK_WEBHOOK    — CoWork (Item #4 preferred transport)
+#   CCM_NOTIFY_WEBHOOK    — generic webhook (Slack/Discord/Telegram/etc.)
+#
+# Both can be set simultaneously; events fan out to each.
+notify_cowork() {  # name kept for back-compat; routes to all configured transports
   local event="$1"
   local detail="$2"
-  local webhook="${CCM_COWORK_WEBHOOK:-}"
-  [[ -z "$webhook" ]] && return 0
-  curl -fsS -m 3 -X POST "$webhook" \
-    -H 'Content-Type: application/json' \
-    -d "$(jq -nc --arg e "$event" --arg d "$detail" --arg ts "$(date -u +%FT%TZ)" \
-        '{event:$e, detail:$d, ts:$ts, source:"ccm-hook"}')" \
-    >/dev/null 2>&1 || true
+  local payload
+  payload="$(jq -nc \
+      --arg e "$event" \
+      --arg d "$detail" \
+      --arg ts "$(date -u +%FT%TZ)" \
+      --arg src "ccm-hook" \
+      --arg hook "${HOOK_NAME:-unknown}" \
+      '{event:$e, detail:$d, ts:$ts, source:$src, hook:$hook}' 2>/dev/null)" \
+      || return 0
+
+  local sent=0
+  for var in CCM_COWORK_WEBHOOK CCM_NOTIFY_WEBHOOK; do
+    local url="${!var:-}"
+    [[ -z "$url" ]] && continue
+    curl -fsS -m 3 -X POST "$url" \
+      -H 'Content-Type: application/json' \
+      -d "$payload" >/dev/null 2>&1 || true
+    sent=$(( sent + 1 ))
+  done
+
+  # Optional ledger trace of notifications sent (best-effort).
+  if (( sent > 0 )); then
+    local notif_log="${CCM_ROOT}/io/ledger/.notifications.jsonl"
+    mkdir -p "$(dirname "$notif_log")"
+    printf '%s\n' "$payload" >> "$notif_log" 2>/dev/null || true
+  fi
 }
+
+# Generic notification helper (clearer name; same behavior).
+notify() { notify_cowork "$@"; }
