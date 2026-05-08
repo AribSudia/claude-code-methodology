@@ -1,0 +1,1 @@
+{"tool_name":"Write","tool_input":{"file_path":"src/components/Button.tsx","content":"export const Button = () => <button style={{color: \"#ff0000\"}}>x</button>;"}}

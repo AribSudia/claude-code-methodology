@@ -399,7 +399,7 @@ Every Claude Code session follows this protocol:
 ## What's Inside (Complete File Tree)
 
 ```
-claude-code-methodology/                  ← 142 files · 58,000+ lines
+claude-code-methodology/                  ← v3.3 "Operating" — see VERSION.json for stats
 │
 ├── CLAUDE.md                             ← The Master Brain (179 lines)
 ├── SYSTEM.md                             ← Full system spec (135 features)
@@ -598,6 +598,23 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.1 | Deep Skills | All 16 skills enriched to Anthropic-grade depth |
 | v3.2 | Honest | Real hook enforcement, token-audit script, README rewrite — docs match disk |
 | **v3.3** | **Operating** | **8 deferred items shipped: hybrid memory, real I/O transport, deep-audit, waves, design system, TestSprite gate, autonomy mode, compliance (OWASP/GDPR/ISO/SOC2/PDPL)** |
+
+---
+
+## External Standards & Tools Disclaimer
+
+This methodology references compliance frameworks (OWASP, GDPR, ISO 27001,
+SOC 2, PDPL/NCA/SDAIA) and third-party tools (Claude Mem, CoWork,
+TestSprite) for educational guidance and integration stubs.
+
+**References do not constitute certification, compliance assertion, or
+endorsement** by any standards body or vendor. CCM produces *alignment
+reports* with a level (NONE / PARTIAL / STRONG) — never "compliant"
+claims. Certification, attestation, and DPO functions remain with
+auditors and humans.
+
+See [`compliance/README.md`](compliance/README.md) for the honesty
+principle and what CCM can / cannot do per framework.
 
 ---
 

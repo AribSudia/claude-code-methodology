@@ -36,8 +36,10 @@ echo ""
 
 $DRY_RUN && echo -e "${YELLOW}DRY RUN — no files will be moved${NC}\n"
 
-# Process each result file
-for result_file in "$RESULTS_DIR"/*-result.md 2>/dev/null; do
+# Process each result file. nullglob makes the loop body skip when no
+# files match (rather than iterating over the literal glob).
+shopt -s nullglob
+for result_file in "$RESULTS_DIR"/*-result.md; do
   [ -f "$result_file" ] || continue
 
   result_name=$(basename "$result_file")

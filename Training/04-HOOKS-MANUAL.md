@@ -61,6 +61,37 @@ repo root. Hard-denied paths cannot be overridden through this list.
 - `io/hook-logs/YYYY-MM-DD.log` — every hook invocation. **Gitignored** (high volume).
 - `io/ledger/session-<timestamp>.md` — per-session summary. **Committed** (this is the trail).
 
+### Testing a hook before shipping
+
+CCM ships a regression suite under `tests/fixtures/payloads/` and
+`scripts/test-hooks.sh`. Run it before committing any hook change:
+
+```bash
+./scripts/test-hooks.sh
+```
+
+The suite asserts:
+- Each documented guard fires on its negative case (e.g., `rm -rf /`,
+  real secrets, eval on user input, hex literals in components).
+- Each documented exemption holds (e.g., test fixtures, tokens/theme
+  paths).
+- Every hook script passes `bash -n` (syntax check).
+- `.claude/settings.json` parses as JSON and has the expected hook shape.
+- Autonomy guard no-ops when `CCM_AUTONOMY` is unset and activates when set.
+
+**Adding a new guard:** add a fixture payload under
+`tests/fixtures/payloads/` (one positive, one negative case is the
+minimum), then add an assertion to `scripts/test-hooks.sh`. CI runs the
+suite on every change to `.claude/hooks/**`, `.claude/settings.json`,
+or `scripts/**`.
+
+**Local debugging tip:** use `bash -x` to trace a hook against a
+fixture:
+
+```bash
+cat tests/fixtures/payloads/pretooluse-bash-dangerous.json | bash -x .claude/hooks/pre-tool-use.sh
+```
+
 ### Bypassing — when you must
 
 1. **Update CONTEXT_MAP** for legitimate new directories.

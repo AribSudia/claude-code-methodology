@@ -1,0 +1,1 @@
+{"tool_name":"Write","tool_input":{"file_path":"tests/fixtures/keys.test.ts","content":"const KEY = \"sk-ant-api03-1234567890abcdefghijklmnop\";"}}

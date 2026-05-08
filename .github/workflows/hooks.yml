@@ -1,0 +1,43 @@
+name: Hooks regression
+
+on:
+  pull_request:
+    paths:
+      - '.claude/hooks/**'
+      - '.claude/settings.json'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'architecture/CONTEXT_MAP.md'
+      - 'architecture/DESIGN_SYSTEM.md'
+  push:
+    branches:
+      - main
+    paths:
+      - '.claude/hooks/**'
+      - '.claude/settings.json'
+      - 'scripts/**'
+      - 'tests/**'
+
+jobs:
+  test-hooks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y jq curl
+
+      - name: Make hooks executable
+        run: chmod +x .claude/hooks/*.sh scripts/*.sh
+
+      - name: Run regression suite
+        run: ./scripts/test-hooks.sh
+
+      - name: Verify settings.json is valid JSON
+        run: jq empty .claude/settings.json
+
+      - name: Verify .mcp.json is valid JSON
+        run: jq empty .mcp.json
+
+      - name: Token audit (informational)
+        run: ./scripts/token-audit.sh || true
