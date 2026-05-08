@@ -68,3 +68,6 @@ io/hook-logs/
 io/.session-start-sha
 # NOTE: io/ledger/ is intentionally NOT ignored — it's the audit trail.
 # Rotate old ledgers manually if they accumulate.
+
+# Autonomy mode runtime state (Item #10) — ephemeral per-session counters.
+io/.autonomy/

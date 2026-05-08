@@ -47,6 +47,11 @@
             "type": "command",
             "command": ".claude/hooks/pre-tool-use.sh",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/autonomy-guard.sh",
+            "timeout": 5
           }
         ]
       }
