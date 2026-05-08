@@ -20,7 +20,7 @@ work durable.
 > support, **not** as bash-enforceable. CCM never claims certification.
 > See [CHANGELOG](CHANGELOG.md), [compliance/README.md](compliance/README.md)
 > for the honesty principle, and the original
-> [proposal + counter-proposal](CCM-v3.2-Enforced-Proposal.md) for context.
+> [proposal + counter-proposal](proposals/archive/) for context.
 
 ```
  ╔═══════════════════════════════════════════════════════════════════╗

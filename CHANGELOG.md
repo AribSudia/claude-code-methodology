@@ -127,7 +127,7 @@ architecture documentation (parallel review is a documented capability rather
 than a buried possibility).
 
 Eight items from the v3.2 "Enforced" proposal were deliberately deferred — see
-`CCM-v3.2-Minimal-Counter-Proposal.md` for the rationale.
+`proposals/archive/CCM-v3.2-Minimal-Counter-Proposal.md` for the rationale.
 
 ### Added — Hooks Enforcement Layer (Item A)
 - `.claude/hooks/lib/common.sh` — shared helpers (logging, JSON payload parsing,

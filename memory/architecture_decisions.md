@@ -35,7 +35,7 @@
 ## v3.3 — Override of v3.2 "Honest" counter-proposal — 2026-05-08
 
 - **Status**: Accepted
-- **Context**: v3.2 "Honest" (commits f5a28ee → 86cd9f0) shipped a counter-proposal that explicitly deferred items #3, #4, #5, #6, #7, #8, #9, #10 of `CCM-v3.2-Enforced-Proposal.md`. The maintainer subsequently reversed the deferral and asked for the full proposal scope, with Item #7 expanded to include ISO 27001, SOC 2, GDPR, and OWASP enforcement.
+- **Context**: v3.2 "Honest" (commits f5a28ee → 86cd9f0) shipped a counter-proposal that explicitly deferred items #3, #4, #5, #6, #7, #8, #9, #10 of `proposals/archive/CCM-v3.2-Enforced-Proposal.md`. The maintainer subsequently reversed the deferral and asked for the full proposal scope, with Item #7 expanded to include ISO 27001, SOC 2, GDPR, and OWASP enforcement.
 - **Decision**: Honor the override. Ship all 8 deferred items as v3.3.0 "Operating" (commits c48d9ee → 709baa7) with the counter-proposal's safeguards preserved: every new MCP stays opt-in via env var; ISO 27001 and SOC 2 docs frame as alignment-only (never "compliant"); compliance/README.md states the honesty principle explicitly; OWASP enforcement ships as real hooks.
 - **Why this matters in memory**: Future sessions reading the counter-proposal file alone might think items 3-10 were skipped. They were not. The override happened, was deliberate, and shipped with safeguards. See `architecture/DECISIONS.md` ADR-011 for the full record.
 - **Audit trail**: A 20-agent parallel review verified the implementation against the proposal post-shipment. Phase 1-6 cleanup commits (6b0b5f1+) closed the gaps the audit surfaced.
