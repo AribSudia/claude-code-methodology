@@ -221,6 +221,54 @@ These operations require explicit human review and sign-off before deployment:
 
 ---
 
+## v3.3 "Operating" — Methodology-level constraints
+
+These constraints govern CCM itself (not the projects it overlays). Apply
+when modifying the methodology repo or shipping a new release.
+
+1. **Hooks fail closed on unknown patterns.** A hook that cannot decide
+   whether to block must block, not allow. Bypass paths are documented
+   in `Training/04-HOOKS-MANUAL.md`; silent fail-open is forbidden.
+
+2. **MCP servers are opt-in via env var.** No MCP may be a hard
+   dependency of any skill, hook, or script. Every MCP-using path must
+   degrade gracefully (markdown grep, filesystem polling, local
+   checklist) when the MCP is absent.
+
+3. **`compliance/` claims alignment, never certification.** The skills
+   `/arib-check-compliance` and `/arib-check-arabic` output "alignment
+   level: <level>" reports. The strings "compliant", "certified",
+   "attested" must not appear in any framework doc as a CCM claim.
+
+4. **Wave merges to main require an audit hash.** The
+   `pre-tool-use.sh` wave-merge gate enforces this. The only sanctioned
+   way to produce the hash is `/arib-deep-audit` (called by
+   `/arib-wave-end`). Disabling the gate requires editing the hook.
+
+5. **Autonomy mode requires preconditions checklist.** Documented in
+   `operations/AUTONOMY_MODE.md`. The `autonomy-guard.sh` hook is a
+   no-op unless `CCM_AUTONOMY=1`; with the env var set, all guardrails
+   are mandatory (wall-clock, call rate, BLOCK rate, push gate).
+
+6. **Documentation matches disk.** If `hooks/HOOKS_PROTOCOL.md` claims
+   a hook exists, the hook must exist as an executable in
+   `.claude/hooks/`. Same for skills, agents, and any "enforced rule".
+   This constraint is the v3.2 "Honest" principle made permanent.
+
+7. **Token-cost transparency.** `scripts/token-audit.sh` measures
+   session-start cost. The README must surface the current measurement.
+   Lines-of-markdown is not a quality metric.
+
+8. **MCP placeholder packages are flagged.** Each entry in `.mcp.json`
+   has a `_package_status` field. Any entry not marked `verified` must
+   carry a `PLACEHOLDER` note explaining why.
+
+9. **No experimental Claude Code flags as defaults.** Flags like
+   `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` may be documented but must
+   never be required for CCM to function.
+
+---
+
 ## Review Schedule
 
 Last reviewed: [DATE]  

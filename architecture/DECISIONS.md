@@ -361,6 +361,226 @@ Requirements:
 
 ---
 
+# ADR-004: Hook Enforcement Layer (v3.2)
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** v3.1 documented a hooks layer in `hooks/HOOKS_PROTOCOL.md`,
+but `.claude/hooks/` was empty on disk. CONSTRAINTS.md was honor-system —
+the model could violate it and nothing stopped the tool call. Reviewers
+running `ls .claude/hooks/` after reading the README would see the gap
+immediately, eroding credibility.
+
+**Decision.** Ship real bash hook executables under `.claude/hooks/`.
+Specifically: `lib/common.sh` (shared helpers), `pre-tool-use.sh` (path
+scoping + secret detection + dangerous-bash blocklist), `pre-commit.sh`
+(credential files, secrets, debug stmts, oversize), `session-start.sh`
+(CLAUDE.md hash, branch warn, capture start SHA), `stop.sh` (per-session
+ledger to `io/ledger/`), `notification.sh` (push transport fan-out).
+Wired in `.claude/settings.json`. Installer: `scripts/install-hooks.sh`.
+
+**Consequences.** Advisory rules become enforced rules. Bypasses require
+either updating CONTEXT_MAP, running outside Claude Code, or `git commit
+--no-verify` (audit-trail-leaving). Smoke tests pass. The whole release
+ladder (waves, autonomy, deep-audit gates) depends on this layer.
+
+**Alternatives rejected.** "Document only" — the v3.1 status quo. Loses
+credibility every time a reviewer runs `ls`. "External hook framework"
+(e.g., husky-style) — unnecessary dependency for what's essentially
+six bash files.
+
+---
+
+# ADR-005: Hybrid Memory Architecture
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** v3.1 stored project memory as seven markdown files. This works
+fine at session 5 and breaks down past ~50 sessions because grep doesn't
+scale on novel paraphrases ("we decided to drop kafka" vs "kafka removal").
+
+**Decision.** Add an *optional* semantic layer (`claude-mem` MCP) that
+provides vector retrieval, with the markdown files preserved as the
+authoritative audit trail. `scripts/memory-export.sh` exports the
+semantic store to `memory/semantic_export.md` nightly (or on Stop). The
+`/arib-memory-search` skill queries the MCP first, falls back to grep if
+the MCP is unavailable.
+
+**Consequences.** Long-horizon recall improves; markdown stays the source
+of truth (regulated-data projects can opt out of the MCP entirely without
+losing function). Adds a vendor dependency (claude-mem) but it stays
+opt-in via env var.
+
+**Alternatives rejected.** "Replace markdown with vectors" — loses the
+human-readable audit trail. "Build our own embedding store" — out of
+scope for a methodology repo.
+
+---
+
+# ADR-006: Wave Delivery Overlay
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** v3.1 operated at session granularity. Multi-week delivery
+had no exit gate — sessions ended, features landed, but nothing forced
+"did we ship what we said we'd ship" review.
+
+**Decision.** Add a wave concept: `waves/<name>/` containing a PLAN.md
+(scope, exit criteria, risk register) and REPORT.md (stakeholder-facing,
+generated at end). Skills `/arib-wave-start` and `/arib-wave-end` manage
+the lifecycle. The pre-tool-use hook blocks `git push|merge` to main
+from `wave/*` branches without an audit hash from `/arib-deep-audit`.
+
+**Consequences.** CCM becomes a delivery framework, not just a session
+helper. Waves produce stakeholder artifacts. Single-session work and
+hotfixes still bypass the overlay (no `wave/*` prefix = no gate).
+
+**Alternatives rejected.** "Quarterly review without git enforcement" —
+honor-system; same failure mode v3.2 Item A fixed for hooks. "Force every
+branch to be a wave" — too heavy for routine work.
+
+---
+
+# ADR-007: Compliance Honesty Principle
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** The expanded Item #7 added ISO 27001, SOC 2, GDPR, OWASP,
+and PDPL alignment. Tempting to claim CCM "ensures compliance" — but
+ISO 27001 is an ISMS, SOC 2 is an attestation over a 6-12 month
+observation period, and GDPR has many operational pieces no script can
+enforce. Pretending otherwise re-creates the marketing/disk gap that
+v3.2 "Honest" was specifically designed to close.
+
+**Decision.** `compliance/README.md` states the honesty principle
+explicitly: CCM cannot certify, attest, or replace a DPO. It produces
+*alignment reports* with a level (NONE / PARTIAL / STRONG), and contributes
+*evidence artifacts* (audit trails, deps audits, secrets-block logs).
+Each framework doc lists code-checkable rules separately from operational
+rules. The `/arib-check-compliance` skill never says "compliant."
+
+**Consequences.** CCM is honest with users and auditors. The OWASP layer
+ships real hooks (eval/Function/exec blocks, PII-in-logs detection)
+because OWASP is genuinely code-checkable. The ISO/SOC2 layers ship as
+alignment docs only.
+
+**Alternatives rejected.** "Claim compliance" — false advertising; legal
+risk; loses credibility on first audit. "Skip the operational frameworks
+entirely" — the user explicitly asked for them.
+
+---
+
+# ADR-008: Design System Token Discipline
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** Item #8 of the proposal asked for an enforceable design
+system. The proposal's original sketch had a YAML-ish config block in
+`architecture/DESIGN_SYSTEM.md` that the hook would parse. Bash-parsing
+YAML is finicky; smoke tests showed pattern-extraction failures.
+
+**Decision.** Hardcode the rules in `.claude/hooks/pre-tool-use.sh`
+(forbidden patterns: hex/rgb/hsl literals; exempt paths: tokens/theme/
+generated/test). `architecture/DESIGN_SYSTEM.md` documents the contract
+for humans; the hook is the machine truth. Override by editing the hook
+directly.
+
+**Consequences.** Fewer moving parts; deterministic enforcement; clearer
+override path. Loses runtime configurability — projects with materially
+different design rules must edit the hook (acceptable for a methodology
+repo where forking is encouraged).
+
+**Alternatives rejected.** "Re-attempt YAML config block" — fragile per
+smoke testing. "Move enforcement to a dedicated linter" — extra
+dependency, separate run cycle, worse failure mode (hook is fail-closed
+on tool call, linter fails-open until run).
+
+---
+
+# ADR-009: Autonomy Mode Protocol
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** Long autonomous Claude Code runs (`--dangerously-skip-
+permissions` + `caffeinate`) trade human-in-loop approval for tighter
+machine-enforced guardrails. Without explicit guardrails, autonomy is
+unsafe; with them, it's productive.
+
+**Decision.** Add `operations/AUTONOMY_MODE.md` (preconditions,
+guardrails, post-conditions) and `.claude/hooks/autonomy-guard.sh`
+(runtime enforcement). Hook is a fast-path no-op unless `CCM_AUTONOMY=1`
+is set; safe to ship in the always-on PreToolUse chain. Guardrails:
+wall-clock cap (4h default), calls-since-commit cap (50 default), BLOCK
+rate cap (5/10min default), unsanctioned push to main refused.
+
+**Consequences.** Long autonomous runs become safe and observable.
+Wave-end self-audit required before main-branch commits land — wave
+overlay and autonomy compose cleanly.
+
+**Alternatives rejected.** "Ship autonomy without guardrails" — unsafe.
+"Require manual setup before every run" — defeats autonomy purpose.
+
+---
+
+# ADR-010: MCP Placeholder Strategy
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** Items #3, #4, #9 reference three MCP servers (claude-mem,
+cowork, testsprite). Verifying npm package names mid-implementation
+revealed: claude-mem ships unscoped (not `@claude-mem/mcp-server`),
+testsprite ships as `@testsprite/testsprite-mcp` (not `@testsprite/mcp`),
+and `@anthropic/cowork-mcp` does not exist on npm at all.
+
+**Decision.** Use the *real* names where they exist (claude-mem,
+testsprite). For cowork: keep the placeholder name in `.mcp.json` but
+mark `_package_status: PLACEHOLDER` in the entry; rely on
+`CCM_NOTIFY_WEBHOOK`/`CCM_COWORK_WEBHOOK` for actual notification fan-out.
+Mark each MCP entry with a `_package_status` field documenting verification
+state.
+
+**Consequences.** Activating an MCP requires the user to verify the
+package still exists at install time. Documentation is honest about
+what's verified vs. placeholder. Notifications work without the cowork
+MCP via plain webhooks.
+
+**Alternatives rejected.** "Drop cowork entirely" — Item #4 is real and
+the proposal specifically asks for CoWork integration. "Ship a custom
+cowork MCP" — out of scope; we don't own that surface.
+
+---
+
+# ADR-011: Override of v3.2 "Honest" Counter-Proposal
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** v3.2 "Honest" was an explicit counter-proposal to the
+original Enforced proposal. It deferred 8 of 11 items on the grounds of
+scope creep and vendor pull-in. The maintainer agreed and v3.2 shipped
+with only Items A/B/C (hooks, token discipline, agent architecture).
+
+After v3.2 landed, the maintainer reversed the deferral and asked for
+the full 8 items with Item #7 expanded to include ISO 27001, SOC 2,
+GDPR, and OWASP enforcement. The work shipped as commits c48d9ee through
+709baa7.
+
+**Decision.** Honor the override but preserve all counter-proposal
+safeguards: every new MCP stays opt-in via env var; ISO 27001 and SOC 2
+docs frame as alignment-only; OWASP enforcement ships as real hooks
+(eval/Function/exec blocks); compliance/README.md states the honesty
+principle explicitly; CCM never claims certification.
+
+**Consequences.** v3.3 "Operating" ships as the union of the original
+Enforced proposal scope and the Honest counter-proposal's safeguards.
+The counter-proposal file remains on disk as a record of the original
+deferral and its reasoning.
+
+**Alternatives considered.** "Hold to the counter-proposal deferral" —
+maintainer's call, not mine. "Ship without the safeguards" — would
+re-create the docs/disk gap v3.2 was specifically designed to close.
+
+---
+
 ## Quick Reference: All ADRs
 
 | ID | Title | Status | Date |
@@ -368,6 +588,14 @@ Requirements:
 | ADR-001 | Project Architecture Pattern (Modular Monolith) | Accepted | 2024-01-15 |
 | ADR-002 | Authentication Strategy (JWT + HttpOnly Refresh) | Accepted | 2024-01-20 |
 | ADR-003 | Database Selection (PostgreSQL + Redis) | Accepted | 2024-02-01 |
+| ADR-004 | Hook Enforcement Layer (v3.2) | Accepted | 2026-05-08 |
+| ADR-005 | Hybrid Memory Architecture (claude-mem MCP + markdown) | Accepted | 2026-05-08 |
+| ADR-006 | Wave Delivery Overlay | Accepted | 2026-05-08 |
+| ADR-007 | Compliance Honesty Principle | Accepted | 2026-05-08 |
+| ADR-008 | Design System Token Discipline | Accepted | 2026-05-08 |
+| ADR-009 | Autonomy Mode Protocol | Accepted | 2026-05-08 |
+| ADR-010 | MCP Placeholder Strategy | Accepted | 2026-05-08 |
+| ADR-011 | Override of v3.2 "Honest" Counter-Proposal | Accepted | 2026-05-08 |
 
 ---
 

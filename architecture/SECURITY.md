@@ -4,6 +4,35 @@ This document defines the security requirements for [PROJECT], including authent
 
 ---
 
+## CCM v3.3 enforcement layer (methodology-level)
+
+The Claude Code Methodology ships an active enforcement layer that
+reduces some classes of security risk at the *development* layer. This is
+**not a substitute** for the application-level controls below — it
+catches a subset of mistakes before they hit a commit.
+
+| Risk | Enforcement | Where |
+|------|-------------|-------|
+| Hardcoded secrets in code | Write-time block (8 patterns) | `.claude/hooks/pre-tool-use.sh` |
+| Hardcoded secrets in commits | Pre-commit block | `.claude/hooks/pre-commit.sh` |
+| `eval()` on non-literals (OWASP A03) | Write-time block | `.claude/hooks/pre-tool-use.sh` |
+| `new Function()` constructor | Write-time block | `.claude/hooks/pre-tool-use.sh` |
+| Template-literal `exec()` | Write-time block | `.claude/hooks/pre-tool-use.sh` |
+| Writes outside `allowed_write_paths` | Path scoping | `.claude/hooks/pre-tool-use.sh` + `architecture/CONTEXT_MAP.md` |
+| `rm -rf /`, fork bomb, force-push to main, etc. | Bash blocklist | `.claude/hooks/pre-tool-use.sh` |
+| PII in log lines | Pre-commit block | `.claude/hooks/pre-commit.sh` |
+| Unsanctioned merge to main from a wave/* branch | Wave-merge gate | `.claude/hooks/pre-tool-use.sh` |
+| Long autonomous runs without guardrails | Autonomy guard | `.claude/hooks/autonomy-guard.sh` (opt-in via `CCM_AUTONOMY=1`) |
+
+Test/fixture paths are exempted from secret scans to avoid false
+positives. Bypass paths (CONTEXT_MAP update, manual run, `--no-verify`)
+are documented in `Training/04-HOOKS-MANUAL.md`.
+
+For the full compliance framework alignment (OWASP, GDPR, ISO 27001,
+SOC 2, PDPL), see `compliance/README.md`.
+
+---
+
 ## Authentication Requirements
 
 ### Password-Based Authentication
