@@ -21,7 +21,7 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.5.0                                                    |
+| **Version**          | 3.5.1                                                    |
 | **Codename**         | "Engineered"                                             |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |

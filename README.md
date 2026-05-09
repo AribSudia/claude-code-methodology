@@ -8,9 +8,17 @@ memory files, and a 5-mode bootstrap. It is **not** a runtime, an orchestrator,
 or a kernel — it is a set of conventions that make multi-session Claude Code
 work durable.
 
-**v3.5.0 "Engineered"** · Engineered by Abdullah x Claude · Token cost on session start: ~39.6K
+**v3.5.1 "Engineered"** · Engineered by Abdullah x Claude · Token cost on session start: ~39.6K
 (measure yours: `./scripts/token-audit.sh`)
 
+> **What changed in v3.5.1 (patch)** — fixes a bug across all 5 bootstrap
+> protocols: same-version runs no longer terminate prematurely. Adds
+> `bootstrap/PROTOCOL_PRINCIPLES.md` (binding charter), a new mandatory
+> Phase 1.5 (drift detection) in `UPGRADE_PROTOCOL.md`, ADR-014, and
+> methodology constraint #11. Forbidden anti-patterns enumerated:
+> "STOP on matching versions", "your options are 1, 2, 3" multiple-choice
+> menus, asking the user about determinable things.
+>
 > **What changed in v3.5** — CI/PR is now an executable subsystem, not
 > just static configuration. New `ci-pr-engineer` agent (15th in the
 > inventory) and `/arib-ci-audit` skill with four modes: `audit`

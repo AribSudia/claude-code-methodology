@@ -1,4 +1,4 @@
-# Claude Code Methodology v3.5.0 "Engineered" — System Overview & User Manual
+# Claude Code Methodology v3.5.1 "Engineered" — System Overview & User Manual
 
 > **Complete Training Manual for the AI Development Operating System**
 
@@ -1180,7 +1180,7 @@ claude-code-methodology/
 
 | Attribute | Value |
 |-----------|-------|
-| **Current Version** | 3.5.0 |
+| **Current Version** | 3.5.1 |
 | **Codename** | "Engineered" |
 | **Release Date** | 2026-05-08 |
 | **Previous Version** | 3.4.0 |
