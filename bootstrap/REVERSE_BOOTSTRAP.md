@@ -1,5 +1,10 @@
 # Reverse Bootstrap — Reengineering an Existing Project
 
+> **Decisive behavior** (v3.5.1+): per `bootstrap/PROTOCOL_PRINCIPLES.md`,
+> the auto-scan determines stack, routes, models, and configs from
+> the codebase. Ask the user only when scan results are genuinely
+> ambiguous — never present a 1-of-3 menu when a default is correct.
+>
 > **Purpose**: When you already have a working codebase and want to overlay
 > the Claude Code Methodology on top of it. Claude Code scans your actual
 > code, extracts everything, and CREATES every methodology file in your

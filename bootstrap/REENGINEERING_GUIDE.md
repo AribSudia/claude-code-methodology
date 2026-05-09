@@ -1,5 +1,10 @@
 # Reengineering Guide — Applying Methodology to Existing Projects
 
+> **Decisive behavior** (v3.5.1+): per `bootstrap/PROTOCOL_PRINCIPLES.md`,
+> the overlay sequence is deterministic — the order of operations is
+> documented below; don't ask the user to pick the order. Apply each
+> step automatically and report what happened.
+
 > **The difference between starting fresh and reengineering**:
 > Starting fresh = methodology drives the code.
 > Reengineering = code drives the methodology, then methodology governs future code.

@@ -1,5 +1,11 @@
 # Migration Guide: claude-code-system → claude-code-methodology
 
+> **Decisive behavior** (v3.5.1+): per `bootstrap/PROTOCOL_PRINCIPLES.md`,
+> the source-system identification is determinable from file inspection
+> (`package.json`, framework markers, schema files). Don't ask "which
+> framework was this?" — read the files. Don't present numbered menus
+> when one migration path is correct for the detected source.
+
 > **Use Case 4**: You already have the OLD `claude-code-system` (the flat 35-file
 > template system) and want to migrate to the NEW `claude-code-methodology` (the
 > full 5-layer operating system with memory, agents, I/O, and versioning).

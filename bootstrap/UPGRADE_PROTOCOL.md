@@ -5,6 +5,14 @@
 > methodology files — safely, without losing any project-specific data.
 >
 > **Core Principle**: READ from methodology. WRITE to project root. PRESERVE your data. VERIFY everything.
+>
+> **Decisive behavior**: Per `bootstrap/PROTOCOL_PRINCIPLES.md` (v3.5.1+),
+> this protocol does **not** stop on matching versions, does **not**
+> present multiple-choice menus, and does **not** ask the user
+> questions whose answers are determinable from the filesystem. When
+> versions match, the protocol proceeds to **Phase 1.5 (drift
+> detection)** automatically. When versions differ, the protocol runs
+> the appropriate phase sequence without prompting.
 
 ---
 
@@ -93,7 +101,22 @@ Compare the two versions. Report:
 - New version: vX.Y.Z
 - Changes: [list from CHANGELOG.md]
 
-If versions are the same, STOP and tell the user "Already up to date."
+**Branching by comparison (per `bootstrap/PROTOCOL_PRINCIPLES.md` Rule 1):**
+
+| Comparison | Action |
+|------------|--------|
+| Template version > project version | Continue to Phase 1 (full upgrade) |
+| Template version == project version | **PROCEED to Phase 1.5 (drift detection)** — do NOT stop |
+| Template version < project version | STOP with error: user has stale template, not stale project. Recommend they update `claude-code-methodology/` first. |
+
+**Do NOT terminate on matching versions.** Matching versions do not
+imply matching files — project extensions, prior partial merges, and
+local edits all produce drift even at the current version. Drift
+detection (Phase 1.5 below) is the correct continuation.
+
+The line "If versions are the same, STOP and tell the user 'Already
+up to date.'" was the v3.1-and-earlier behavior. v3.5.1 supersedes it
+per `bootstrap/PROTOCOL_PRINCIPLES.md`.
 
 ---
 
@@ -114,6 +137,123 @@ cp -r io/archive/ io-archive-backup-$(date +%Y%m%d)/ 2>/dev/null
 # Back up current CLAUDE.md (has project-specific content)
 cp CLAUDE.md CLAUDE.md.backup 2>/dev/null
 ```
+
+---
+
+### Phase 1.5: DRIFT DETECTION (mandatory; runs in same-version case too)
+
+This phase exists because matching `VERSION.json` does not imply
+matching files. Per `bootstrap/PROTOCOL_PRINCIPLES.md` Rule 4, drift
+detection is automatic and complete.
+
+#### 1.5.1 — Build the file inventory
+
+```bash
+# Every file the template ships, relative to claude-code-methodology/
+TEMPLATE_FILES=$(cd claude-code-methodology && git ls-files 2>/dev/null \
+  || find . -type f -not -path './.git/*' | sed 's|^./||')
+```
+
+#### 1.5.2 — Classify each file
+
+For each path P in TEMPLATE_FILES:
+
+```text
+1. Does the corresponding project file exist?
+     no  → COPY from template (it's a new file in this template version)
+     yes → continue to step 2.
+
+2. Are the bytes identical?
+     yes → IDENTICAL (skip)
+     no  → continue to step 3.
+
+3. Is P a project-state path?
+   (memory/*.md, core/**, io/ledger/**, io/hook-logs/**,
+    compliance/CONTROLS.md, waves/<name>/**, the
+    allowed_write_paths block of architecture/CONTEXT_MAP.md)
+     yes → PROJECT-STATE; preserve untouched.
+     no  → continue to step 4.
+
+4. Does the project file's content match a known prior template
+   version (sha256 of historical template files for this path)?
+     yes → STALE-TEMPLATE; refresh from current template.
+     no  → LOCAL-EDIT; preserve untouched; record with REVIEW flag.
+```
+
+The "known prior template version" check uses content hashes the
+methodology repo ships in `reference/template-hashes.json` (added in
+v3.5.1). When that file is absent (older project), fall back to a
+simpler heuristic: if the file is in a list of "core methodology
+files" (`.claude/skills/*/SKILL.md`, `.claude/agents/*.md`,
+`.claude/rules/*.md`, `architecture/AGENT_ARCHITECTURE.md`,
+`architecture/DESIGN_SYSTEM.md`, the hook scripts), assume STALE-TEMPLATE
+unless the user has marked it otherwise. Otherwise assume LOCAL-EDIT.
+
+#### 1.5.3 — Apply refreshes
+
+For each file classified STALE-TEMPLATE:
+
+```bash
+cp -p claude-code-methodology/<path> ./<path>
+```
+
+For each file classified PROJECT-STATE or LOCAL-EDIT: do nothing.
+
+For each file classified IDENTICAL: do nothing.
+
+#### 1.5.4 — Drift report
+
+Write the report to `io/ledger/drift-<YYYY-MM-DD>-<short-hash>.md`
+with the same YAML-style header as `/arib-deep-audit`:
+
+```markdown
+# Drift Detection Report
+
+- audit-hash: <sha256 of findings, sorted>
+- short-hash: <first 8>
+- timestamp: <ISO-8601>
+- branch: <git current branch>
+- mode: drift-detection
+- template_version: <semver from template VERSION.json>
+- project_version: <semver from project VERSION.json>
+- comparison: equal | newer | older
+- identical: <count>
+- refreshed: <count>
+- preserved_extensions: <count>
+- preserved_local_edits: <count>
+- preserved_project_state: <count>
+
+## Refreshed files
+- <path> (was: <short-hash-old>, now: <short-hash-new>)
+
+## Project extensions (preserved untouched)
+- <path>
+
+## Local edits (REVIEW recommended)
+- <path> — bytes differ from current template AND no prior template
+  hash matches. Either a project customization to keep, or a missed
+  earlier merge to redo. Confirm.
+
+## Project state (preserved untouched)
+- <path>
+```
+
+Also append one summary line to `operations/OPERATIONS_LOG.md`:
+
+```text
+2026-05-08 | upgrade-drift | <verdict> | <short-hash> | refreshed=N preserved=M reviewed=K
+```
+
+#### 1.5.5 — Branch on result
+
+| Drift report | Continue with |
+|--------------|---------------|
+| Refreshed > 0 | Continue to Phase 2-7 (verify, commit) |
+| All identical or only project state | STOP cleanly with "no drift; project synced". This is a legitimate clean exit, not a Rule 1 violation — drift was *checked*, just absent. |
+| Local edits with REVIEW flag | Continue but include the REVIEW list in the final report so the user can act. |
+
+**Do not present a numbered options menu** at this point. The
+classification is deterministic; the actions are deterministic.
 
 ---
 

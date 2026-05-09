@@ -1,5 +1,11 @@
 # Bootstrap Protocol — New Project Instantiation
 
+> **Decisive behavior** (v3.5.1+): per `bootstrap/PROTOCOL_PRINCIPLES.md`,
+> the Project Questionnaire is the **only** legitimate user-input phase.
+> Every subsequent decision is determined from the answers, the
+> filesystem, or the methodology defaults — never delegated back to the
+> user as a numbered options menu.
+>
 > **Purpose**: Transform the universal methodology into a project-specific
 > Claude Code system. Claude Code asks the questionnaire, understands your
 > project, then CREATES every file in your project root — pre-filled with
