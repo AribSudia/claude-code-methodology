@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.5.0 "Engineered"                       |
+| Version           | 3.5.1 "Engineered"                       |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7         |
@@ -179,6 +179,7 @@ The 15 agents: `architect`, `code-reviewer`, `security-auditor`,
 | Code of Conduct            | `CODE_OF_CONDUCT.md`                         |
 | Agent definitions          | `.claude/agents/*.md`                        |
 | Skill definitions          | `.claude/skills/*/SKILL.md`                  |
+| Bootstrap protocol charter | `bootstrap/PROTOCOL_PRINCIPLES.md` (binding for all 5 below) |
 | Bootstrap new project      | `bootstrap/BOOTSTRAP.md`                     |
 | Reverse-engineer project   | `bootstrap/REVERSE_BOOTSTRAP.md`             |
 | Upgrade from older CCM     | `bootstrap/UPGRADE_PROTOCOL.md`              |

@@ -7,6 +7,61 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.5.1] "Engineered" — 2026-05-08
+
+Patch release fixing decisive-protocol behavior across all 5 bootstrap
+protocols. No new capability; corrects pre-existing anti-patterns.
+
+### Why this release exists
+
+A user reported that running `UPGRADE_PROTOCOL.md` on a project with
+matching `VERSION.json` (3.1.0 == 3.1.0) hit a Phase 0 STOP rule and
+then offered three opt-in alternatives ("1. Force-reapply, 2. Diff
+drift check, 3. Drop newer release"). Both behaviors are wrong:
+matching versions don't imply matching files (project extensions,
+prior partial merges, local edits all produce drift), and numbered
+option menus delegate the protocol's own job. ADR-014 records the
+decision; this release fixes the protocols.
+
+### Added
+- `bootstrap/PROTOCOL_PRINCIPLES.md` — binding charter for the 5
+  bootstrap protocols. Four rules (no STOP on matching versions, no
+  multiple-choice menus, ask only what's undeterminable, drift
+  detection is automatic and complete), 7 legitimate STOP conditions,
+  forbidden phrases enumerated.
+- `architecture/DECISIONS.md` ADR-014 — Decisive Bootstrap Protocols.
+  Records the user report, the principle, and the alternatives
+  rejected.
+- `architecture/CONSTRAINTS.md` constraint #11 — methodology-level
+  rule binding the discipline.
+
+### Changed
+- `bootstrap/UPGRADE_PROTOCOL.md`:
+  - Phase 0 STOP rule replaced with branching table (template > project
+    → continue; template == project → PROCEED to Phase 1.5; template <
+    project → honest error).
+  - NEW Phase 1.5 (DRIFT DETECTION) — mandatory. Inventory + classify
+    each file (IDENTICAL / PROJECT-EXTENSION / STALE-TEMPLATE /
+    LOCAL-EDIT / PROJECT-STATE) + auto-refresh stale templates +
+    write report to `io/ledger/drift-<date>-<short-hash>.md` with the
+    same YAML-style header as `/arib-deep-audit`.
+  - Header gains "Decisive behavior" preface.
+- `bootstrap/{BOOTSTRAP,REVERSE_BOOTSTRAP,MIGRATION_GUIDE,REENGINEERING_GUIDE}.md`
+  — each gets a "Decisive behavior" header note pointing to
+  PROTOCOL_PRINCIPLES.md with protocol-specific guidance.
+- VERSION.json bumped 3.5.0 → 3.5.1; previousVersion → 3.5.0.
+- CLAUDE.md identity table bumped; §6 gains pointer to
+  `bootstrap/PROTOCOL_PRINCIPLES.md`.
+
+### Migration notes
+- Projects upgrading from v3.5.0 will see the v3.5.1 behavior on the
+  next `/arib-session-start` or `UPGRADE_PROTOCOL` invocation.
+- Projects on v3.4.x or earlier will benefit from the change once
+  they pull v3.5.1; the new Phase 1.5 will run on their first
+  upgrade attempt.
+
+---
+
 ## [3.5.0] "Engineered" — 2026-05-08
 
 The "Engineered" release promotes CI/PR from static configuration to

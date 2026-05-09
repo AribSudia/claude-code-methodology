@@ -275,6 +275,22 @@ when modifying the methodology repo or shipping a new release.
     budget, markdown lint. CODEOWNERS routes review by path. Branch
     protection settings live in `CONTRIBUTING.md` §6.
 
+11. **Bootstrap protocols are decisive.** Per
+    `bootstrap/PROTOCOL_PRINCIPLES.md`, the 5 bootstrap protocols
+    (BOOTSTRAP, REVERSE_BOOTSTRAP, UPGRADE_PROTOCOL, MIGRATION_GUIDE,
+    REENGINEERING_GUIDE) must:
+    - Never STOP on matching versions — proceed to drift detection.
+    - Never present numbered multiple-choice menus when one answer is
+      correct — pick the safest correct action and report.
+    - Never ask the user a question whose answer is determinable from
+      the filesystem (`VERSION.json`, `ls`, `git log`, package files).
+    - Run drift detection automatically and completely, classifying
+      each file as IDENTICAL / PROJECT-EXTENSION / STALE-TEMPLATE /
+      LOCAL-EDIT / PROJECT-STATE and acting per the table.
+    Legitimate STOP conditions are enumerated in
+    `bootstrap/PROTOCOL_PRINCIPLES.md` §"Genuine blockers"; nothing
+    else is a legitimate STOP.
+
 ---
 
 ## Review Schedule

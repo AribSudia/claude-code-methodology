@@ -550,6 +550,86 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-014: Decisive Bootstrap Protocols (v3.5.1)
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** A user reported that running `UPGRADE_PROTOCOL.md` on a
+project with matching `VERSION.json` (3.1.0 == 3.1.0) hit the Phase 0
+STOP rule:
+
+> "If versions are the same, STOP and tell the user 'Already up to date.'"
+
+The protocol then offered three opt-in alternatives:
+
+> "If you want me to take action anyway, your options are:
+> 1. Force-reapply Phase 3 (UPDATE)...
+> 2. Diff drift check...
+> 3. Drop a newer methodology release...
+> Tell me which (if any) and I'll proceed."
+
+This is wrong on two axes:
+1. **Matching versions don't imply matching files.** Project extensions,
+   prior partial merges, and local edits all produce drift even at the
+   current version. Stopping forfeits the audit value.
+2. **Numbered option menus delegate the protocol's own job.** The
+   correct action is determinable; presenting 3 choices to the user
+   is delegation, not collaboration.
+
+The same anti-pattern risk applies (to varying degrees) across the
+4 sibling protocols (BOOTSTRAP, REVERSE_BOOTSTRAP, MIGRATION_GUIDE,
+REENGINEERING_GUIDE).
+
+**Decision.** Codify decisive-protocol discipline in
+`bootstrap/PROTOCOL_PRINCIPLES.md` (binding charter for all 5
+protocols). Four rules:
+
+1. **Same version is not a terminator.** Matching `VERSION.json` →
+   proceed to drift detection.
+2. **No multiple-choice menus when one answer is correct.** Specific
+   forbidden phrases enumerated ("If you want me to take action
+   anyway, your options are: 1. ... 2. ... 3. ...").
+3. **Ask only what you cannot determine.** The Project Questionnaire
+   in BOOTSTRAP is the only legitimate user-input phase.
+4. **Drift detection is automatic and complete.** Classification
+   rules: IDENTICAL / PROJECT-EXTENSION / STALE-TEMPLATE / LOCAL-EDIT
+   / PROJECT-STATE.
+
+7 legitimate STOP conditions enumerated (dirty tree, missing required
+deps, conflict requiring user resolution, user-cancelled, template
+older than project, etc.). Anything else: proceed with the safest
+correct action and report.
+
+`UPGRADE_PROTOCOL.md` updated:
+- Phase 0 STOP rule removed.
+- New Phase 1.5 (DRIFT DETECTION) inserted, mandatory, runs in
+  same-version case too.
+- Drift report goes to `io/ledger/drift-<date>-<short-hash>.md` with
+  the same YAML-style header as `/arib-deep-audit`.
+
+The 4 sibling protocols each gain a header note pointing to
+PROTOCOL_PRINCIPLES.md with protocol-specific guidance (BOOTSTRAP:
+Questionnaire is the only user-input phase; REVERSE_BOOTSTRAP: ask
+only on ambiguous scan; MIGRATION_GUIDE: source-system identification
+is determinable; REENGINEERING_GUIDE: overlay sequence is
+deterministic).
+
+**Consequences.** Same-version upgrade runs no longer terminate
+prematurely — they run drift detection and report what was refreshed,
+preserved, or flagged for review. Numbered options menus become
+forbidden by the binding charter. New constraint (#11 in
+CONSTRAINTS.md) makes the discipline binding methodology-wide, not
+just within bootstrap protocols.
+
+**Alternatives rejected.** "Document the same-version exit as
+intentional" — the user reported it as a bug, and they're right;
+matching versions don't imply matching files. "Add a `--force` flag
+the user must pass" — re-introduces a numbered choice the protocol
+should make on its own. "Keep the menu but reword it" — addresses
+the symptom, not the principle.
+
+---
+
 # ADR-013: CI/PR as a Standalone Technique (v3.5)
 
 **Status:** Accepted   **Date:** 2026-05-08
@@ -712,6 +792,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-011 | Override of v3.2 "Honest" Counter-Proposal | Accepted | 2026-05-08 |
 | ADR-012 | CI/PR Governance Model | Accepted | 2026-05-08 |
 | ADR-013 | CI/PR as a Standalone Technique (v3.5) | Accepted | 2026-05-08 |
+| ADR-014 | Decisive Bootstrap Protocols (v3.5.1) | Accepted | 2026-05-08 |
 
 ---
 
