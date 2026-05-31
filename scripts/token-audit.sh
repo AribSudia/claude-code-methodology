@@ -34,10 +34,14 @@ if [[ -f .claude/settings.json ]] && command -v jq >/dev/null 2>&1; then
   done < <(jq -r '.context.include[]? // empty' .claude/settings.json 2>/dev/null)
 fi
 
-# 3. Always-loaded rule files (.claude/rules/*.md).
+# 3. Path-scoped rules (.claude/rules/*.md) are NOT always-on — they load
+# only when the working file path matches the rule's scope. Counting them
+# as session-start cost was a v3.6-and-earlier over-count (~5K tokens). They
+# are reported separately below, not in the always-on headline. (ADR-016.)
+RULE_FILES=()
 if [[ -d .claude/rules ]]; then
   while IFS= read -r f; do
-    FILES+=("$f")
+    RULE_FILES+=("$f")
   done < <(find .claude/rules -maxdepth 1 -type f -name '*.md' 2>/dev/null)
 fi
 
@@ -73,8 +77,23 @@ done
 TOTAL_TOKENS=$(( TOTAL_CHARS / CHARS_PER_TOKEN ))
 
 printf '%s\n' "------------------------------------------------------------------------------------"
-printf '%-50s %10d %10d %10d\n' "TOTAL" "$TOTAL_LINES" "$TOTAL_CHARS" "$TOTAL_TOKENS"
+printf '%-50s %10d %10d %10d\n' "ALWAYS-ON TOTAL" "$TOTAL_LINES" "$TOTAL_CHARS" "$TOTAL_TOKENS"
+
+# Path-scoped rules — loaded on demand, NOT at session start.
+if (( ${#RULE_FILES[@]} > 0 )); then
+  RULE_CHARS=0; RULE_LINES=0
+  printf '\n%s\n' "Path-scoped rules (.claude/rules/) — loaded ON DEMAND, not counted above:"
+  for f in "${RULE_FILES[@]}"; do
+    [[ ! -f "$f" ]] && continue
+    L=$(wc -l < "$f" | tr -d ' '); C=$(wc -c < "$f" | tr -d ' ')
+    RULE_CHARS=$(( RULE_CHARS + C )); RULE_LINES=$(( RULE_LINES + L ))
+    printf '  %-48s %10d %10d %10d\n' "${f#.claude/rules/}" "$L" "$C" "$(( C / CHARS_PER_TOKEN ))"
+  done
+  printf '  %-48s %10d %10d %10d\n' "(path-scoped subtotal)" "$RULE_LINES" "$RULE_CHARS" "$(( RULE_CHARS / CHARS_PER_TOKEN ))"
+fi
+
 printf '\n'
+printf 'Headline = ALWAYS-ON TOTAL (what loads on every session start).\n'
 printf 'Target on session start: <%d tokens.\n' "$TARGET_TOKENS"
 
 if (( TOTAL_TOKENS > TARGET_TOKENS )); then

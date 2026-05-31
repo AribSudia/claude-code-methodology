@@ -88,9 +88,10 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 ### 4. Test before pushing
 
 ```bash
-./scripts/test-hooks.sh        # 31-test regression suite, must pass
-./scripts/token-audit.sh       # token-budget impact
-bash -n .claude/hooks/*.sh     # syntax check (suite already does this)
+./scripts/test-hooks.sh          # hook regression suite, must pass
+./scripts/validate-coherence.sh  # counts/frontmatter/version/refs, must pass (CI-enforced)
+./scripts/token-audit.sh         # always-on token-budget impact
+bash -n .claude/hooks/*.sh       # syntax check (suite already does this)
 ```
 
 If you touched `.github/workflows/`, the workflow itself runs on the PR;

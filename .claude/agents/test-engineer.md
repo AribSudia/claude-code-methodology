@@ -1,3 +1,9 @@
+---
+name: test-engineer
+description: Use to assess test coverage or write tests for new modules. report-only mode is read-only; write mode adds tests under tests/.
+tools: Read, Grep, Glob, Bash, Edit, Write
+---
+
 # Claude Code Agent: Test Engineer
 
 ## Identity

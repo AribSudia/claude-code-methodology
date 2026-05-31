@@ -10,14 +10,14 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.6.0 "Flowing"                          |
+| Version           | 3.7.0 "Self-Policing"                    |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7         |
 | Created           | 2026-04-15                               |
 | Last Updated      | 2026-05-08                               |
 | Language Support   | Universal (RTL, LTR, CJK, Indic, Bidi)  |
-| Methodology       | 5-Layer Architecture + Persistent Memory |
+| Methodology       | 4-Layer Architecture + I/O Channel + Memory |
 | Status            | Production-Ready                         |
 
 ---
@@ -89,11 +89,11 @@ your-project/
 |   |-- settings.json                  <- Permissions, hooks (committed)
 |   |-- settings.local.json            <- Personal overrides (gitignored)
 |   |-- rules/                         <- Path-scoped modular rules
-|   |-- skills/                        <- Branded skills (/arib-*)
+|   |-- skills/                        <- Branded skills (/arib-*) — 26 total
 |   |   |-- arib-session-start/SKILL.md
 |   |   |-- arib-dev-feature/SKILL.md
-|   |   +-- (14 more skills)
-|   |-- agents/                        <- 13 specialist subagents
+|   |   +-- (24 more skills)
+|   |-- agents/                        <- 15 specialist subagents
 |   |-- agent-memory/                  <- Persistent memory per agent
 |   +-- output-styles/                 <- Custom output styles
 |-- io/                                <- I/O Channel (inter-agent comms + ledger)
@@ -174,7 +174,8 @@ The 15 agents: `architect`, `code-reviewer`, `security-auditor`,
 | Compliance frameworks      | `compliance/README.md` + `compliance/COMPLIANCE.md` + `compliance/frameworks/*.md` |
 | Wave delivery              | `waves/README.md` + `arib-wave-start` / `arib-wave-end` skills |
 | Autonomy mode              | `operations/AUTONOMY_MODE.md`                |
-| Token cost on session start| run `./scripts/token-audit.sh`               |
+| Token cost on session start| run `./scripts/token-audit.sh` (always-on vs path-scoped) |
+| Coherence self-check       | run `./scripts/validate-coherence.sh` (CI-enforced) |
 | CI / PR governance         | `CONTRIBUTING.md` + `.github/` + `Training/11-CI-PR-MANUAL.md` |
 | Vulnerability disclosure   | `SECURITY.md` (repo-root)                    |
 | Code of Conduct            | `CODE_OF_CONDUCT.md`                         |

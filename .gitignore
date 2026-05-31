@@ -71,3 +71,6 @@ io/.session-start-sha
 
 # Autonomy mode runtime state (Item #10) — ephemeral per-session counters.
 io/.autonomy/
+
+# Claude Code worktrees (transient, never committed)
+.claude/worktrees/

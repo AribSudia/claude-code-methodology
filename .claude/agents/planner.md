@@ -1,3 +1,9 @@
+---
+name: planner
+description: Use during wave-start (alongside architect) to sequence work, map dependencies, build a risk register, and identify blockers. Read-only; returns a plan.
+tools: Read, Grep, Glob
+---
+
 # Claude Code Agent: Planner
 
 ## Identity

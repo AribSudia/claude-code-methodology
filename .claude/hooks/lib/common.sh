@@ -52,7 +52,12 @@ allow() {
 block() {
   log BLOCK "BLOCK: $*"
   printf 'CCM hook blocked this operation: %s\n' "$*" >&2
-  exit 1
+  # Exit 2 is the Claude Code contract for a BLOCKING PreToolUse hook:
+  # exit 0 = allow, exit 2 = block (stderr fed back to Claude), any other
+  # non-zero = NON-blocking error (shown to user, tool call proceeds).
+  # This was exit 1 before v3.7.0 — which meant every gate was advisory.
+  # Git also aborts a commit on any non-zero, so 2 is correct there too.
+  exit 2
 }
 
 # ---------- Path helpers ----------

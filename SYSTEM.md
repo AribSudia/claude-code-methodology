@@ -21,8 +21,8 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.6.0                                                    |
-| **Codename**         | "Flowing"                                                |
+| **Version**          | 3.7.0                                                    |
+| **Codename**         | "Self-Policing"                                          |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
 | **Last Updated**     | 2026-04-18                                               |
@@ -91,7 +91,7 @@ The system is built on five engineering principles:
 
 ## Part II — System Architecture
 
-### 2.1 — The 5-Layer Stack
+### 2.1 — The 4-Layer Stack (+ I/O Channel + Memory)
 
 ```
 ╔══════════════════════════════════════════════════════════════════════╗

@@ -12,6 +12,14 @@ on:
       - 'operations/WORKFLOW.md'
       - 'scripts/token-audit.sh'
 
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: token-budget-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   measure:
     runs-on: ubuntu-latest

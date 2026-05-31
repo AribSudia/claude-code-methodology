@@ -1,9 +1,9 @@
 {
   "name": "claude-code-methodology",
-  "version": "3.6.0",
-  "codename": "Flowing",
+  "version": "3.7.0",
+  "codename": "Self-Policing",
   "releaseDate": "2026-05-08",
-  "previousVersion": "3.5.1",
+  "previousVersion": "3.6.0",
   "engineeredBy": "Abdullah x Claude Opus 4.6 / Opus 4.7",
   "license": "MIT",
   "repository": "https://github.com/AribSudia/claude-code-methodology",
@@ -14,7 +14,7 @@
     "skills": 26,
     "skillPrefix": "arib",
     "skillCategories": 6,
-    "rules": 8,
+    "rules": 9,
     "hookScripts": 7,
     "memoryFiles": 7,
     "ioTemplates": 9,
@@ -22,12 +22,13 @@
     "implementationFiles": 9,
     "operationsFiles": 8,
     "complianceFrameworks": 5,
-    "scripts": 8,
+    "scripts": 12,
     "bootstrapMethods": 5,
     "trainingManuals": 11,
-    "githubWorkflows": 4,
+    "githubWorkflows": 5,
     "issueTemplates": 3,
-    "tokenCostOnSessionStart": 39560
+    "tokenCostOnSessionStart": 43357,
+    "tokenCostNote": "always-on only (CLAUDE.md + context.include); path-scoped rules (~4.8K) load on demand and are NOT counted. Target <8000; honestly over by ~5x — ratchet-down tracked in ADR-016."
   },
   "compatibility": {
     "minClaudeCodeVersion": "1.0.0",

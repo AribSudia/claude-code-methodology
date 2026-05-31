@@ -550,6 +550,111 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-017: Canonical "4-Layer" Architecture Framing (v3.7)
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** A 23-agent review found CCM described its own architecture
+inconsistently: CLAUDE.md said both "5-Layer Architecture" (identity
+table) and "The 4-Layer Architecture" (§1 heading); SYSTEM.md said both
+"4-Layer Architecture" and "The 5-Layer Stack". This is a flat
+DOCS-MATCH-DISK violation on the system's most foundational concept.
+
+**Decision.** The canonical framing is **4 layers**: L1 CLAUDE.md +
+rules, L2 Skills, L3 Hooks, L4 Agents. The **I/O Channel** and
+**Persistent Memory** are cross-cutting subsystems, not numbered
+layers. (Historically v1.0 called it "5-Layer" by counting I/O as a
+layer; that framing is retired.) All current-claim docs use "4-Layer
+Architecture + I/O Channel + Memory". The `validate-coherence.sh`
+guard forbids the "5-Layer Stack" / "5-Layer Architecture + Persistent
+Memory" tokens in CLAUDE.md and SYSTEM.md so the framing can't drift
+back. Version-history rows (e.g. "v1.0 — 5-Layer Architecture") are
+historical and exempt.
+
+**Consequences.** One consistent mental model. The §1 diagram in
+CLAUDE.md (L1–L4 + I/O band) is authoritative.
+
+**Alternatives rejected.** "Adopt 5-Layer (count I/O as L5)" — the §1
+diagram and README already commit to 4 numbered layers with I/O as a
+cross-cutting band; renumbering would churn more docs than it fixes.
+
+---
+
+# ADR-016: Self-Policing — Make CCM Enforce Its Own Rules (v3.7)
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** A 23-agent review of CCM v3.6.0 graded the system C+ and
+found that, despite best-in-class *design* and *honesty*, several
+load-bearing mechanisms were advisory in practice rather than enforced
+— a direct violation of CCM's own "ENFORCED not advisory" and
+"DOCS-MATCH-DISK" principles. Three defects were severe:
+
+1. **`block()` used `exit 1`.** Claude Code treats PreToolUse exit 1 as
+   a *non-blocking* error; only **exit 2** blocks. So every write-time
+   gate (secrets, dangerous-bash, OWASP-A03, design-token, wave-merge)
+   was advisory — it logged and warned but let the tool call proceed.
+   The hooks manual itself specified exit 2; the code never matched it.
+   The test suite asserted exit 1, codifying the bug as green.
+2. **All 15 agent files lacked YAML frontmatter.** Claude Code registers
+   subagents from `.claude/agents/*.md` frontmatter (`name`,
+   `description`). Without it, every `Task(<agent>)` dispatch failed to
+   resolve — the agent fleet was prose, not functioning agents.
+3. **Documentation coherence broke silently** — stale counts (13 agents
+   / 16 skills vs 15 / 26), VERSION.json `rules:8` while disk had 9, a
+   4-vs-5-layer contradiction, and a stale ~39.6K token figure (real
+   always-on ~43.4K).
+
+The unifying root cause: **no script validated the invariants the
+methodology preaches.** Drift survived because nothing checked it.
+
+**Decision.** Make CCM self-policing:
+- Fix `block()` → `exit 2` (and `pre-commit.sh` final exit → 2); flip
+  the test suite's blocking assertions to expect 2. Enforcement is now
+  real.
+- Add YAML frontmatter (`name` == filename, `description`, scoped
+  `tools` derived from the AGENT_ARCHITECTURE Writes column) to all 15
+  agents. Read-only agents get Read/Grep/Glob(/Bash); writers add
+  Edit/Write.
+- Ship `scripts/validate-coherence.sh` + `.github/workflows/coherence.yml`
+  asserting: disk counts == VERSION.json; agent frontmatter valid with
+  name==filename; skill frontmatter present; version string present in
+  CLAUDE.md/SYSTEM.md/README; no known stale tokens; `Task(<agent>)`
+  references resolve.
+- Make the token audit honest: separate always-on context from
+  path-scoped rules (which load on demand, not at session start);
+  correct the headline to the real ~43.4K; keep the <8K target with an
+  honest "over by ~5x" and a ratchet-down plan (move true reference
+  docs — DECISIONS.md, SECURITY.md, ERROR_PATTERNS.md — to lazy loading
+  later; keep CLAUDE.md and CONSTRAINTS.md always-on so hard rules are
+  never invisible).
+- Wire or honestly downgrade three "documented but unwired" claims:
+  security-auditor now explicitly reads owasp.md (wired); IO_PROTOCOL no
+  longer claims hooks "watch signals / pre-empt" (downgraded to the
+  truth — hooks fire on events, not a filesystem watch); the wave-merge
+  gate now also catches `gh pr merge` and the docs note web-UI merges
+  are governed by branch protection, not the local hook.
+- Add `permissions:` + `concurrency:` to all GitHub workflows (they
+  would have failed ci-pr-engineer's own checklist).
+
+**Consequences.** A large fraction of prior findings flip from
+honor-system to enforced in a handful of small commits. CI now catches
+count drift, missing frontmatter, version skew, and dangling references
+automatically. Crucially, none of these fixes make CCM overclaim —
+several trade an aspirational claim (the 8K target, "hooks watch
+signals", exit-1 "blocking") for an honest one, which is exactly what
+CCM's honesty principle demands.
+
+**Alternatives rejected.**
+- "Leave exit 1; document hooks as advisory" — abandons the flagship
+  ENFORCED principle when a one-character fix delivers it.
+- "Skip the validator; fix the drift once by hand" — the root cause is
+  the absence of a check; hand-fixing guarantees re-drift.
+- "Hide the token gap by changing the target to 45K" — dishonest;
+  better to keep the <8K target and state the gap plainly with a plan.
+
+---
+
 # ADR-015: Wave Auto-Advance Execution (v3.6)
 
 **Status:** Accepted   **Date:** 2026-05-08
@@ -857,6 +962,8 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-013 | CI/PR as a Standalone Technique (v3.5) | Accepted | 2026-05-08 |
 | ADR-014 | Decisive Bootstrap Protocols (v3.5.1) | Accepted | 2026-05-08 |
 | ADR-015 | Wave Auto-Advance Execution (v3.6) | Accepted | 2026-05-08 |
+| ADR-016 | Self-Policing — Make CCM Enforce Its Own Rules (v3.7) | Accepted | 2026-05-08 |
+| ADR-017 | Canonical "4-Layer" Architecture Framing (v3.7) | Accepted | 2026-05-08 |
 
 ---
 

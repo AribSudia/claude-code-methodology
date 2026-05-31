@@ -291,6 +291,17 @@ when modifying the methodology repo or shipping a new release.
     `bootstrap/PROTOCOL_PRINCIPLES.md` §"Genuine blockers"; nothing
     else is a legitimate STOP.
 
+13. **Hooks block with exit 2; coherence is CI-enforced.** A blocking
+    PreToolUse hook MUST `exit 2` (exit 1 is non-blocking in Claude
+    Code — the v3.6-and-earlier bug). Every agent file MUST have YAML
+    frontmatter with `name` == filename. `scripts/validate-coherence.sh`
+    MUST pass (disk counts == VERSION.json, agent/skill frontmatter
+    valid, version string coherent across CLAUDE.md/SYSTEM.md/README,
+    no stale tokens, references resolve) — it runs in CI on every PR
+    touching agents/skills/rules/hooks/version docs. The token audit
+    reports always-on cost separately from path-scoped rules; the
+    headline is honest, never massaged to hide the gap.
+
 12. **Wave execution auto-advances.** Per ADR-015, `/arib-wave-run`
     executes wave steps in order without asking "continue?" between
     them. It pauses ONLY on: step failure (per the step's

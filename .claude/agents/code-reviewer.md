@@ -1,3 +1,9 @@
+---
+name: code-reviewer
+description: Use to review a diff or file for bugs, design, maintainability, and the 8 quality gates before merge. Read-only review; returns findings.
+tools: Read, Grep, Glob, Bash
+---
+
 # Claude Code Agent: Code Reviewer
 
 ## Identity

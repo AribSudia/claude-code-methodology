@@ -67,21 +67,21 @@ echo ""
 
 echo "1. PreToolUse — Bash"
 run_test "safe bash (ls)"             "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-safe.json"      0
-run_test "dangerous bash (rm -rf /)"  "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-dangerous.json" 1
+run_test "dangerous bash (rm -rf /)"  "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-dangerous.json" 2
 
 echo ""
 echo "2. PreToolUse — Secret detection"
-run_test "real secret in src/"         "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-secret.json"        1
+run_test "real secret in src/"         "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-secret.json"        2
 run_test "secret in tests/ (exempt)"   "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-test-fixture.json"  0
 
 echo ""
 echo "3. PreToolUse — Path scoping"
-run_test "write to allowed src/"       "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-hex-component.json" 1   # blocked by hex, not path
-run_test "write to non-allowed path"   "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-out-of-scope.json"  1
+run_test "write to allowed src/"       "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-hex-component.json" 2   # blocked by hex, not path
+run_test "write to non-allowed path"   "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-out-of-scope.json"  2
 
 echo ""
 echo "4. PreToolUse — OWASP A03"
-run_test "eval(input) in src/"         "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-eval.json"          1
+run_test "eval(input) in src/"         "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-eval.json"          2
 
 echo ""
 echo "5. SessionStart / Stop / Notification"

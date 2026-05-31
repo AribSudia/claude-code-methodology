@@ -1,3 +1,9 @@
+---
+name: refactor-specialist
+description: Use to refactor code for clarity and reduced duplication. Writes: rewrites the files under refactor. Run alone, not in parallel fan-out.
+tools: Read, Grep, Glob, Bash, Edit, Write
+---
+
 # Claude Code Agent: Refactor Specialist
 
 ## Identity

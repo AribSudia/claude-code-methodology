@@ -1,0 +1,42 @@
+name: Coherence
+
+on:
+  pull_request:
+    paths:
+      - 'VERSION.json'
+      - 'CLAUDE.md'
+      - 'SYSTEM.md'
+      - 'README.md'
+      - '.claude/agents/**'
+      - '.claude/skills/**'
+      - '.claude/rules/**'
+      - '.claude/hooks/**'
+      - 'scripts/validate-coherence.sh'
+  push:
+    branches: [main]
+    paths:
+      - 'VERSION.json'
+      - 'CLAUDE.md'
+      - '.claude/agents/**'
+      - '.claude/skills/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coherence-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-coherence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Run coherence validator
+        run: |
+          chmod +x scripts/validate-coherence.sh
+          ./scripts/validate-coherence.sh

@@ -138,7 +138,11 @@ if [[ "$TOOL_NAME" == "Bash" ]]; then
   CURRENT_BRANCH="$(git -C "${CCM_ROOT}" rev-parse --abbrev-ref HEAD 2>/dev/null || echo)"
   if [[ "$CURRENT_BRANCH" =~ ^wave/(.+)$ ]]; then
     WAVE_NAME="${BASH_REMATCH[1]}"
-    if printf '%s' "$CMD" | grep -Eq -- '\bgit (merge|push)\b.*\b(main|master|production)\b'; then
+    # Catches shell-driven merges: `git merge|push` to a protected branch
+    # AND `gh pr merge` (which the local hook would otherwise miss).
+    # Web-UI merges are NOT catchable by a local hook — those are governed
+    # by GitHub branch protection (required checks), see CONTRIBUTING.md §6.
+    if printf '%s' "$CMD" | grep -Eq -- '\bgit (merge|push)\b.*\b(main|master|production)\b|\bgh pr merge\b'; then
       LATEST_AUDIT="$(ls -1t "${CCM_ROOT}/io/ledger/audit-"*.md 2>/dev/null | head -1)"
       if [[ -z "$LATEST_AUDIT" ]] || ! grep -q -- "wave: ${WAVE_NAME}" "$LATEST_AUDIT" 2>/dev/null; then
         notify_cowork "wave-gate-block" "branch=${CURRENT_BRANCH} cmd=${CMD:0:80}"

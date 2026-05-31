@@ -1,3 +1,9 @@
+---
+name: api-docs
+description: Use to generate or sync API documentation and OpenAPI specs from route handlers. Writes documentation files.
+tools: Read, Grep, Glob, Bash, Edit, Write
+---
+
 # Agent: API Documentation Generator
 
 > **Role**: Documentation specialist that auto-generates OpenAPI/Swagger specs

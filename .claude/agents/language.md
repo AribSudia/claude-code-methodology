@@ -1,3 +1,9 @@
+---
+name: language
+description: Use to audit i18n/RTL/LTR/CJK and Arabic typography compliance. Read-only; returns findings.
+tools: Read, Grep, Glob
+---
+
 # Claude Code Agent: Language Specialist
 
 ## Identity

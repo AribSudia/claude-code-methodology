@@ -7,6 +7,78 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.7.0] "Self-Policing" — 2026-05-08
+
+A 23-agent workflow review graded CCM v3.6.0 at **C+**: best-in-class
+design and honesty, but several load-bearing mechanisms were advisory in
+practice rather than enforced — violating CCM's own "ENFORCED not
+advisory" and "DOCS-MATCH-DISK" principles. This release fixes the
+critical gaps. The unifying theme: **make CCM enforce its own rules.**
+
+### Fixed (critical)
+- **`block()` exit code 1 → 2.** Claude Code treats PreToolUse `exit 1`
+  as a NON-blocking error; only `exit 2` blocks. Every write-time gate
+  (secrets, dangerous-bash, OWASP-A03, design-token, wave-merge) was
+  advisory — logging and warning but letting the tool call proceed. Now
+  they actually block. `pre-commit.sh` final exit also → 2. The test
+  suite's 5 blocking assertions flipped from `1` to `2` (they had
+  codified the bug as green). **This is the single highest-leverage fix
+  in the system's history.**
+- **All 15 agent files now have YAML frontmatter** (`name` == filename,
+  `description`, scoped `tools`). Without it, Claude Code could not
+  register them as subagents, so every `Task(<agent>)` dispatch in
+  skills silently failed to resolve. The agent fleet is now functional,
+  not prose. Tool scopes derived from the AGENT_ARCHITECTURE Writes
+  column (read-only → Read/Grep/Glob[/Bash]; writers → +Edit/Write).
+
+### Added
+- `scripts/validate-coherence.sh` — self-policing validator. Asserts:
+  disk counts == VERSION.json (agents/skills/rules/hookScripts); every
+  agent has frontmatter with name==filename; every skill has SKILL.md
+  with frontmatter; current version string present in
+  CLAUDE.md/SYSTEM.md/README; no known stale tokens; every
+  `Task(<agent>)` reference resolves. (It immediately caught a real
+  drift: VERSION.json said `rules:8` while disk had 9.)
+- `.github/workflows/coherence.yml` — runs the validator in CI on every
+  PR touching agents/skills/rules/hooks/version docs. `permissions:
+  contents: read` + concurrency cancellation.
+- ADR-016 (self-policing) and ADR-017 (canonical 4-Layer framing).
+- CONSTRAINTS.md constraint #13 (exit-2 + CI-enforced coherence).
+
+### Changed
+- Token audit is now honest: `scripts/token-audit.sh` separates
+  always-on context (CLAUDE.md + context.include, ~43.4K) from
+  path-scoped rules (~4.8K, loaded on demand, previously over-counted
+  into the headline). README/VERSION.json corrected from the stale
+  ~39.6K to ~43.4K. The <8K target stays, with an honest "over by ~5x"
+  and a ratchet-down plan in ADR-016.
+- Documentation coherence reconciled: CLAUDE.md identity line
+  "5-Layer" → "4-Layer Architecture + I/O Channel + Memory"; stale
+  "13 specialist subagents" → 15 and "(14 more skills)" → "(24 more)";
+  README "13 specialists" → 15 (two spots); SYSTEM.md "5-Layer Stack" →
+  "4-Layer Stack"; VERSION.json `rules` 8 → 9.
+- Three "documented but unwired" claims wired or downgraded:
+  - `security-auditor.md` now explicitly reads `compliance/frameworks/owasp.md`
+    as its rule source (the skills already claimed it did).
+  - `io/IO_PROTOCOL.md` no longer claims hooks "watch signals / pre-empt
+    a running tool" — corrected to the truth (hooks fire on events, not
+    a filesystem watch; mid-session pre-emption needs a push transport).
+  - The wave-merge gate now also catches `gh pr merge`; docs note web-UI
+    merges are governed by branch protection, not the local hook.
+- All 5 GitHub workflows gained `permissions:` + `concurrency:` (they
+  would have failed the ci-pr-engineer agent's own checklist).
+- VERSION.json stats refreshed: scripts 8→12, githubWorkflows 4→5,
+  tokenCostOnSessionStart 39560→43357 with an honesty note.
+
+### Why
+The review's root-cause finding: nearly every drift, false count, and
+unenforced gate survived because no script validated the invariants the
+methodology preaches. The fixes are small and shippable, and none make
+CCM overclaim — several trade an aspirational claim for an honest one,
+which is exactly what the honesty principle requires.
+
+---
+
 ## [3.6.0] "Flowing" — 2026-05-08
 
 Waves now execute themselves. The wave overlay (v3.3) had a plan and an

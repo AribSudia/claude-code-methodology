@@ -18,6 +18,13 @@ on:
       - 'scripts/**'
       - 'tests/**'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: hooks-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-hooks:
     runs-on: ubuntu-latest

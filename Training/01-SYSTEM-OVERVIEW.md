@@ -1,4 +1,4 @@
-# Claude Code Methodology v3.6.0 "Flowing" — System Overview & User Manual
+# Claude Code Methodology v3.7.0 "Self-Policing" — System Overview & User Manual
 
 > **Complete Training Manual for the AI Development Operating System**
 
@@ -54,8 +54,8 @@ It works like an operating system for your project:
 
 | Attribute | Value |
 |-----------|-------|
-| **Version** | 3.6.0 |
-| **Codename** | "Flowing" |
+| **Version** | 3.7.0 |
+| **Codename** | "Self-Policing" |
 | **Release Date** | 2026-05-08 |
 | **Engineered By** | Abdullah × Claude Opus 4.6 / 4.7 / 4.8 |
 | **License** | MIT |
@@ -1180,10 +1180,10 @@ claude-code-methodology/
 
 | Attribute | Value |
 |-----------|-------|
-| **Current Version** | 3.6.0 |
-| **Codename** | "Flowing" |
+| **Current Version** | 3.7.0 |
+| **Codename** | "Self-Policing" |
 | **Release Date** | 2026-05-08 |
-| **Previous Version** | 3.5.1 |
+| **Previous Version** | 3.6.0 |
 | **Status** | Production-Ready |
 | **License** | MIT |
 

@@ -9,9 +9,23 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.6.0 "Flowing"** · Engineered by Abdullah x Claude · Token cost on session start: ~39.6K
-(measure yours: `./scripts/token-audit.sh`)
+**v3.7.0 "Self-Policing"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~43.4K
+(measure yours: `./scripts/token-audit.sh` — path-scoped rules ~4.8K load on demand, not counted)
 
+> **What changed in v3.7** — a 23-agent review of CCM found that the
+> system did not fully live up to its own principles, and v3.7 fixes the
+> critical gaps. **The enforcement layer now actually enforces**:
+> `block()` was using `exit 1` (which Claude Code treats as *non-blocking*)
+> — fixed to `exit 2`, so secret/dangerous-bash/OWASP/design-token/
+> wave-merge gates finally block instead of warn. **All 15 agents got YAML
+> frontmatter** so Claude Code can register them as dispatchable subagents
+> (they were prose before). **New `scripts/validate-coherence.sh` + CI**
+> self-polices the invariants CCM preaches (counts match disk, agent
+> frontmatter valid, version coherent, no stale tokens, references
+> resolve). The token metric is now **honest** (always-on vs path-scoped
+> separated; the stale ~39.6K corrected to ~43.4K). Three "documented but
+> unwired" claims were wired or downgraded. ADR-016 + ADR-017 record it.
+>
 > **What changed in v3.6** — waves now execute themselves. New
 > `/arib-wave-run` skill reads the wave PLAN's Steps contract and
 > **auto-advances** from step to step without asking "continue?" between
@@ -90,7 +104,7 @@ This methodology solves all of that:
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  L4 — AGENTS          13 specialists with scoped context    ║
+║  L4 — AGENTS          15 specialists with scoped context    ║
 ║  Architect · Security · Reviewer · Tester · Debugger        ║
 ║  Refactor · Language · Deploy Guardian · Reality Auditor     ║
 ║  Database Guardian · Performance · API Docs · Accessibility  ║
@@ -466,7 +480,7 @@ claude-code-methodology/                  ← v3.3 "Operating" — see VERSION.j
 │   │   ├── arib-docs-api/SKILL.md        ← /arib-docs-api (396 lines)
 │   │   ├── arib-docs-generate/SKILL.md   ← /arib-docs-generate (575 lines)
 │   │   └── arib-docs-language/SKILL.md   ← /arib-docs-language (766 lines)
-│   ├── agents/                           ← 13 specialist agent definitions
+│   ├── agents/                           ← 15 specialist agent definitions
 │   │   ├── architect.md                  ← System design authority
 │   │   ├── security-auditor.md           ← OWASP Top 10 expert
 │   │   ├── code-reviewer.md              ← Quality gatekeeper
@@ -631,7 +645,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.4 | Reviewed | GitHub PR/CI governance as static configuration: PR template, CODEOWNERS, 4 CI workflows, Dependabot, CONTRIBUTING, repo-root SECURITY, COC |
 | v3.5 | Engineered | CI/PR as an executable subsystem: `ci-pr-engineer` agent + `/arib-ci-audit` skill with audit/init/review/branch-protection modes |
 | v3.5.1 | Engineered | Decisive bootstrap protocols: no STOP on matching versions, no options-menus, mandatory drift detection (ADR-014) |
-| **v3.6** | **Flowing** | **Wave auto-advance: `/arib-wave-run` executes wave steps without asking between them, pausing only on issue/checkpoint (ADR-015)** |
+| v3.6 | Flowing | Wave auto-advance: `/arib-wave-run` executes wave steps without asking between them, pausing only on issue/checkpoint (ADR-015) |
+| **v3.7** | **Self-Policing** | **Post-review fixes: `block()` exit-2 (enforcement now real), agent frontmatter (subagents functional), coherence validator + CI, honest token metric (ADR-016/017)** |
 
 ---
 

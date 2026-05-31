@@ -64,7 +64,9 @@ if (( ${#FAILURES[@]} > 0 )); then
   done
   printf '\nFix the issues above, then re-run the commit.\nLast resort (leaves audit trail): git commit --no-verify\n\n'
   notify_cowork "pre-commit-block" "$(printf '%s; ' "${FAILURES[@]}")"
-  exit 1
+  # Exit 2: blocks when run as a Claude PreToolUse hook (git-commit matcher);
+  # git also aborts the commit on any non-zero when run as a .git/hooks/pre-commit.
+  exit 2
 fi
 
 allow "pre-commit clean"

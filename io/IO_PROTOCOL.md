@@ -322,7 +322,7 @@ io/archive/
 |------------|----------------------------------------------------------|
 | L1 (CLAUDE.md) | Session protocol references I/O check at start     |
 | L2 (Skills)    | Skills can auto-generate requests (e.g., security audit)|
-| L3 (Hooks)     | Hooks watch `io/signals/` for emergency interrupts |
+| L3 (Hooks)     | `session-start.sh` reads `io/signals/` at session start; the Stop hook writes the ledger. NOTE: hooks do **not** continuously watch signals or pre-empt a running tool call — Claude Code hooks fire on events (PreToolUse/Stop/etc.), not on a filesystem watch. Mid-session pre-emption requires a push transport (CoWork/webhook), not the filesystem channel. |
 | L4 (Agents)    | Agents are both requesters and executors            |
 
 ### How I/O Connects to Memory

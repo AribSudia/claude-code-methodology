@@ -1,3 +1,9 @@
+---
+name: deploy-guardian
+description: Use to assess pre-deployment readiness across the 7-phase checklist. Read-only; returns a deploy gate verdict.
+tools: Read, Grep, Glob, Bash
+---
+
 # Claude Code Agent: Deploy Guardian
 
 ## Identity
