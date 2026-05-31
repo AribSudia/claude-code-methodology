@@ -27,9 +27,17 @@ waves/
     ├─ creates waves/<name>/ from .templates/
     ├─ creates branch wave/<name>
     ├─ dispatches architect + planner (Tier-2 parallel)
-    └─ writes initial PLAN.md filled with plan output
+    ├─ writes initial PLAN.md with the Steps contract
+    └─ offers to hand off to /arib-wave-run
 
-(... sessions of work, each landing commits on wave/<name> ...)
+/arib-wave-run            ◀ v3.6 auto-advance execution engine
+    ├─ reads PLAN.md Steps (goal / done_when / checkpoint / on_failure)
+    ├─ executes each step, verifies done_when, commits per step
+    ├─ AUTO-ADVANCES to the next step without asking
+    └─ pauses ONLY on: step failure, checkpoint:true step, genuine
+       ambiguity, blocker, autonomy-guard trip, or user interrupt
+
+(... steps flow automatically; one commit per step on wave/<name> ...)
 
 /arib-wave-end
     ├─ runs /arib-deep-audit (21 sections)

@@ -85,8 +85,21 @@ git commit -m "feat(wave): start <wave-name>"
 Announce to user:
 - Wave directory created.
 - Branch `wave/<wave-name>` checked out.
-- PLAN.md populated. Review and adjust before starting work.
+- PLAN.md populated, including the **Steps** section with the
+  auto-advance execution contract (each step has goal / done_when /
+  checkpoint / on_failure).
+- **Next:** review and adjust PLAN.md, then run `/arib-wave-run` to
+  execute. It auto-advances through the steps — you won't be asked
+  "continue?" between steps; it pauses only on a failure, a
+  `checkpoint: true` step, genuine ambiguity, or a blocker.
 - Reminder: `/arib-wave-end` is the only way to land on `main` from this branch.
+
+### Step 6 — Offer to begin execution
+
+After announcing, **offer to run `/arib-wave-run` immediately** (don't
+force it — the user may want to edit PLAN first). If the user confirms,
+hand off to `/arib-wave-run`. If the wave's step 1 is a `checkpoint:
+true` step, `/arib-wave-run` will pause before it regardless.
 
 ## Failure modes
 

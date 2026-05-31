@@ -550,6 +550,69 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-015: Wave Auto-Advance Execution (v3.6)
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** The wave overlay (ADR-006) gave CCM a multi-session
+delivery unit with a plan and an end gate. But execution between
+`/arib-wave-start` and `/arib-wave-end` was unstructured — in practice
+CCM would complete one step and then ask the user "should I continue to
+the next step?", repeating the question after every step. For a wave
+with many steps this is exactly the Rule 2 anti-pattern that ADR-014
+forbade for bootstrap protocols (numbered continue/stop prompts when
+the right action is determinable). The user reported it directly:
+"in this wave more than one step, let CCM not ask me to start next
+unless [there is an] issue."
+
+**Decision.** Add a dedicated execution engine skill, `/arib-wave-run`,
+that reads the wave's PLAN.md Steps section and **auto-advances** from
+step to step without asking for approval. It pauses only on six genuine
+conditions: step failure (per the step's `on_failure`), an explicit
+`checkpoint: true` step, genuine ambiguity, a blocker, an autonomy-guard
+trip, or a user interrupt.
+
+The PLAN.md template gains a structured Steps contract: each step has
+`goal`, `done_when` (a verifiable completion criterion), `checkpoint`
+(default false), and `on_failure` (halt | retry-once | skip-and-flag).
+`/arib-wave-start` now generates this structure and offers to hand off
+to `/arib-wave-run`.
+
+This is ADR-014's decisive discipline extended from protocols into wave
+execution. The principle is uniform across CCM now: don't ask when the
+answer is determinable; pause only for genuinely-human decisions.
+
+**Consequences.**
+- A multi-step wave runs end-to-end with one command, reporting per-step
+  progress, pausing only when it must.
+- One commit per step keeps the autonomy guard's calls-since-commit
+  counter healthy and the wave history granular.
+- `checkpoint: true` is the explicit escape hatch for irreversible /
+  high-stakes steps (prod deploy, data migration, external send) —
+  those still get a human gate.
+- `/arib-wave-end` remains an explicit gate (it's the finish line and
+  the merge-to-main control, not a between-steps prompt). Auto-advance
+  flows *within* the build, not *through* the close.
+- An unverifiable step (`done_when` vague, no way to confirm) is treated
+  as an ambiguity and pauses — it is never falsely marked PASS. Honesty
+  principle preserved.
+
+**Alternatives rejected.**
+- "Fold execution into `/arib-wave-start`" — conflates planning with
+  doing; the lifecycle is cleaner as start → run → end (matches the
+  three-verb shape the wave skills already use).
+- "Auto-run `/arib-wave-end` too when steps finish" — rejected; closing
+  the wave gates the merge to main and runs the 21-section audit. That
+  is a deliberate end gate, not a step transition. Keep it explicit.
+- "No checkpoint concept; auto-advance everything" — unsafe for
+  irreversible actions. The `checkpoint: true` flag is the minimal,
+  honest exception.
+- "Ask the user to set a global auto/manual toggle" — that's itself a
+  menu; the per-step `checkpoint` flag is more precise and lives in the
+  plan where the decision belongs.
+
+---
+
 # ADR-014: Decisive Bootstrap Protocols (v3.5.1)
 
 **Status:** Accepted   **Date:** 2026-05-08
@@ -793,6 +856,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-012 | CI/PR Governance Model | Accepted | 2026-05-08 |
 | ADR-013 | CI/PR as a Standalone Technique (v3.5) | Accepted | 2026-05-08 |
 | ADR-014 | Decisive Bootstrap Protocols (v3.5.1) | Accepted | 2026-05-08 |
+| ADR-015 | Wave Auto-Advance Execution (v3.6) | Accepted | 2026-05-08 |
 
 ---
 

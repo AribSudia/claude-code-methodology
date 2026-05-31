@@ -1,4 +1,4 @@
-# Claude Code Methodology v3.5.1 "Engineered" — System Overview & User Manual
+# Claude Code Methodology v3.6.0 "Flowing" — System Overview & User Manual
 
 > **Complete Training Manual for the AI Development Operating System**
 
@@ -54,10 +54,10 @@ It works like an operating system for your project:
 
 | Attribute | Value |
 |-----------|-------|
-| **Version** | 3.3.0 |
-| **Codename** | "Operating" |
+| **Version** | 3.6.0 |
+| **Codename** | "Flowing" |
 | **Release Date** | 2026-05-08 |
-| **Engineered By** | Abdullah × Claude Opus 4.6 / 4.7 |
+| **Engineered By** | Abdullah × Claude Opus 4.6 / 4.7 / 4.8 |
 | **License** | MIT |
 | **Status** | Production-Ready |
 
@@ -1180,10 +1180,10 @@ claude-code-methodology/
 
 | Attribute | Value |
 |-----------|-------|
-| **Current Version** | 3.5.1 |
-| **Codename** | "Engineered" |
+| **Current Version** | 3.6.0 |
+| **Codename** | "Flowing" |
 | **Release Date** | 2026-05-08 |
-| **Previous Version** | 3.4.0 |
+| **Previous Version** | 3.5.1 |
 | **Status** | Production-Ready |
 | **License** | MIT |
 

@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.5.1 "Engineered"                       |
+| Version           | 3.6.0 "Flowing"                          |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7         |
@@ -124,6 +124,7 @@ your-project/
 | /arib-dev-debug             | Dev        | Scientific debugging (3 hypotheses)                  |
 | /arib-dev-review            | Dev        | Code review with parallel agent fan-out              |
 | /arib-wave-start            | Wave       | Start a multi-session wave (architect + planner)     |
+| /arib-wave-run              | Wave       | Execute wave steps with auto-advance (pauses only on issue/checkpoint) |
 | /arib-wave-end              | Wave       | Close a wave (deep-audit gate + stakeholder report)  |
 | /arib-deep-audit            | Audit      | 21-section wave-end audit + IMPLEMENT-FROM-FILE      |
 | /arib-check-deploy          | Check      | Pre-deployment 7-phase verification + TestSprite     |

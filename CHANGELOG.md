@@ -7,6 +7,61 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.6.0] "Flowing" — 2026-05-08
+
+Waves now execute themselves. The wave overlay (v3.3) had a plan and an
+end gate but no execution engine — CCM would finish a step and ask
+"continue?" after every one. v3.6 adds auto-advance: a wave runs
+step-to-step without between-steps prompts, pausing only on a genuine
+issue or an explicit checkpoint.
+
+This is the v3.5.1 decisive discipline (no continue/stop menus when the
+right action is determinable) extended from bootstrap protocols into
+wave execution.
+
+### Added
+- `.claude/skills/arib-wave-run/SKILL.md` — the wave execution engine
+  (skill #26). Reads PLAN.md Steps, executes each, verifies `done_when`,
+  commits per step, and **auto-advances**. Pauses only on: step failure
+  (per `on_failure`: halt | retry-once | skip-and-flag), a
+  `checkpoint: true` step, genuine ambiguity, a blocker, an
+  autonomy-guard trip, or a user interrupt. Supports `--from <step>` to
+  resume. v3.1-depth skill: 4 examples, decision tree, edge cases,
+  failure modes.
+- `architecture/DECISIONS.md` ADR-015 — Wave Auto-Advance Execution.
+- `architecture/CONSTRAINTS.md` constraint #12 — wave execution
+  auto-advances; pauses only on the six enumerated conditions; an
+  unverifiable step is treated as ambiguity (pause), never falsely
+  marked PASS.
+
+### Changed
+- `waves/.templates/PLAN.md` — adds an "Execution mode" section and a
+  structured "Steps" contract: each step has `goal`, `done_when`,
+  `checkpoint` (default false), `on_failure` (default halt). Includes a
+  worked example of a guarded `checkpoint: true` step (prod deploy).
+- `.claude/skills/arib-wave-start/SKILL.md` — generates the Steps
+  contract; new Step 6 offers to hand off to `/arib-wave-run`.
+- `waves/README.md` — lifecycle diagram now shows start → run → end.
+- CLAUDE.md §4 skills table grows to 26 (added `/arib-wave-run`);
+  identity table bumped.
+- VERSION.json, SYSTEM.md, Training/01 bumped to v3.6.0 "Flowing".
+  Training/01 also fixed two stale attribute tables (one was still at
+  3.3.0 "Operating" — version drift caught and corrected).
+
+### Why
+The user reported: "in this wave more than one step, let CCM not ask me
+to start next unless [there is an] issue." Asking after every step is
+the exact Rule 2 anti-pattern (numbered continue/stop prompts) that
+ADR-014 forbade for bootstrap protocols. ADR-015 applies the same fix
+to waves.
+
+`checkpoint: true` is the minimal honest exception — irreversible or
+high-stakes steps (prod deploy, data migration, external send, spending
+money) still get a human gate. `/arib-wave-end` stays explicit: it's
+the finish line and merge-to-main control, not a between-steps prompt.
+
+---
+
 ## [3.5.1] "Engineered" — 2026-05-08
 
 Patch release fixing decisive-protocol behavior across all 5 bootstrap

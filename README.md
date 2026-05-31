@@ -2,15 +2,27 @@
 
 ### An opinionated methodology and skill pack for Claude Code
 
-A convention layer for serious work in Claude Code: 16 branded `/arib-*` skills,
-13 specialist agents, kernel-level enforcement hooks, path-scoped rules, persistent
-memory files, and a 5-mode bootstrap. It is **not** a runtime, an orchestrator,
-or a kernel — it is a set of conventions that make multi-session Claude Code
-work durable.
+A convention layer for serious work in Claude Code: 26 branded `/arib-*` skills,
+15 specialist agents, kernel-level enforcement hooks, path-scoped rules, persistent
+memory files, a 5-mode bootstrap, a wave delivery overlay with auto-advancing
+execution, a compliance layer, and full CI/PR governance. It is **not** a runtime,
+an orchestrator, or a kernel — it is a set of conventions that make multi-session
+Claude Code work durable.
 
-**v3.5.1 "Engineered"** · Engineered by Abdullah x Claude · Token cost on session start: ~39.6K
+**v3.6.0 "Flowing"** · Engineered by Abdullah x Claude · Token cost on session start: ~39.6K
 (measure yours: `./scripts/token-audit.sh`)
 
+> **What changed in v3.6** — waves now execute themselves. New
+> `/arib-wave-run` skill reads the wave PLAN's Steps contract and
+> **auto-advances** from step to step without asking "continue?" between
+> them. It pauses only on a real issue (failed step), an explicit
+> `checkpoint: true` step (irreversible/high-stakes), genuine ambiguity,
+> a blocker, an autonomy-guard trip, or a user interrupt. One commit per
+> step; `/arib-wave-end` stays the explicit finish-line gate. Extends
+> the v3.5.1 decisive discipline from bootstrap protocols into wave
+> execution. ADR-015 records it. See
+> [arib-wave-run](.claude/skills/arib-wave-run/SKILL.md).
+>
 > **What changed in v3.5.1 (patch)** — fixes a bug across all 5 bootstrap
 > protocols: same-version runs no longer terminate prematurely. Adds
 > `bootstrap/PROTOCOL_PRINCIPLES.md` (binding charter), a new mandatory
@@ -617,7 +629,9 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.2 | Honest | Real hook enforcement, token-audit script, README rewrite — docs match disk |
 | v3.3 | Operating | 8 deferred items shipped: hybrid memory, real I/O transport, deep-audit, waves, design system, TestSprite gate, autonomy mode, compliance (OWASP/GDPR/ISO/SOC2/PDPL) |
 | v3.4 | Reviewed | GitHub PR/CI governance as static configuration: PR template, CODEOWNERS, 4 CI workflows, Dependabot, CONTRIBUTING, repo-root SECURITY, COC |
-| **v3.5** | **Engineered** | **CI/PR as an executable subsystem: `ci-pr-engineer` agent + `/arib-ci-audit` skill with audit/init/review/branch-protection modes** |
+| v3.5 | Engineered | CI/PR as an executable subsystem: `ci-pr-engineer` agent + `/arib-ci-audit` skill with audit/init/review/branch-protection modes |
+| v3.5.1 | Engineered | Decisive bootstrap protocols: no STOP on matching versions, no options-menus, mandatory drift detection (ADR-014) |
+| **v3.6** | **Flowing** | **Wave auto-advance: `/arib-wave-run` executes wave steps without asking between them, pausing only on issue/checkpoint (ADR-015)** |
 
 ---
 

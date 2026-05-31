@@ -291,6 +291,15 @@ when modifying the methodology repo or shipping a new release.
     `bootstrap/PROTOCOL_PRINCIPLES.md` §"Genuine blockers"; nothing
     else is a legitimate STOP.
 
+12. **Wave execution auto-advances.** Per ADR-015, `/arib-wave-run`
+    executes wave steps in order without asking "continue?" between
+    them. It pauses ONLY on: step failure (per the step's
+    `on_failure`), a `checkpoint: true` step, genuine ambiguity, a
+    blocker, an autonomy-guard trip, or a user interrupt. An
+    unverifiable step is treated as ambiguity (pause), never falsely
+    marked PASS. `/arib-wave-end` remains an explicit gate — it is the
+    finish line, not a between-steps prompt.
+
 ---
 
 ## Review Schedule
