@@ -226,7 +226,9 @@ This pause is not optional—it's a safety gate. The user may:
 
 **Action:**
 - Run `/arib-session-start` normally, but note in the report: "First session detected — no prior context available"
-- Propose running `/bootstrap` or `/reverse-bootstrap` to initialize memory structure
+- Propose initializing the project via the bootstrap protocols in
+  `bootstrap/BOOTSTRAP.md` (new project) or `bootstrap/REVERSE_BOOTSTRAP.md`
+  (existing codebase) — these are protocol docs you follow, not slash commands
 - Ask user to provide the session's goal explicitly (since there's no memory to guide it)
 
 ### Conflicting Information

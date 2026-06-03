@@ -9,7 +9,7 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.7.1 "Self-Policing"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~43.4K
+**v3.7.2 "Self-Policing"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~43.4K
 (measure yours: `./scripts/token-audit.sh` — path-scoped rules ~4.8K load on demand, not counted)
 
 > **What changed in v3.7.1 (patch)** — closes the review's deferred
@@ -100,8 +100,8 @@ This methodology solves all of that:
 
 | Problem                          | Solution                                     |
 |----------------------------------|----------------------------------------------|
-| Claude forgets between sessions  | **Persistent Memory** — 7 file types, auto-updated |
-| No consistent code quality       | **13 Specialist Agents** — each with checklists |
+| Claude forgets between sessions  | **Persistent Memory** — 6 file types, auto-updated |
+| No consistent code quality       | **15 Specialist Agents** — each with checklists |
 | Dangerous operations slip through| **Safety Hooks** — block before damage happens |
 | Every session starts from scratch| **Session Protocol** — read → work → write    |
 | Architecture decisions are lost  | **Decision Records** — permanent, searchable  |
@@ -122,14 +122,14 @@ This methodology solves all of that:
 ║  L3 — HOOKS           Safety gates & automation             ║
 ║  PreToolUse · PostToolUse · PreCommit · Notification        ║
 ╠══════════════════════════════════════════════════════════════╣
-║  L2 — SKILLS          16 branded /arib-* deep reference     ║
+║  L2 — SKILLS          26 branded /arib-* deep reference     ║
 ║  Session · Dev · Check · Docs (7,393 lines total)           ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  I/O — CHANNEL        Inter-agent nervous system            ║
 ║  Requests · Results · Signals · Pipelines · Threads         ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  L1 — CLAUDE.md       The Master Brain (179 lines)          ║
-║  + .claude/rules/ (7 path-scoped rule files)                ║
+║  + .claude/rules/ (9 path-scoped rule files)                ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 

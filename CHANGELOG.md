@@ -7,6 +7,42 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.7.2] "Self-Policing" — 2026-06-03
+
+Forensic skill audit (all 26 skills, file-grounded) + v3.8 roadmap, plus
+the one functional blocker the audit found.
+
+### Fixed (functional blocker)
+- `arib-dev-feature` hard-coded `git checkout develop`; the repo is
+  main-only, so **every feature start failed at step 2**. Now detects the
+  integration branch (`develop` if present, else `main`). The skill ran
+  at 0% on main-only projects before this.
+- `arib-session-start` referenced `/bootstrap` and `/reverse-bootstrap`
+  as slash commands — they are protocol docs, not skills. Corrected to
+  point at `bootstrap/BOOTSTRAP.md` / `REVERSE_BOOTSTRAP.md`.
+
+### Added (analysis deliverables)
+- `io/ledger/skill-audit-2026-06-03.md` — forensic audit of all 26 skills
+  across 5 dimensions (syntax/triggers/depth/coherence/improvement), with
+  line citations, a unified table, TOP-5/BOTTOM-5, and 8 cross-cutting
+  defect classes. Headline: **0/26 skills have a `name:` field** (the
+  skills-analog of the v3.7 agent fix); mean depth 8.4.
+- `proposals/CCM-v3.8-Roadmap.md` — evidence-backed v3.8 plan. Structural
+  checks verified on disk: B1 (no skill triggers/name + no invocation
+  telemetry → activation rate unmeasurable), B2 (**`.claude/agent-memory/`
+  is dead infra — only a README, nothing reads/writes it**), B3 (exit-2
+  enforcement re-tested, **held**, 37/37). Proposes 10 KPIs (4 measurable
+  today, 3 need telemetry, honestly labeled) and a leverage-ordered
+  sequence that leads with the **token restructure (43K → <8K)** — the
+  real C+→A+ gate — over adding new skills.
+
+### Note
+The audit's verdict matches two independent external reviews: CCM's
+enforcement and self-policing are genuinely strong; its blockers are
+token bloat and surface sprawl. v3.8 should make it leaner, not bigger.
+
+---
+
 ## [3.7.1] "Self-Policing" — 2026-05-08
 
 Patch release closing the P2/P3 findings the v3.7.0 review deferred.

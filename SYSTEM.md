@@ -21,7 +21,7 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.7.1                                                    |
+| **Version**          | 3.7.2                                                    |
 | **Codename**         | "Self-Policing"                                          |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
