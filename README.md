@@ -684,4 +684,4 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Built by Abdullah x Claude Opus 4.6** — Claude Code Methodology v3.1.0 "Deep Skills"
+**Built by Abdullah x Claude Opus X x DR.SAMI SHM**
