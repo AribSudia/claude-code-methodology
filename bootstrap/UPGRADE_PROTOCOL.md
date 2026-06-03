@@ -19,16 +19,17 @@
 ## Step 0 — Get the new version (fetch from GitHub)
 
 Before this protocol can run, your project needs the **new** CCM source on
-disk at `./claude-code-methodology/`. You don't download it by hand anymore:
+disk at `./claude-code-methodology/`. You don't download it by hand anymore.
+
+From your project root — **this works on any version, including old ones
+that have no `ccm-fetch.sh` yet** (it pulls the script fresh from GitHub):
 
 ```bash
-# from your project root — refreshes ./claude-code-methodology/ from GitHub
-./claude-code-methodology/scripts/ccm-fetch.sh            # latest (main)
-./claude-code-methodology/scripts/ccm-fetch.sh --ref v3.9.0   # pin a version
+curl -fsSL https://raw.githubusercontent.com/AribSudia/claude-code-methodology/main/scripts/ccm-fetch.sh | bash
 ```
 
-(First-ever install, when the script isn't present yet:
-`curl -fsSL https://raw.githubusercontent.com/AribSudia/claude-code-methodology/main/scripts/ccm-fetch.sh | bash`)
+(Shortcut once you already have a recent CCM:
+`./claude-code-methodology/scripts/ccm-fetch.sh --ref v3.9.0` to pin.)
 
 `ccm-fetch.sh` updates ONLY the framework source folder (keeping the old one
 at `claude-code-methodology.prev`) and touches no project data. The phases

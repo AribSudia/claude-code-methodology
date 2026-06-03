@@ -1,9 +1,9 @@
 {
   "name": "claude-code-methodology",
-  "version": "3.9.0",
+  "version": "3.9.1",
   "codename": "Live Update",
   "releaseDate": "2026-06-03",
-  "previousVersion": "3.8.4",
+  "previousVersion": "3.9.0",
   "engineeredBy": "Abdullah x Claude Opus 4.6 / Opus 4.7",
   "license": "MIT",
   "repository": "https://github.com/AribSudia/claude-code-methodology",

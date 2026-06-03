@@ -9,7 +9,7 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.9.0 "Live Update"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.9.1 "Live Update"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -219,8 +219,11 @@ git checkout -b methodology/overlay
 You are on an older CCM and want the latest. The upgrade protocol detects your version, runs drift detection, and preserves all your project data.
 
 ```bash
-# 1. Pull the latest CCM source from GitHub (no manual re-download)
-./claude-code-methodology/scripts/ccm-fetch.sh        # latest; --ref vX.Y.Z to pin
+# 1. Pull the latest CCM source from GitHub (no manual re-download).
+#    This SAME one-liner works even on old versions that have no local
+#    ccm-fetch.sh yet — it downloads the script fresh from GitHub:
+curl -fsSL https://raw.githubusercontent.com/AribSudia/claude-code-methodology/main/scripts/ccm-fetch.sh | bash
+#    (shortcut once you already have it: ./claude-code-methodology/scripts/ccm-fetch.sh --ref vX.Y.Z)
 
 # 2. Open Claude Code and paste bootstrap/UPGRADE_PROTOCOL.md (or the one-prompt)
 # Claude:
@@ -691,7 +694,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.8.2 | Lean Core | Migration modernized to "From Any System" (Cursor/Windsurf/Copilot/Kiro), legacy path retired to Appendix A (ADR-021) |
 | v3.8.3 | Lean Core | One-prompt unified entry + Situation Router, skill-hygiene sweep, dead `agent-memory/` removed (ADR-022) |
 | v3.8.4 | Lean Core | Invocation telemetry (`invocation-log.sh`) + upgrade Phase 1.6 re-verification recommendations (ADR-023) |
-| **v3.9.0** | **Live Update** | **Fetch CCM directly from GitHub — `scripts/ccm-fetch.sh` + curl one-liner; no manual re-download (ADR-024)** |
+| v3.9.0 | Live Update | Fetch CCM directly from GitHub — `scripts/ccm-fetch.sh` + curl one-liner; no manual re-download (ADR-024) |
+| **v3.9.1** | **Live Update** | **Doc fix: curl one-liner is the universal entry — old versions without a local `ccm-fetch.sh` upgrade with the same line** |
 
 ---
 
