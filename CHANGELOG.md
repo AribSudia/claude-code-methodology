@@ -7,6 +7,34 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.9.2] "Live Update" — 2026-06-03
+
+UX polish on `ccm-fetch.sh` so the two-step model is unmistakable for the
+common layout (`myproject/claude-code-methodology/` source + CCM deployed
+into `myproject/` root).
+
+### Changed — `scripts/ccm-fetch.sh` output
+- **Explicit "STEP 1 of 2 / STEP 2 of 2" framing.** Step 1 (this script)
+  states plainly that it updated ONLY the source folder and that root files
+  (`CLAUDE.md`, `.claude/`, `architecture/`, `memory/`, …) are *not* changed
+  yet. Step 2 is the Claude-driven merge.
+- **Reads the DEPLOYED version.** The "from" version now comes from the
+  project root `./VERSION.json` (what you're upgrading from), falling back to
+  the source folder — so the report reads e.g. `3.1.0 -> 3.9.2`, not the
+  source folder's stale number.
+- **Install-vs-upgrade-aware hand-off.** Detects whether CCM is already
+  deployed at the root (`./CLAUDE.md` / `./.claude` / root `VERSION.json`)
+  and tailors the next-step text: UPGRADE (update + merge + preserve memory/)
+  vs. fresh bootstrap (scaffold from source). No behavior change to what's
+  fetched — only clearer guidance.
+
+### Note
+- Confirms the intended workflow: `ccm-fetch.sh` updates
+  `claude-code-methodology/` only; the pasted prompt is what updates the
+  deployed files at your project root (preserving `memory/` + your data).
+
+---
+
 ## [3.9.1] "Live Update" — 2026-06-03
 
 Doc correction to v3.9.0: makes explicit that the **curl one-liner is the

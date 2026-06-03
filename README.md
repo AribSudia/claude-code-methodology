@@ -9,7 +9,7 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.9.1 "Live Update"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.9.2 "Live Update"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -695,7 +695,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.8.3 | Lean Core | One-prompt unified entry + Situation Router, skill-hygiene sweep, dead `agent-memory/` removed (ADR-022) |
 | v3.8.4 | Lean Core | Invocation telemetry (`invocation-log.sh`) + upgrade Phase 1.6 re-verification recommendations (ADR-023) |
 | v3.9.0 | Live Update | Fetch CCM directly from GitHub — `scripts/ccm-fetch.sh` + curl one-liner; no manual re-download (ADR-024) |
-| **v3.9.1** | **Live Update** | **Doc fix: curl one-liner is the universal entry — old versions without a local `ccm-fetch.sh` upgrade with the same line** |
+| v3.9.1 | Live Update | Doc fix: curl one-liner is the universal entry — old versions without a local `ccm-fetch.sh` upgrade with the same line |
+| **v3.9.2** | **Live Update** | **`ccm-fetch.sh` UX: explicit 2-step output (source vs. project root), reads the deployed version, install-vs-upgrade-aware hand-off** |
 
 ---
 

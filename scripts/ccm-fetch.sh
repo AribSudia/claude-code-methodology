@@ -71,11 +71,25 @@ fi
 
 URL="https://github.com/${REPO}.git"
 
-# Capture the currently-installed version (if any) for the report.
-OLD_VER="(none)"
-if [[ -f "${DEST}/VERSION.json" ]]; then
-  OLD_VER="$(grep -E '"version"' "${DEST}/VERSION.json" | head -1 | sed -E 's/.*"version"[^"]*"([^"]+)".*/\1/' || true)"
-  [[ -z "${OLD_VER}" ]] && OLD_VER="(unknown)"
+# Read a version string out of a VERSION.json (best-effort, no jq dependency).
+read_ver() {
+  [[ -f "$1" ]] || { echo ""; return; }
+  grep -E '"version"' "$1" | head -1 | sed -E 's/.*"version"[^"]*"([^"]+)".*/\1/'
+}
+
+# The version that actually matters to the user is what's DEPLOYED at the
+# project root (./VERSION.json) — that's what they're upgrading FROM. Fall
+# back to the source folder's version if no root deployment exists yet.
+DEPLOYED_VER="$(read_ver "./VERSION.json")"
+SOURCE_VER="$(read_ver "${DEST}/VERSION.json")"
+OLD_VER="${DEPLOYED_VER:-${SOURCE_VER:-(none)}}"
+[[ -z "${OLD_VER}" ]] && OLD_VER="(none)"
+
+# Is CCM already DEPLOYED in this project (root files present), vs. just the
+# source folder sitting here? Drives install-vs-upgrade wording below.
+IS_UPGRADE=0
+if [[ -f "./CLAUDE.md" || -d "./.claude" || -n "${DEPLOYED_VER}" ]]; then
+  IS_UPGRADE=1
 fi
 
 echo "==> Fetching CCM from ${URL} (ref: ${REF})"
@@ -116,23 +130,37 @@ rm -rf "${TMP}/repo/.git"
 if [[ -e "${DEST}" ]]; then
   rm -rf "${DEST}.prev"
   mv "${DEST}" "${DEST}.prev"
-  echo "==> Previous source preserved at ${DEST}.prev (rollback safety)"
 fi
 mv "${TMP}/repo" "${DEST}"
 
 echo ""
-echo "==> CCM source updated: ${OLD_VER}  ->  ${NEW_VER}"
-echo "    Location: ${DEST}/"
+echo "==> STEP 1 of 2 done — source folder updated."
+echo "    ${DEST}/   ${OLD_VER}  ->  ${NEW_VER}"
+[[ -e "${DEST}.prev" ]] && echo "    (previous source kept at ${DEST}.prev for rollback)"
+echo ""
+echo "    NOT changed yet: your project files at the root — CLAUDE.md,"
+echo "    .claude/, architecture/, memory/, etc. Nothing outside ${DEST}/"
+echo "    was touched. Step 2 (below) is what updates those, safely."
 
 # ---- Hand off to the Claude-driven upgrade --------------------------------
 if [[ "${DO_HANDOFF}" -eq 1 ]]; then
+  if [[ "${IS_UPGRADE}" -eq 1 ]]; then
+    ACTION_LINE="CCM is already installed here (${OLD_VER}). Claude will run the"
+    ACTION_LINE2="UPGRADE protocol: UPDATE skills/agents/hooks/rules/scripts,"
+    ACTION_LINE3="MERGE CLAUDE.md + architecture + docs (keeping your content),"
+    ACTION_LINE4="and PRESERVE memory/ + your project data. Then re-verify."
+  else
+    ACTION_LINE="No CCM is deployed at the root yet. Claude will run the right"
+    ACTION_LINE2="bootstrap protocol to scaffold the methodology into this"
+    ACTION_LINE3="project from the source folder — filling files with your"
+    ACTION_LINE4="real project data, not placeholders."
+  fi
   cat <<EOF
 
 ────────────────────────────────────────────────────────────────────────
-NEXT STEP — run the intelligent merge (preserves your data).
+STEP 2 of 2 — apply it to your project (this is the part Claude does).
 
-The fetch above only updated the framework SOURCE. To apply it to your
-project, open Claude Code in this directory and paste:
+Open Claude Code in this directory and paste:
 
     Read ${DEST}/bootstrap/RUN.md and set up (or upgrade) CCM for this
     project. Detect my situation from the filesystem per the Situation
@@ -140,9 +168,14 @@ project, open Claude Code in this directory and paste:
     (PROTOCOL_PRINCIPLES Rule 5). Finish with ./scripts/install-hooks.sh
     and ./scripts/validate-coherence.sh, and report what you did.
 
-CCM will detect that ${OLD_VER} is already installed and run the UPGRADE
-protocol (drift detection + Phase 1.6 re-verification), preserving
-memory/, decisions, and all project-specific data.
+${ACTION_LINE}
+${ACTION_LINE2}
+${ACTION_LINE3}
+${ACTION_LINE4}
+
+Why two steps: the download is mechanical (this script). The merge needs
+judgment — keep your data, reconcile your edits, re-verify changed skills.
+A blind copy would overwrite memory/ and your CLAUDE.md; Claude won't.
 ────────────────────────────────────────────────────────────────────────
 EOF
 fi
