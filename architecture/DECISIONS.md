@@ -550,6 +550,52 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-021: Migration Modernization — "From Any System" (v3.8.2)
+
+**Status:** Accepted   **Date:** 2026-06-03
+
+**Context.** An external review (Claude Sonnet 4.6) of the bootstrap
+section raised 3 gaps. Verified against disk:
+- **Gap 1 (claimed Critical): `drift-detect.sh`/`template-hashes.json`
+  "do not exist"** — FALSE. Both shipped in v3.7.1 (drift-detect.sh,
+  gen-template-hashes.sh, a 153-entry manifest, CI-checked by
+  validate-coherence). The reviewer's footnote admits they tested nothing
+  outside `bootstrap/`, so they missed `scripts/`. No action — the
+  "enforcement vs prose" contradiction they allege does not exist.
+- **Gap 3a: REENGINEERING lacks the decisive header** — FALSE; it has it.
+- **Gap 3b: RUN.md omits the reengineering prompt** — TRUE.
+- **Gap 2: MIGRATION_GUIDE targets the dead `claude-code-system`** — TRUE,
+  and matches the maintainer's "retire Legacy Migration" instruction.
+- **Q25 missing 2026 categories** — TRUE.
+
+**Decision.**
+- **Retire** the legacy `claude-code-system → CCM` migration as the
+  *primary* content (it's a ~0%-of-users path in 2026). Restructure
+  MIGRATION_GUIDE.md as **"From Any System"** with a Step 0 source-
+  detection table (Cursor / Windsurf / Copilot / Kiro / unstructured
+  CLAUDE.md / legacy) and per-source mapping sections §A–§E. The legacy
+  6-phase content is demoted, intact, to **Appendix A (RETIRED)**.
+- Add the **reengineering** prompt to `bootstrap/RUN.md` (5 prompts now).
+- Add conditional questions **Q26–Q30** to the BOOTSTRAP questionnaire:
+  AI/LLM integration, vector DB/RAG, multi-tenancy, real-time, edge/
+  serverless — asked only when relevant; "no" is a valid common answer.
+- Do **not** action Gap 1 (it's already done) — instead record here that
+  the scripts exist and are CI-verified, so the false gap can't recur.
+
+**Deferred (not built — subtraction discipline):** the review's larger
+"improvements" — Coexistence Mode, a unified Bootstrap Health Score, and
+BOOTSTRAP_TEAMS.md — add surface to a system whose strength is now its
+leanness. They are noted as candidates, not committed. (A health-score
+artifact, if built, should reuse the existing `validate-coherence.sh` /
+`token-audit.sh` outputs, not a new parallel framework.)
+
+**Consequences.** A 2026 user migrating from Cursor/Windsurf/Copilot/Kiro
+now has a real path; the obsolete legacy content is retired without being
+deleted. The external review's verified-true items are closed; its
+false "Critical" gap is corrected on the record.
+
+---
+
 # ADR-020: Skill `name:` Conformance + Autonomous Protocol Execution (v3.8.1)
 
 **Status:** Accepted   **Date:** 2026-06-03
@@ -1116,6 +1162,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-018 | Close the Deferred Review Findings (v3.7.1) | Accepted | 2026-05-08 |
 | ADR-019 | Lean Core — Always-On Context Budget (v3.8.0) | Accepted | 2026-06-03 |
 | ADR-020 | Skill name conformance + autonomous protocol execution (v3.8.1) | Accepted | 2026-06-03 |
+| ADR-021 | Migration modernization — "From Any System" (v3.8.2) | Accepted | 2026-06-03 |
 
 ---
 

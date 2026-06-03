@@ -42,14 +42,28 @@ up to date"); if the template is newer, run the upgrade phases; if older,
 stop with the honest error. Apply changes and report — no options menus.
 ```
 
-## Legacy migration
+## Migrate from another AI-coding system (Cursor / Windsurf / Copilot / Kiro / unstructured CLAUDE.md / legacy claude-code-system)
 
 ```
 Read claude-code-methodology/bootstrap/MIGRATION_GUIDE.md and execute the
 full migration protocol. Run autonomously per PROTOCOL_PRINCIPLES Rule 5:
-identify the source system from file inspection (don't ask what it was),
-migrate data into the CCM structure, split AGENTS.md, deploy skills/agents,
-and verify. Pause only on a genuine blocker.
+detect the source system from filesystem markers (Step 0 — .cursor/rules,
+.windsurfrules, .github/copilot-instructions.md, .kiro/, bare CLAUDE.md, or
+the legacy claude-code-system), migrate ALL detected sources' real content
+into the CCM structure per §A–§E, scaffold the rest, and verify with
+./scripts/install-hooks.sh + ./scripts/validate-coherence.sh. Don't ask
+which system it was — read the files. Pause only on a genuine blocker.
+```
+
+## Reengineer / overlay on a legacy codebase (non-destructive)
+
+```
+Read claude-code-methodology/bootstrap/REENGINEERING_GUIDE.md and execute
+the full reengineering protocol. Run autonomously per PROTOCOL_PRINCIPLES
+Rule 5: overlay CCM onto this existing codebase in the documented order
+without restructuring my code, reporting each step. Pause only on a genuine
+blocker. (Use this instead of reverse-bootstrap when CCM must coexist with
+the code as-is rather than reorganize it.)
 ```
 
 ---
