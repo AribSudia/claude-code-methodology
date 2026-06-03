@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.8.2 "Lean Core"                    |
+| Version           | 3.8.3 "Lean Core"                    |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7         |
@@ -94,7 +94,6 @@ your-project/
 |   |   |-- arib-dev-feature/SKILL.md
 |   |   +-- (24 more skills)
 |   |-- agents/                        <- 15 specialist subagents
-|   |-- agent-memory/                  <- Persistent memory per agent
 |   +-- output-styles/                 <- Custom output styles
 |-- io/                                <- I/O Channel (inter-agent comms + ledger)
 |-- memory/                            <- Persistent memory (6 data files + protocol)

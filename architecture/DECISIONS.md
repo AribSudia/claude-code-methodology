@@ -550,6 +550,53 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-022: Unified Entry, Skill-Hygiene Sweep, Dead-Infra Removal (v3.8.3)
+
+**Status:** Accepted   **Date:** 2026-06-03
+
+**Context.** Three cleanups: (1) the v3.8 audit's deferred skill-hygiene
+defects; (2) `.claude/agent-memory/` remained dead infra (B2 finding —
+only a README, nothing read it); (3) the maintainer asked for the most
+user-friendly invocation across all situations and to drop the standalone
+Legacy Migration prompt.
+
+**Decision.**
+- **Skill hygiene swept:** relabeled the mis-numbered steps in
+  `arib-dev-debug` (dup Step 4/5/6 → supplementary sections un-numbered;
+  canonical Steps 1-8 now linear) and `arib-check-services` (dup Step
+  2/3/4 → Step 1-5 linear + reference sections). De-duplicated repeated
+  `##` section headings in 6 skills (check-compliance, check-migrate,
+  docs-generate, memory-search, wave-end, wave-start). `validate-coherence.sh`
+  §3b now reports zero duplicate headings.
+- **Dead infra removed:** deleted `.claude/agent-memory/` and its
+  CLAUDE.md reference. It was declared but never read/written (subtraction
+  over wiring an unused feature; the hybrid memory layer + `memory/*.md`
+  already cover persistence).
+- **Unified entry (the user-friendly method for all situations):**
+  `bootstrap/RUN.md` now leads with **one auto-routing prompt** + a
+  **Situation Router** that detects the project state from filesystem
+  markers (CCM installed → upgrade; tool markers → migrate; existing code
+  → reverse-bootstrap; empty → bootstrap; legacy → migration Appendix A).
+  The 5 explicit per-protocol prompts are demoted to an "advanced" section.
+- **Dropped the standalone Legacy/Migration invocation:** the router
+  auto-invokes `MIGRATION_GUIDE.md` when it detects tool markers, so the
+  user never chooses "migrate." The guide remains as the called protocol.
+
+**On the upgrade method (audit answer):** `UPGRADE_PROTOCOL.md` HAS
+changed materially since v3.1 — v3.5.1 made it decisive (Phase 0 branches
+instead of "stop if same version") and added the mandatory Phase 1.5 drift
+detection; v3.7.1 wired Phase 1.5 to the real `drift-detect.sh` +
+`template-hashes.json`. The current method never says "already up to
+date" — it always runs drift detection, refreshes stale templates, and
+preserves project edits. With the unified router, the user no longer needs
+to know it's an "upgrade" at all — one prompt routes there automatically.
+
+**Consequences.** One prompt works in every situation; no protocol
+selection, no wrong choice. Skills are hygienic and the validator keeps
+them so. One less dead directory.
+
+---
+
 # ADR-021: Migration Modernization — "From Any System" (v3.8.2)
 
 **Status:** Accepted   **Date:** 2026-06-03
@@ -1163,6 +1210,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-019 | Lean Core — Always-On Context Budget (v3.8.0) | Accepted | 2026-06-03 |
 | ADR-020 | Skill name conformance + autonomous protocol execution (v3.8.1) | Accepted | 2026-06-03 |
 | ADR-021 | Migration modernization — "From Any System" (v3.8.2) | Accepted | 2026-06-03 |
+| ADR-022 | Unified entry + skill-hygiene sweep + dead-infra removal (v3.8.3) | Accepted | 2026-06-03 |
 
 ---
 

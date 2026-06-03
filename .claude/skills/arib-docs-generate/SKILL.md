@@ -118,7 +118,7 @@ Retrieve user information by ID.
 ```markdown
 # UserService
 
-## Purpose
+## Purpose (per documentation target)
 Handles all user-related business logic and data operations.
 
 ## Public API

@@ -1,13 +1,48 @@
-# RUN — Canonical Invocation Prompts
+# RUN — How to invoke CCM
 
-> Copy-paste one of these to invoke a bootstrap protocol. Each runs
-> **autonomously to completion** (PROTOCOL_PRINCIPLES Rule 5) — systematic,
-> not interactive. The only pauses are genuine blockers (dirty tree without
-> `--force`, missing dependency, unresolvable conflict, a destructive op
-> needing a snapshot) and — for a brand-new project with no facts — the
-> one-time questionnaire.
+> Every protocol runs **autonomously to completion** (PROTOCOL_PRINCIPLES
+> Rule 5) — systematic, not interactive. The only pauses are genuine
+> blockers (dirty tree without `--force`, missing dependency, unresolvable
+> conflict, a destructive op needing a snapshot) and — for a brand-new
+> project with no facts — the one-time questionnaire.
 
 ---
+
+## ⭐ The one-prompt method (recommended — works in ALL situations)
+
+You don't need to know which protocol applies. Paste this and CCM detects
+your situation from the filesystem and runs the right one:
+
+```
+Read claude-code-methodology/bootstrap/RUN.md and set up (or upgrade) CCM
+for this project. Detect my situation from the filesystem per the Situation
+Router and execute the matching protocol autonomously to completion
+(PROTOCOL_PRINCIPLES Rule 5). Finish with ./scripts/install-hooks.sh and
+./scripts/validate-coherence.sh, and report what you did.
+```
+
+### Situation Router (how the one-prompt method decides)
+
+| Detected on disk | Situation | Protocol |
+|------------------|-----------|----------|
+| `.claude/` + `VERSION.json` with a CCM version | CCM already installed | **UPGRADE_PROTOCOL.md** (Phase 0 detects version → upgrade phases, or drift detection if versions match — never "already up to date / stop") |
+| Other-tool markers (`.cursor/`, `.windsurfrules`, `.github/copilot-instructions.md`, `.kiro/`, or a bare `CLAUDE.md`) and no CCM structure | Coming from another AI-coding tool | **MIGRATION_GUIDE.md** (From Any System) |
+| Flat `AGENTS.md` + `docs/` + root architecture files | Legacy claude-code-system | **MIGRATION_GUIDE.md Appendix A** (retired path) |
+| Substantial existing code, no CCM, no tool markers | Existing codebase to overlay | **REVERSE_BOOTSTRAP.md** |
+| Empty / near-empty project | Brand-new project | **BOOTSTRAP.md** (greenfield) |
+
+If multiple apply (e.g. Cursor markers *and* existing code), do both: migrate
+the tool config AND reverse-bootstrap the code. Report which matched.
+
+**Why this is the most user-friendly method:** one prompt, zero protocol
+selection, no wrong choice possible — the filesystem is the source of truth,
+and the router is deterministic (Rule 2: no menus when one answer is correct).
+
+---
+
+## Explicit invocations (advanced — when you want to force a specific protocol)
+
+Use these only if you want to override the router.
 
 ## New project (greenfield)
 
@@ -42,18 +77,11 @@ up to date"); if the template is newer, run the upgrade phases; if older,
 stop with the honest error. Apply changes and report — no options menus.
 ```
 
-## Migrate from another AI-coding system (Cursor / Windsurf / Copilot / Kiro / unstructured CLAUDE.md / legacy claude-code-system)
-
-```
-Read claude-code-methodology/bootstrap/MIGRATION_GUIDE.md and execute the
-full migration protocol. Run autonomously per PROTOCOL_PRINCIPLES Rule 5:
-detect the source system from filesystem markers (Step 0 — .cursor/rules,
-.windsurfrules, .github/copilot-instructions.md, .kiro/, bare CLAUDE.md, or
-the legacy claude-code-system), migrate ALL detected sources' real content
-into the CCM structure per §A–§E, scaffold the rest, and verify with
-./scripts/install-hooks.sh + ./scripts/validate-coherence.sh. Don't ask
-which system it was — read the files. Pause only on a genuine blocker.
-```
+> **Migration has no standalone prompt (v3.8.3).** The one-prompt method
+> above auto-detects tool markers (Cursor / Windsurf / Copilot / Kiro /
+> unstructured CLAUDE.md / legacy claude-code-system) and invokes
+> `MIGRATION_GUIDE.md` itself — you never have to choose "migrate." The
+> guide still exists as the protocol the router calls.
 
 ## Reengineer / overlay on a legacy codebase (non-destructive)
 

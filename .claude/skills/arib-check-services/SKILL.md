@@ -80,7 +80,7 @@ Does docker-compose.yml exist?
       └─ YES → Static site
 ```
 
-### Step 2: Check What Applies
+### Step 3: Check What Applies
 
 Run ONLY the checks that match this project's type. Do NOT check for things the project doesn't use.
 
@@ -213,7 +213,7 @@ Just check:
 - Does the main entry point exist?
 - Can it run? (quick smoke test)
 
-### Step 3: Docker Troubleshooting Guide
+### Reference: Docker Troubleshooting Guide
 
 Common Docker issues and diagnostics:
 
@@ -244,7 +244,7 @@ docker compose logs --tail=50 [service]
 docker compose logs -f [service]
 ```
 
-### Step 3: Port Conflict Resolution
+### Reference: Port Conflict Resolution
 
 Only check ports that this project actually uses:
 ```bash
@@ -274,7 +274,7 @@ kill -9 [PID]
 PORT=3001 npm start
 ```
 
-### Step 4: Inter-Service Connectivity Matrix Template
+### Reference: Inter-Service Connectivity Matrix Template
 
 For microservices, document which services can reach which:
 

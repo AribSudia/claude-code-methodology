@@ -250,7 +250,7 @@ Commit + announce
   cycle to the user immediately and require resolution before the wave
   starts. Cyclic plans never complete.
 
-## Failure modes
+## Failure modes (extended)
 
 - **Wave name collides with existing dir or branch:** abort. Pick a
   different name. Do not overwrite.
