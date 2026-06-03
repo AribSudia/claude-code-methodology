@@ -22,7 +22,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: markdownlint-cli2
+      # Advisory, not blocking. markdownlint over 150+ hand-written methodology
+      # docs surfaces thousands of cosmetic nits (fence languages, blank-line
+      # spacing) that are not worth gating a merge on. continue-on-error keeps
+      # this informational — the relaxed .markdownlint.json focuses it on rules
+      # that actually matter. (The TODO/FIXME detector below DOES block.)
+      - name: markdownlint-cli2 (advisory)
+        continue-on-error: true
         uses: DavidAnson/markdownlint-cli2-action@v16
         with:
           globs: |

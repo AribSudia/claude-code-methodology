@@ -101,11 +101,14 @@ run_test "notification fan-out"        "$HOOKS/notification.sh"  "$PAYLOADS/noti
 
 echo ""
 echo "6. Autonomy guard"
-run_test "autonomy off (no-op)"        "$HOOKS/autonomy-guard.sh" "$PAYLOADS/pretooluse-bash-safe.json"         0
-run_test "autonomy on, fresh state"    "$HOOKS/autonomy-guard.sh" "$PAYLOADS/pretooluse-bash-safe.json"         0   CCM_AUTONOMY=1
-
-# Cleanup any state files autonomy-guard wrote.
-rm -rf "${REPO_ROOT}/io/.autonomy" 2>/dev/null
+# Run against an ISOLATED CCM_ROOT (temp dir) so "fresh state" is genuinely
+# fresh. Otherwise the guard's BLOCK-rate check counts the BLOCK events the
+# earlier tests in THIS suite just generated into the shared io/hook-logs/,
+# and trips (this differs across macOS/Linux date parsing — caught by CI).
+AUTONOMY_TMP="$(mktemp -d)"
+run_test "autonomy off (no-op)"        "$HOOKS/autonomy-guard.sh" "$PAYLOADS/pretooluse-bash-safe.json"         0   CCM_ROOT="$AUTONOMY_TMP"
+run_test "autonomy on, fresh state"    "$HOOKS/autonomy-guard.sh" "$PAYLOADS/pretooluse-bash-safe.json"         0   CCM_AUTONOMY=1 CCM_ROOT="$AUTONOMY_TMP"
+rm -rf "$AUTONOMY_TMP"
 
 echo ""
 echo "7. Static checks"
