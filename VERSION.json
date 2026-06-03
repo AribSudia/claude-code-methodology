@@ -1,9 +1,9 @@
 {
   "name": "claude-code-methodology",
-  "version": "3.7.2",
-  "codename": "Self-Policing",
+  "version": "3.8.0",
+  "codename": "Lean Core",
   "releaseDate": "2026-05-08",
-  "previousVersion": "3.7.1",
+  "previousVersion": "3.7.2",
   "engineeredBy": "Abdullah x Claude Opus 4.6 / Opus 4.7",
   "license": "MIT",
   "repository": "https://github.com/AribSudia/claude-code-methodology",
@@ -27,8 +27,8 @@
     "trainingManuals": 11,
     "githubWorkflows": 5,
     "issueTemplates": 3,
-    "tokenCostOnSessionStart": 43357,
-    "tokenCostNote": "always-on only (CLAUDE.md + context.include); path-scoped rules (~4.8K) load on demand and are NOT counted. Target <8000; honestly over by ~5x — ratchet-down tracked in ADR-016."
+    "tokenCostOnSessionStart": 7401,
+    "tokenCostNote": "v3.8.0 Lean Core: always-on cut 45855 -> 7401 (84%); UNDER the 8000 target. Reference docs load on demand (ADR-019). Path-scoped rules ~4.8K load on matching paths."
   },
   "compatibility": {
     "minClaudeCodeVersion": "1.0.0",

@@ -64,9 +64,14 @@ bash scripts/io-watcher.sh
 **Key principle**: "The I/O channel bridges Cowork (oversight) and Claude Code (execution). Signals are urgent and interrupt the plan; requests are queued work that needs user prioritization."
 
 
-### Step 1: Read Core Documentation
+### Step 1: Read the Lean Core (v3.8.0 — ADR-019)
 
-These five files form the foundation of everything you do. Read them in this exact order—each builds on the previous.
+Read **only the always-on lean core** at session start — `CLAUDE.md` and
+`CONSTRAINTS.md` (plus the two memory files in Step 2). The other reference
+docs below (TECH_STACK, CONTEXT_MAP, ERROR_PATTERNS) are **read on demand**
+when the task touches them, NOT bulk-read at start. This keeps always-on
+context ~8K instead of ~46K. Their entries are kept here as a *reading map*
+(when to pull each), not a start-of-session checklist.
 
 **1. CLAUDE.md** (Project Identity & Rules)
 - **Why**: This is the master brain. It defines what this project is, who maintains it, the golden rules that never bend, the overall structure, and a reference guide to all skills
@@ -78,22 +83,25 @@ These five files form the foundation of everything you do. Read them in this exa
 - **What to look for**: Version pins (Node 18.x, Python 3.11+, etc.), forbidden libraries, maximum bundle size, latency SLOs, test coverage minimums
 - **Impact**: Violate these and your code will be rejected. Read this before proposing any technical approach
 
-**3. TECH_STACK.md** (Approved Libraries & Versions)
+**3. TECH_STACK.md** (Approved Libraries & Versions) — *read on demand*
 - **Why**: The approved toolkit. If it's not on this list, ask before using it
 - **What to look for**: Backend framework, ORM, testing library, CSS approach, build tool, observability, database
 - **Impact**: If you want to use a library not listed, propose it explicitly—don't surprise the user with a new dependency
 
-**4. CONTEXT_MAP.md** (Folder Structure & Ownership)
+**4. CONTEXT_MAP.md** (Folder Structure & Ownership) — *read on demand*
 - **Why**: Prevents you from creating files in the wrong place or duplicating what already exists
 - **What to look for**: High-level folder structure, ownership of each area (frontend, backend, infra), where configs live, where tests go, where to add new features
 - **Impact**: Saves you from "I created a file but it should have gone in /services not /lib"
 
-**5. ERROR_PATTERNS.md** (Known Pitfalls & Solutions)
+**5. ERROR_PATTERNS.md** (Known Pitfalls & Solutions) — *read on demand (esp. when debugging)*
 - **Why**: Avoid repeating mistakes. Every recurring issue lives here with its diagnosis and solution
 - **What to look for**: Common bugs, performance issues, gotchas specific to this project, patterns that seemed good but caused problems
 - **Impact**: If you spot a pattern from this list, you already know the solution
 
-**Reading order is critical.** CLAUDE.md sets global context; CONSTRAINTS.md sets boundaries; the remaining three fill in detail.
+**Lean-core reading order:** CLAUDE.md sets global context; CONSTRAINTS.md
+sets boundaries. Those two are always-on. TECH_STACK / CONTEXT_MAP /
+ERROR_PATTERNS are pulled only when the task needs them — don't bulk-read
+them at session start (that was the pre-v3.8 ~46K habit; Lean Core is ~8K).
 
 
 ### Step 2: Read Memory Files

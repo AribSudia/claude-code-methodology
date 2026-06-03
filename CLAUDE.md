@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.7.2 "Self-Policing"                    |
+| Version           | 3.8.0 "Lean Core"                    |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7         |
@@ -160,9 +160,15 @@ The 15 agents: `architect`, `code-reviewer`, `security-auditor`,
 
 ## 6. Where to Find Everything
 
+> **Lean Core (v3.8.0, ADR-019):** only `CLAUDE.md`, `architecture/CONSTRAINTS.md`,
+> `memory/project_status.md`, and `memory/session_notes.md` are **always-on**
+> (~7.3K tokens). Everything in the table below is **read on demand** — pull
+> it when the task needs it, don't bulk-read at session start. This table IS
+> the on-demand loading map.
+
 | Need                       | Read                                         |
 |----------------------------|----------------------------------------------|
-| Hard rules                 | `architecture/CONSTRAINTS.md`                |
+| Hard rules                 | `architecture/CONSTRAINTS.md` (always-on)    |
 | Tech decisions             | `architecture/DECISIONS.md`                  |
 | Agent dispatch governance  | `architecture/AGENT_ARCHITECTURE.md`         |
 | Design system contract     | `architecture/DESIGN_SYSTEM.md`              |

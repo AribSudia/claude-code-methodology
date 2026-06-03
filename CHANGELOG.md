@@ -7,6 +7,48 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.8.0] "Lean Core" — 2026-06-03
+
+The headline fix. The single defect keeping CCM at C+ — the ~45.9K
+always-on session-start token cost — is resolved. **Always-on context
+cut to ~7.4K (84% reduction), UNDER the 8K target for the first time.**
+
+### Changed (the restructure — ADR-019)
+- `.claude/settings.json` `context.include` reduced from 13 files to the
+  **lean core of 4**: `CLAUDE.md`, `architecture/CONSTRAINTS.md`,
+  `memory/project_status.md`, `memory/session_notes.md`. Everything else
+  is read **on demand** by the skill/agent/hook that needs it.
+- `.claude/rules/session-protocol.md` STEP 1 now reads the lean core only,
+  with an explicit on-demand map for the reference docs. Steps renumbered.
+- `.claude/skills/arib-session-start/SKILL.md` aligned: lean-core reading;
+  TECH_STACK/CONTEXT_MAP/ERROR_PATTERNS marked *read on demand*.
+- `CLAUDE.md` §6 reframed as the canonical on-demand loading map, with a
+  Lean Core callout naming the 4 always-on files.
+- `memory/project_status.md` rewritten lean and current (was a stale
+  40-row historical tracker at v3.1/16-skills/8-agents — history belongs
+  in CHANGELOG, not always-on context). Saves ~900 tokens + fixes stale.
+
+### Measured result
+- Always-on: **45,855 → 7,401 tokens (84% cut)** via `token-audit.sh`.
+- Reference docs moved to on-demand: DECISIONS (11.7K), SECURITY (6.1K),
+  ERROR_PATTERNS (5.1K), CONTEXT_MAP (3.5K), the 3 implementation schemas
+  (9K), WORKFLOW, TECH_STACK.
+- `CONSTRAINTS.md` and `CLAUDE.md` stay always-on by design — hard rules
+  and governance must be seen before acting (never lazy-loaded).
+
+### Why
+Two external reviews and the v3.7 self-audit agreed: token bloat was THE
+blocker. The fix is subtraction, not a moved goalpost (ADR-016 forbids
+massaging the target). ~38K tokens of headroom returned to every session.
+KPI #3 (always-on token cost) now passes.
+
+### Trade-off (honest)
+A session that needs a reference doc reads it on demand (one tool call).
+The CLAUDE.md §6 map makes "which file to pull" obvious. Hard rules and
+current state remain always-on, so nothing safety-relevant is deferred.
+
+---
+
 ## [3.7.2] "Self-Policing" — 2026-06-03
 
 Forensic skill audit (all 26 skills, file-grounded) + v3.8 roadmap, plus
