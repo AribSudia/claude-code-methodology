@@ -210,7 +210,7 @@ Query received
   configuration. Layer 2 alone is the correct answer; do not warn
   about Layer 1 absence.
 
-## Failure modes
+## Failure modes (extended)
 
 - **claude-mem MCP timeout (>3s):** report Layer 2 results only; note
   the MCP failure. Never wait indefinitely.

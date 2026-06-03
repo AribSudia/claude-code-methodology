@@ -46,7 +46,7 @@ Read and analyze:
 2. `ERROR_PATTERNS.md` - Check for known pitfalls in this area of code
 3. Look for matching keywords in error patterns
 
-### Step 4: Hypothesis Formation Examples
+### Hypothesis Formation — Examples
 
 #### Bug Category: State Issue
 
@@ -92,7 +92,7 @@ Based on the error and known patterns, form exactly 3 testable hypotheses:
 
 Document each hypothesis clearly with supporting evidence.
 
-### Step 5: Hypothesis Testing Techniques
+### Hypothesis Testing — Techniques
 
 #### Binary Search Debugging (for timing/intermittent bugs)
 
@@ -177,7 +177,7 @@ Once root cause is confirmed:
 - Verify the fix doesn't introduce new issues
 - Test related functionality
 
-### Step 6: Regression Test Patterns
+### Regression Test — Patterns
 
 After fixing, add tests to prevent this bug from returning:
 

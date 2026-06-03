@@ -286,7 +286,7 @@ Commit + announce
   produces exactly this tag. Sequence is: autonomy session → /arib-
   wave-end PASS → tag created → push allowed.
 
-## Failure modes
+## Failure modes (extended)
 
 - **Not on a wave/* branch:** abort with clear instruction to check
   out the wave branch first.

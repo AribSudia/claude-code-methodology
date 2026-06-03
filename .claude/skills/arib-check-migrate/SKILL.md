@@ -379,7 +379,7 @@ Produce the Migration Safety Report with:
 - Rollback plan verification
 - Final verdict: APPROVED / APPROVED WITH CONDITIONS / BLOCKED
 
-## Notes
+## Notes (additional)
 - This command activates the Database Guardian agent
 - For CRITICAL migrations, recommend running during low-traffic window
 - Always recommend backup for HIGH/CRITICAL operations

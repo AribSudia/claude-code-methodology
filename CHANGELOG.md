@@ -7,6 +7,41 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.8.3] "Lean Core" — 2026-06-03
+
+Skill-hygiene sweep, dead-infra removal, and a unified one-prompt entry.
+ADR-022.
+
+### Added — the user-friendly method for ALL situations
+- `bootstrap/RUN.md` leads with **one auto-routing prompt** + a **Situation
+  Router**: detect project state from the filesystem and run the right
+  protocol (CCM installed → upgrade; tool markers → migrate; existing code
+  → reverse-bootstrap; empty → bootstrap; legacy → migration Appendix A).
+  No protocol selection, no wrong choice. The 5 explicit prompts are demoted
+  to an "advanced / override" section.
+
+### Removed
+- **Standalone Legacy/Migration invocation dropped** — the router
+  auto-invokes `MIGRATION_GUIDE.md` on detected tool markers; the user
+  never chooses "migrate." The guide remains as the called protocol.
+- **`.claude/agent-memory/` deleted** (dead infra — only a README, nothing
+  read/wrote it; hybrid memory + `memory/*.md` cover persistence).
+
+### Fixed — skill hygiene (deferred v3.8 defect classes)
+- `arib-dev-debug` dup Step 4/5/6 → linear Steps 1-8 (supplementary
+  sections un-numbered). `arib-check-services` dup Step 2/3/4 → linear
+  Steps 1-5 + reference sections. De-duplicated repeated `##` headings in
+  6 skills. `validate-coherence.sh` §3b now reports zero duplicates.
+
+### Upgrade-method audit (answer)
+`UPGRADE_PROTOCOL.md` changed materially since v3.1: v3.5.1 made it
+decisive (Phase 0 branches, never "stop if same version") + added Phase
+1.5 drift detection; v3.7.1 wired it to the real `drift-detect.sh` +
+`template-hashes.json`. It never says "already up to date" — always runs
+drift detection, refreshes stale templates, preserves project edits.
+
+---
+
 ## [3.8.2] "Lean Core" — 2026-06-03
 
 Bootstrap modernization in response to an external review. ADR-021.

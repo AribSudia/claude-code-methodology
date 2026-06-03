@@ -363,7 +363,7 @@ Write io/ledger/compliance-<framework>-<date>.md
     +-- no  --> standalone report; no commit by default
 ```
 
-## Failure modes
+## Failure modes (extended)
 
 - **Framework doc missing:** abort with clear error. Do not invent.
 - **`compliance/CONTROLS.md` missing:** treat all operational items
