@@ -21,7 +21,7 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.8.3                                                    |
+| **Version**          | 3.8.4                                                    |
 | **Codename**         | "Lean Core"                                          |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |

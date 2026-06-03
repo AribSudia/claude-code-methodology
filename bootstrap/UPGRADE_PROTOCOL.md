@@ -256,6 +256,79 @@ classification is deterministic; the actions are deterministic.
 
 ---
 
+### Phase 1.6: RE-VERIFICATION RECOMMENDATIONS (v3.8.4)
+
+The upgrade refreshes a skill's **definition** (Phase 1.5). It does NOT
+re-do the skill's **prior work** — if an old, weaker version of a skill
+was run on part of your project, those results are still the old results.
+This phase surfaces, precisely, which prior work is worth redoing.
+
+**It does NOT alert you to "reactivate every skill" — that would be noise.**
+It recommends re-running ONLY skills that are *both* (a) materially changed
+in this upgrade AND (b) actually used in this project. And it never
+auto-runs them, never gates the upgrade — it reports + offers once.
+
+#### 1.6.1 — Which skills changed materially?
+
+From Phase 1.5: the set of `.claude/skills/*/SKILL.md` classified
+`STALE-TEMPLATE` (refreshed to the new version). Exclude cosmetic-only
+diffs (a heading rename, a typo fix) — only behavior/contract changes
+count. The drift report already names them.
+
+#### 1.6.2 — Which of those were used HERE?
+
+Determine usage, best-effort, in this priority:
+
+```text
+1. PRIMARY (exact, if present): io/ledger/invocations.jsonl
+   grep for {"type":"skill","name":"arib-<skill>"} — this is the
+   invocation telemetry the UserPromptSubmit hook records (v3.8.4).
+   If the file exists, it is authoritative for "was this run here".
+
+2. FALLBACK (heuristic, when telemetry absent — older projects):
+   grep memory/change_log.md, memory/*.md, and io/ledger/ for the skill
+   name or its characteristic output (e.g. a security-*/audit-* report,
+   a deploy gate verdict). A footprint = it was used.
+
+If NEITHER signal exists, the skill was likely never used here — do NOT
+recommend re-verifying it.
+```
+
+Be honest in the report about which signal was used: "(per invocation
+log)" vs "(heuristic — no telemetry; may miss untracked runs)".
+
+#### 1.6.3 — Prioritize and report (no auto-run, no gate)
+
+For each skill that is *changed AND used*, add it to a **Recommended
+re-verifications** list in the upgrade report, prioritized:
+
+| Priority | Skills | Why |
+|----------|--------|-----|
+| **High** | quality/safety gates: `arib-check-security`, `arib-check-deps`, `arib-check-a11y`, `arib-check-migrate`, `arib-check-reality` | cheap to re-run, high value; an improved gate may catch what the old one missed |
+| **Medium** | `arib-deep-audit`, `arib-check-perf`, `arib-check-compliance`, `arib-dev-review` | broader passes; re-run if the area is active |
+| **Low** | docs/cosmetic: `arib-docs-*`, `arib-check-design` | re-run opportunistically |
+
+Each entry states: skill, what changed in it, the usage signal, and the
+exact command (`/arib-<skill>`).
+
+Then make **one batched offer** and stop — e.g.:
+
+> "3 skills that were used here improved in this upgrade. Re-run them to
+> re-verify with the better versions?
+>   High: /arib-check-security  /arib-check-deps
+>   Medium: /arib-deep-audit
+> Reply 'yes' to run all, or name the ones you want."
+
+**Never** auto-run (some, like `arib-check-deploy`, touch production).
+**Never** gate the upgrade on it — the upgrade is already complete; this
+is a post-upgrade recommendation. **Never** prompt per-skill — one offer,
+batched, per PROTOCOL_PRINCIPLES Rule 2.
+
+If nothing qualifies (no changed-and-used skill), say so in one line and
+skip the offer entirely — don't manufacture a recommendation.
+
+---
+
 ### Phase 2: PRESERVE — Never Touch These Files
 
 These files contain YOUR project-specific data. DO NOT overwrite, modify,

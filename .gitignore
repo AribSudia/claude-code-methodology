@@ -72,5 +72,9 @@ io/.session-start-sha
 # Autonomy mode runtime state (Item #10) — ephemeral per-session counters.
 io/.autonomy/
 
+# Invocation telemetry + notification trace (high-volume, per-project runtime)
+io/ledger/invocations.jsonl
+io/ledger/.notifications.jsonl
+
 # Claude Code worktrees (transient, never committed)
 .claude/worktrees/

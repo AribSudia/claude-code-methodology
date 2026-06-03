@@ -98,6 +98,8 @@ echo "5. SessionStart / Stop / Notification"
 run_test "session-start default"       "$HOOKS/session-start.sh" "$PAYLOADS/sessionstart-empty.json"            0
 run_test "stop default"                "$HOOKS/stop.sh"          "$PAYLOADS/stop-empty.json"                    0
 run_test "notification fan-out"        "$HOOKS/notification.sh"  "$PAYLOADS/notification-test.json"             0
+run_test "invocation-log: skill (UserPromptSubmit)" "$HOOKS/invocation-log.sh" "$PAYLOADS/userpromptsubmit-skill.json" 0
+run_test "invocation-log: agent (Task)"             "$HOOKS/invocation-log.sh" "$PAYLOADS/pretooluse-task-agent.json"  0
 
 echo ""
 echo "6. Autonomy guard"

@@ -7,6 +7,39 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.8.4] "Lean Core" — 2026-06-03
+
+Answers "when I upgrade and an old skill was weak/partially used, how does
+the system handle re-verifying it?" — with targeted recommendations, not a
+blanket reactivation nag. ADR-023.
+
+### Added — invocation telemetry (the missing signal)
+- `.claude/hooks/invocation-log.sh` — wired to `UserPromptSubmit` (detects
+  `/arib-*` skill commands) and `PreToolUse(Task)` (detects `subagent_type`).
+  Appends JSONL to `io/ledger/invocations.jsonl` (gitignored, per-project).
+  Non-blocking, silent (no stdout), always exit 0. This is the
+  long-missing "was this skill/agent used here" signal (audit B1) and makes
+  health KPIs 5/6 measurable. `hookScripts` 7→8.
+
+### Added — Upgrade Phase 1.6 (re-verification recommendations)
+- After drift detection, `UPGRADE_PROTOCOL.md` cross-references skills that
+  **changed materially** (Phase 1.5 STALE-TEMPLATE) against **usage**
+  (invocations.jsonl primary; changelog/artifact heuristic fallback). Skills
+  that are *changed ∧ used* → a prioritized "Recommended re-verifications"
+  list (safety gates first). The upgrade makes ONE batched offer, never
+  auto-runs (deploy/migration skills are unsafe to auto-trigger), never
+  gates, never prompts per-skill. If nothing qualifies, it says so in one
+  line. This replaces the rejected "alert to reactivate every skill" design.
+
+### Fixed
+- Training/01 stale "13 Specialist Agents" → 15; "7+ files at session
+  start" → lean-core (~4 files, ~7.4K) reflecting v3.8.0.
+
+### Tests
+- 2 invocation-log regression cases (skill + agent) + fixtures. Suite 40/40.
+
+---
+
 ## [3.8.3] "Lean Core" — 2026-06-03
 
 Skill-hygiene sweep, dead-infra removal, and a unified one-prompt entry.
