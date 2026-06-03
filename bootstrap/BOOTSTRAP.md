@@ -178,9 +178,24 @@ below. If any answer is unclear from the reference files, ask me.
 22. What are the MVP features? (List every feature that must exist at launch)
 23. What are the Phase 2 features? (Post-launch)
 24. What are the non-functional requirements? (Performance, uptime, compliance)
-25. What is the deployment target? (Cloud provider, containerized, serverless)
+25. What is the deployment target? (Cloud provider, containerized, serverless, **edge/CDN workers**)
 
-Do not proceed to Step 3 until all 25 questions are answered clearly.
+### Modern Architecture (2026 — ask only if relevant; infer "no" from core/ when silent)
+26. **AI/LLM integration?** Does the project call external AI models (OpenAI/Anthropic/etc.)? If yes: which providers, prompt-caching needs, streaming, cost budget? (Drives a CONSTRAINTS entry + the claude-api/owasp considerations.)
+27. **Vector database / RAG?** Embeddings, semantic search, a vector store (pgvector, Pinecone, etc.)? (Drives TECH_STACK + data-model entities.)
+28. **Multi-tenancy?** Single-tenant, pooled (shared DB + tenant_id), or siloed (DB-per-tenant)? (Drives isolation constraints + the deep-audit multi-tenancy section.)
+29. **Real-time?** WebSocket / SSE / push? Which transport, what events, reconnection strategy? (Drives architecture + perf budgets.)
+30. **Edge / serverless specifics?** Cold-start budget, runtime limits (e.g. Workers/Lambda), regional data residency? (Interacts with Q25 + PDPL/GDPR residency.)
+
+For Q26–Q30: if `core/` or the prompt already answers them, CONFIRM (don't
+ask). Only genuinely-unknown items become questions. A "no" to all five is
+a perfectly valid, common answer — don't force AI/vector/multitenancy onto
+a project that doesn't need it.
+
+Do not proceed to Step 3 until the applicable questions (the 25 core + any
+of Q26–Q30 that apply) are answered clearly — in ONE batch, per
+PROTOCOL_PRINCIPLES Rule 5 (the questionnaire is the single greenfield
+input point; never ask iteratively).
 
 ---
 

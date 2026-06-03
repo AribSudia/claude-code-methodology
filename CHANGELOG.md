@@ -7,6 +7,42 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.8.2] "Lean Core" — 2026-06-03
+
+Bootstrap modernization in response to an external review. ADR-021.
+
+### Review verification (honesty first)
+The review's #1 "Critical" gap — that `drift-detect.sh` and
+`template-hashes.json` "do not exist" — is **FALSE**. Both shipped in
+v3.7.1 and are CI-verified; the reviewer tested nothing outside
+`bootstrap/` (their own footnote). Its claim that REENGINEERING lacks the
+decisive header is also false. Its migration and questionnaire findings
+are correct and are actioned below.
+
+### Changed — Migration retired & modernized
+- `MIGRATION_GUIDE.md` restructured **"From Any System"**: Step 0 source
+  detection (Cursor / Windsurf / Copilot / Kiro / unstructured CLAUDE.md /
+  legacy claude-code-system) + per-source mapping §A–§E. The legacy
+  `claude-code-system` path is **retired to Appendix A** (intact, marked
+  historical) rather than deleted — almost no one is on it in 2026.
+
+### Added
+- `bootstrap/RUN.md` — the **reengineering** prompt (5 prompts now, was 4)
+  and a modernized "migrate from any system" prompt.
+- BOOTSTRAP questionnaire **Q26–Q30** (conditional): AI/LLM integration,
+  vector DB/RAG, multi-tenancy, real-time (WS/SSE), edge/serverless —
+  asked only when relevant; "no" is a valid common answer.
+
+### Deferred (not built — subtraction discipline)
+The review's larger proposals (Coexistence Mode, a unified Bootstrap
+Health Score, BOOTSTRAP_TEAMS.md) add surface to a system whose current
+strength is leanness. Noted as candidates, not committed; a health score,
+if built, should reuse `validate-coherence.sh` / `token-audit.sh`, not a
+new framework. The v3.8 skill-hygiene sweep (6 duplicate-heading skills)
+also remains tracked by `validate-coherence.sh` §3b.
+
+---
+
 ## [3.8.1] "Lean Core" — 2026-06-03
 
 Two v3.8 roadmap items: skill `name:` conformance (the #1 audit finding)

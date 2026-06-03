@@ -1,9 +1,9 @@
 {
   "name": "claude-code-methodology",
-  "version": "3.8.1",
+  "version": "3.8.2",
   "codename": "Lean Core",
   "releaseDate": "2026-05-08",
-  "previousVersion": "3.8.0",
+  "previousVersion": "3.8.1",
   "engineeredBy": "Abdullah x Claude Opus 4.6 / Opus 4.7",
   "license": "MIT",
   "repository": "https://github.com/AribSudia/claude-code-methodology",

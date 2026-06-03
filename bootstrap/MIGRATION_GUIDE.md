@@ -1,18 +1,111 @@
-# Migration Guide: claude-code-system → claude-code-methodology
+# Migration Guide: From Any System → claude-code-methodology
 
-> **Decisive behavior** (v3.5.1+): per `bootstrap/PROTOCOL_PRINCIPLES.md`,
-> the source-system identification is determinable from file inspection
-> (`package.json`, framework markers, schema files). Don't ask "which
-> framework was this?" — read the files. Don't present numbered menus
-> when one migration path is correct for the detected source.
+> **Decisive behavior** (v3.5.1+) + **autonomous** (Rule 5): the source
+> system is **determinable from filesystem markers** — detect it, don't
+> ask. Run the migration end-to-end; pause only on a genuine blocker.
 
-> **Use Case 4**: You already have the OLD `claude-code-system` (the flat 35-file
-> template system) and want to migrate to the NEW `claude-code-methodology` (the
-> full 5-layer operating system with memory, agents, I/O, and versioning).
+**Use Case:** you have an *existing* AI-coding setup (Cursor rules,
+Windsurf config, Copilot instructions, a Kiro setup, an unstructured
+`CLAUDE.md`, or the legacy `claude-code-system`) and want to migrate it
+to CCM — preserving your real content (rules, context, conventions).
+
+> **v3.8.2 retirement note:** the original `claude-code-system → CCM`
+> migration (the flat 35-file template) is now a *historical* path —
+> almost no one is on it in 2026. It is preserved in **Appendix A**
+> (below), retired but intact for the rare user who needs it. The
+> **primary** content is the multi-source flow that follows.
 
 ---
 
-## Copy-Paste Prompt for Claude Code
+## Step 0 — Detect the source system (autonomous)
+
+Read the project root for these markers and pick the matching source. Do
+NOT ask the user which system they came from — the filesystem says so.
+
+| Marker on disk | Source system | Migrate section |
+|----------------|---------------|-----------------|
+| `.cursor/rules/` or `.cursorrules` | **Cursor** | §A |
+| `.windsurfrules` or `.windsurf/` | **Windsurf** | §B |
+| `.github/copilot-instructions.md` | **GitHub Copilot** | §C |
+| `.kiro/` (steering/specs) | **Kiro** | §D |
+| `CLAUDE.md` present but no `.claude/` structure | **Unstructured CLAUDE.md** | §E |
+| Flat `AGENTS.md` + `docs/` + root architecture files | **Legacy claude-code-system** | Appendix A |
+| None of the above | Treat as **greenfield-with-code** → use `REVERSE_BOOTSTRAP.md` instead | — |
+
+If multiple markers exist (e.g. Cursor *and* Copilot), migrate **all**
+detected sources — they are not mutually exclusive. Report which were
+found and merged.
+
+## The migration contract (all sources)
+
+Whatever the source, migration means: **extract the real content** (the
+user's rules, context, conventions, domain facts) and **re-home it into
+CCM's structure** — never discard it, never overwrite CCM scaffolding
+blindly. Then scaffold the rest of CCM around it and verify.
+
+- **Rules/conventions** (lint rules, "always/never" directives, style) →
+  `architecture/CONSTRAINTS.md` (hard rules) + `.claude/rules/*.md`
+  (path-scoped) as appropriate.
+- **Project/architecture context** (stack, structure, domain notes) →
+  `CLAUDE.md` (identity/overview) + `architecture/CONTEXT_MAP.md` +
+  `architecture/TECH_STACK.md`.
+- **Task/workflow instructions** → the matching skill, or `operations/WORKFLOW.md`.
+- **Agent/persona definitions** (if any) → `.claude/agents/*.md` with
+  proper `name:`/`description:` frontmatter (see existing agents).
+- Then run the standard scaffold + `./scripts/install-hooks.sh` +
+  `./scripts/validate-coherence.sh`, and write a migration report to
+  `io/ledger/`.
+
+## §A — From Cursor (`.cursor/rules/*.mdc`, `.cursorrules`)
+
+Cursor rules are MDC/markdown directives. Map:
+- Global `.cursorrules` / `.cursor/rules/*.mdc` "always" rules → split
+  into hard rules (`CONSTRAINTS.md`) vs advisory guidance (`CLAUDE.md` or
+  a path-scoped `.claude/rules/*.md`, mirroring Cursor's glob scoping).
+- Cursor `globs:` frontmatter → CCM path-scoped rule scope (the
+  `.claude/rules/*.md` description/scope line).
+- Preserve the original under `core/` for reference.
+
+## §B — From Windsurf (`.windsurfrules`, `.windsurf/`)
+
+- `.windsurfrules` (single-file directives) → same split as Cursor:
+  hard → CONSTRAINTS, advisory → CLAUDE/rules.
+- Any Windsurf workflows → the matching `/arib-*` skill or WORKFLOW.md.
+
+## §C — From GitHub Copilot (`.github/copilot-instructions.md`)
+
+- The single instructions file → `CLAUDE.md` (project identity + overview)
+  for the descriptive parts; the imperative "always/never" lines →
+  `CONSTRAINTS.md`.
+- `.github/instructions/*.instructions.md` (path-scoped) → `.claude/rules/`
+  with matching scope.
+
+## §D — From Kiro (`.kiro/steering/`, `.kiro/specs/`)
+
+- Kiro **steering** docs → `CLAUDE.md` + `architecture/` files.
+- Kiro **specs** (requirements/design/tasks) → `core/` (the source specs)
+  + seed `memory/project_status.md` from the tasks.
+
+## §E — From an unstructured `CLAUDE.md`
+
+- The existing `CLAUDE.md` already loads in Claude Code. Split it: keep
+  identity/overview in the new `CLAUDE.md`; move hard rules to
+  `CONSTRAINTS.md`; move any decisions to `DECISIONS.md`. Then scaffold
+  the rest of CCM around it. This is the most common 2026 case.
+
+---
+
+# Appendix A — Legacy: claude-code-system → CCM (RETIRED, historical)
+
+> **Retired in v3.8.2.** This is the original migration path for the flat
+> 35-file `claude-code-system`. It is preserved intact for the rare user
+> still on that system, but it is **not** the primary migration flow —
+> see the source-detection table and §A–§E above for the 2026 sources
+> (Cursor / Windsurf / Copilot / Kiro / unstructured CLAUDE.md). If you
+> are not migrating from `claude-code-system` specifically, ignore this
+> appendix.
+
+## Copy-Paste Prompt for Claude Code (legacy claude-code-system only)
 
 Open Claude Code in your **project root** (where the old claude-code-system files are), then paste:
 
