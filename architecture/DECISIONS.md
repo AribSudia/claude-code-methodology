@@ -550,6 +550,52 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-023: Invocation Telemetry + Upgrade Re-Verification (v3.8.4)
+
+**Status:** Accepted   **Date:** 2026-06-03
+
+**Context.** On upgrade, an old skill's *definition* is refreshed by drift
+detection, but its *prior work* (a partial/weak pass it ran earlier) is
+never revisited. The maintainer asked whether a "re-activate the skill"
+alert is the right design. It isn't — a blanket reactivation prompt is the
+exact nag PROTOCOL_PRINCIPLES forbids. The right design recommends
+re-running only skills that **materially changed AND were used here** — but
+"used here" was unanswerable: CCM had no invocation telemetry (audit B1;
+health KPIs 5/6 unmeasurable).
+
+**Decision.** Two complementary pieces:
+1. **Invocation telemetry** — `.claude/hooks/invocation-log.sh`, wired to
+   `UserPromptSubmit` (detects `/arib-*` skill commands in the prompt) and
+   `PreToolUse(Task)` (detects `subagent_type`). Appends JSONL to
+   `io/ledger/invocations.jsonl` (gitignored, per-project runtime).
+   Non-blocking, silent (no stdout — UserPromptSubmit would inject it),
+   always exit 0. This is the missing signal for "was this used here."
+2. **Upgrade Phase 1.6 — Re-verification recommendations.** After drift
+   detection, cross-reference changed-and-refreshed skills against the
+   invocation log (primary) or a changelog/artifact heuristic (fallback
+   for projects without telemetry). Skills that are *changed ∧ used* go
+   into a prioritized "Recommended re-verifications" list (safety gates
+   first); the upgrade makes ONE batched offer and never auto-runs, never
+   gates, never prompts per-skill.
+
+**Consequences.** Answers the maintainer's question with a targeted,
+evidence-based recommendation instead of a noisy reactivation alert. Health
+KPIs 5/6 (agent coverage, per-skill usage) become measurable. Telemetry is
+honest about its limits: the fallback heuristic is labeled as such, and the
+log only captures explicit `/arib-*` invocations + Task dispatches (a skill
+auto-activated by description without the slash command isn't captured —
+acceptable; the slash command is the dominant path).
+
+**Alternatives rejected.**
+- "Alert to reactivate the skill" (the asked option) — blanket nag; violates
+  Rule 2. Phase 1.6's targeted offer replaces it.
+- "Auto-re-run changed skills on upgrade" — unsafe (deploy/migration skills)
+  and slow; recommend + offer instead.
+- "Parse skill bodies to detect prior runs" — telemetry is the clean signal;
+  don't reverse-engineer usage from artifacts when a hook can record it.
+
+---
+
 # ADR-022: Unified Entry, Skill-Hygiene Sweep, Dead-Infra Removal (v3.8.3)
 
 **Status:** Accepted   **Date:** 2026-06-03
@@ -1211,6 +1257,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-020 | Skill name conformance + autonomous protocol execution (v3.8.1) | Accepted | 2026-06-03 |
 | ADR-021 | Migration modernization — "From Any System" (v3.8.2) | Accepted | 2026-06-03 |
 | ADR-022 | Unified entry + skill-hygiene sweep + dead-infra removal (v3.8.3) | Accepted | 2026-06-03 |
+| ADR-023 | Invocation telemetry + upgrade re-verification (v3.8.4) | Accepted | 2026-06-03 |
 
 ---
 

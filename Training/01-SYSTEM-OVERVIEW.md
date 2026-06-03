@@ -1,4 +1,4 @@
-# Claude Code Methodology v3.8.3 "Lean Core" — System Overview & User Manual
+# Claude Code Methodology v3.8.4 "Lean Core" — System Overview & User Manual
 
 > **Complete Training Manual for the AI Development Operating System**
 
@@ -54,7 +54,7 @@ It works like an operating system for your project:
 
 | Attribute | Value |
 |-----------|-------|
-| **Version** | 3.8.3 |
+| **Version** | 3.8.4 |
 | **Codename** | "Lean Core" |
 | **Release Date** | 2026-05-08 |
 | **Engineered By** | Abdullah × Claude Opus 4.6 / 4.7 / 4.8 |
@@ -83,7 +83,7 @@ Every Claude Code session without CCM suffers from:
 | Problem | Solution | Benefit |
 |---------|----------|---------|
 | **Context Loss** | **Persistent Memory** (6 file types) | Every session reads `memory/` at start, writes before end |
-| **Quality Drift** | **13 Specialist Agents** with checklists | Code Reviewer, Test Engineer, Security Auditor run automatically |
+| **Quality Drift** | **15 Specialist Agents** with checklists | Code Reviewer, Test Engineer, Security Auditor run automatically |
 | **No Communication** | **I/O Channel** (structured requests/results) | Agents coordinate through documented protocols |
 | **Rework Cycle** | **Decision Records** + **CONSTRAINTS.md** | Architecture decisions are permanent, searchable, enforced |
 | **No Audit Trail** | **Change Log + Operations Log** | Every session logs what it did, why, when |
@@ -93,7 +93,7 @@ Every Claude Code session without CCM suffers from:
 
 With CCM in place:
 
-- **0% context loss** — Full read of 7+ files at session start
+- **0% context loss** — Lean core (~4 files, ~7.4K tokens) at session start; reference docs on demand
 - **5-10x fewer bugs** — Security Auditor + Code Reviewer + Test Engineer gates
 - **60% faster onboarding** — New team members read CLAUDE.md, not guessing
 - **100% auditable** — Every decision, every commit, every agent action logged
@@ -1180,10 +1180,10 @@ claude-code-methodology/
 
 | Attribute | Value |
 |-----------|-------|
-| **Current Version** | 3.8.3 |
+| **Current Version** | 3.8.4 |
 | **Codename** | "Self-Policing" |
 | **Release Date** | 2026-05-08 |
-| **Previous Version** | 3.8.2 |
+| **Previous Version** | 3.8.3 |
 | **Status** | Production-Ready |
 | **License** | MIT |
 
