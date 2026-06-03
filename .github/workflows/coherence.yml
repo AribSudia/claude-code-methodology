@@ -1,17 +1,9 @@
 name: Coherence
 
 on:
+  # Required check → runs on every PR to main (see hooks.yml note).
   pull_request:
-    paths:
-      - 'VERSION.json'
-      - 'CLAUDE.md'
-      - 'SYSTEM.md'
-      - 'README.md'
-      - '.claude/agents/**'
-      - '.claude/skills/**'
-      - '.claude/rules/**'
-      - '.claude/hooks/**'
-      - 'scripts/validate-coherence.sh'
+    branches: [main]
   push:
     branches: [main]
     paths:
