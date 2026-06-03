@@ -1,4 +1,5 @@
 ---
+name: arib-check-services
 description: Check | Infrastructure health - adapts to project type, checks only what exists
 ---
 

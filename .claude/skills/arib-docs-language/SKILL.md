@@ -1,4 +1,5 @@
 ---
+name: arib-docs-language
 argument-hint: "<component> --locale <code>"
 description: Docs | Universal language/i18n compliance - RTL, LTR, CJK, Indic, fonts, formatting, accessibility
 ---

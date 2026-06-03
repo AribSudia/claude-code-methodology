@@ -7,6 +7,37 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.8.1] "Lean Core" — 2026-06-03
+
+Two v3.8 roadmap items: skill `name:` conformance (the #1 audit finding)
+and making the bootstrap protocols systematic/non-interactive. ADR-020.
+
+### Fixed
+- **All 26 skills now have a `name:` frontmatter field** (== directory).
+  The audit found 0/26 had one — the skills-analog of the v3.7 agent fix.
+
+### Added
+- `validate-coherence.sh` §3 now HARD-enforces skill `name:` == dir +
+  `description` present (CI-gated). New §3b advisory surfaces duplicate
+  section headings within skills.
+- `bootstrap/PROTOCOL_PRINCIPLES.md` **Rule 5 — Autonomous Execution**:
+  an invoked protocol runs end-to-end without permission-gating. The
+  greenfield questionnaire is input (asked once when a new project has no
+  facts), not intervention. Genuine blockers remain the only pauses.
+- `bootstrap/RUN.md` — the 4 canonical invocation prompts, each specifying
+  autonomous-to-completion.
+
+### Changed
+- `REVERSE_BOOTSTRAP.md` — two mid-flight "wait for confirmation" gates
+  softened to "report inline and proceed" (Rule 5).
+
+### Deferred (tracked, not hidden)
+- 6 skills have duplicate section headings; a few have broken step
+  numbering. Cosmetic; now surfaced by `validate-coherence.sh` §3b
+  (advisory). Sweep in v3.8.2.
+
+---
+
 ## [3.8.0] "Lean Core" — 2026-06-03
 
 The headline fix. The single defect keeping CCM at C+ — the ~45.9K

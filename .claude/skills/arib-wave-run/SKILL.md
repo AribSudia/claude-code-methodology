@@ -1,4 +1,5 @@
 ---
+name: arib-wave-run
 argument-hint: "[<wave-name> | --from <step-number>]"
 description: "Wave | Execute wave steps with auto-advance — runs the plan, pausing only on issues or checkpoints"
 ---

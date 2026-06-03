@@ -1,4 +1,5 @@
 ---
+name: arib-memory-search
 argument-hint: "<search query>"
 description: "Memory | Semantic search across project memory — claude-mem MCP with grep fallback"
 ---

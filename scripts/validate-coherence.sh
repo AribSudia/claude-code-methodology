@@ -64,14 +64,38 @@ done
 
 # ---------- 3. Every skill dir has a SKILL.md with frontmatter ----------
 echo ""
-echo "3. Skill frontmatter"
+echo "3. Skill frontmatter (name==dir + description; v3.8.1 skill-lint)"
 SKILL_BAD=0
 for d in .claude/skills/*/; do
+  dname="$(basename "$d")"
   s="$d/SKILL.md"
-  if [ ! -f "$s" ]; then note_fail "$d: no SKILL.md"; SKILL_BAD=1; continue; fi
-  if [ "$(head -1 "$s")" != "---" ]; then note_fail "$s: no frontmatter"; SKILL_BAD=1; fi
+  if [ ! -f "$s" ]; then note_fail "$dname: no SKILL.md"; SKILL_BAD=1; continue; fi
+  if [ "$(head -1 "$s")" != "---" ]; then note_fail "$dname: no frontmatter"; SKILL_BAD=1; continue; fi
+  fm_name="$(awk 'NR>1 && /^---$/{exit} /^name:/{sub(/^name:[[:space:]]*/,"");print;exit}' "$s")"
+  fm_desc="$(awk 'NR>1 && /^---$/{exit} /^description:/{found=1} END{print found+0}' "$s")"
+  if [ "$fm_name" != "$dname" ]; then
+    note_fail "$dname: frontmatter name='$fm_name' != dir (skills with wrong/missing name risk silent non-discovery)"; SKILL_BAD=1
+  elif [ "$fm_desc" != "1" ]; then
+    note_fail "$dname: frontmatter missing description"; SKILL_BAD=1
+  fi
 done
-[ "$SKILL_BAD" = "0" ] && note_ok "all $SKILLS_DISK skills have SKILL.md with frontmatter"
+[ "$SKILL_BAD" = "0" ] && note_ok "all $SKILLS_DISK skills have frontmatter with name==dir + description"
+
+# Advisory skill-hygiene: duplicate section headings within a skill (the
+# "Failure modes x2" class from the v3.8 audit). WARN, does not fail CI.
+echo ""
+echo "3b. Skill hygiene (advisory — duplicate section headings)"
+HYG=0
+for d in .claude/skills/*/; do
+  dname="$(basename "$d")"; s="$d/SKILL.md"
+  [ -f "$s" ] || continue
+  dups="$(grep -E '^## ' "$s" | sort | uniq -d | sed 's/^## //')"
+  if [ -n "$dups" ]; then
+    while IFS= read -r h; do [ -n "$h" ] && printf '  ~ %s: duplicate section "## %s"\n' "$dname" "$h"; done <<< "$dups"
+    HYG=1
+  fi
+done
+[ "$HYG" = "0" ] && note_ok "no duplicate section headings"
 
 # ---------- 4. Version string coherence ----------
 echo ""

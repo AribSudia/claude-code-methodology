@@ -1,4 +1,5 @@
 ---
+name: arib-check-deps
 argument-hint: "[--fix]"
 description: Check | Audit dependencies - vulnerabilities, outdated packages, license compliance, supply chain safety
 ---

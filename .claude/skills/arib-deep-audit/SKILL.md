@@ -1,4 +1,5 @@
 ---
+name: arib-deep-audit
 argument-hint: "[wave-name | --from-file <audit-report.md>]"
 description: "Audit | Wave-end 21-section deep audit + IMPLEMENT-FROM-FILE mode"
 ---

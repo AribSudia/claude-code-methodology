@@ -1,4 +1,5 @@
 ---
+name: arib-docs-api
 argument-hint: "[scope]"
 description: Docs | Generate or sync API documentation - discover endpoints, produce OpenAPI spec, detect undocumented routes
 ---

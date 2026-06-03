@@ -115,6 +115,34 @@ The drift report goes to `operations/OPERATIONS_LOG.md` and
 `io/ledger/drift-<date>-<short-hash>.md` with the same YAML-style
 header as `/arib-deep-audit` reports.
 
+### Rule 5 — Autonomous execution to completion (v3.8.1)
+
+Once a protocol is invoked ("execute the full <X> protocol"), it runs
+**end-to-end to completion without permission-gating.** It does NOT pause
+between phases to ask "should I continue?", does NOT present its findings
+and wait for approval before scaffolding, and does NOT seek confirmation
+for any step whose action is determinate. Report progress as you go; do
+not gate on it.
+
+The protocols are **systematic, not interactive.** Specifically:
+
+| Protocol | Autonomy |
+|----------|----------|
+| REVERSE_BOOTSTRAP | **Fully autonomous.** Scan → synthesize → scaffold → verify, no mid-flight approval. Report findings *as part of* the run, not as a stop-and-wait gate. |
+| UPGRADE_PROTOCOL | **Fully autonomous.** Detect version, run phases / drift detection, apply, report. |
+| MIGRATION_GUIDE | **Fully autonomous.** Identify source from file inspection, migrate, verify. |
+| BOOTSTRAP (greenfield) | **Autonomous when facts exist.** If `core/` or the invoking prompt supplies the project facts, run end-to-end with ZERO questions (confirm-from-source, don't ask). The 25-question questionnaire is the *fallback* used ONLY when a brand-new project has no facts at all — and even then it is asked **once, as a single batch**, never iteratively, then the protocol runs to completion. |
+
+**The questionnaire is input, not intervention.** You cannot bootstrap a
+greenfield project without knowing what it is; that is the one irreducible
+input. Everything after the facts are known is autonomous.
+
+**The only pauses that remain legitimate** are the genuine blockers below
+(dirty tree without `--force`, missing dep, unresolvable conflict,
+destructive/irreversible op needing a snapshot first) — the same safety
+gates that protect data everywhere in CCM. A protocol never invents an
+approval gate outside that list.
+
 ---
 
 ## Decisive flow chart

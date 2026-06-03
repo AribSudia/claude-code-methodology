@@ -1,4 +1,5 @@
 ---
+name: arib-check-deploy
 description: Check | Pre-deployment 7-phase verification - tests, security, DB, env, performance, docs, rollback
 ---
 

@@ -1,4 +1,5 @@
 ---
+name: arib-io
 description: Session | I/O Channel - check signals, process requests from Cowork, write results, update dashboard
 ---
 

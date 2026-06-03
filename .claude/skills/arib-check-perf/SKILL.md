@@ -1,4 +1,5 @@
 ---
+name: arib-check-perf
 argument-hint: "<scope>"
 description: Check | Performance audit - N+1 queries, bundle size, latency budgets, memory leaks, caching gaps
 ---

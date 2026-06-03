@@ -1,4 +1,5 @@
 ---
+name: arib-session-start
 description: "Session | Initialize session — read context, check I/O channel, report status, wait for approval"
 ---
 

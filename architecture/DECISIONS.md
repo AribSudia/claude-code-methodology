@@ -550,6 +550,37 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-020: Skill `name:` Conformance + Autonomous Protocol Execution (v3.8.1)
+
+**Status:** Accepted   **Date:** 2026-06-03
+
+**Context.** (1) The 26-skill audit found **0/26 skills had a `name:`
+field** — the skills-analog of the v3.7 agent bug; conformance gap risking
+silent non-discovery. (2) The user required the bootstrap protocols to run
+**systematically with no needless intervention**, but REVERSE_BOOTSTRAP
+still had mid-flight "wait for confirmation" gates contradicting ADR-014.
+
+**Decision.**
+- Add `name: arib-<dir>` to all 26 skills. Extend `validate-coherence.sh`
+  with a HARD skill-lint (name==dir + description) — CI-enforced — plus an
+  ADVISORY hygiene check surfacing duplicate section headings.
+- Add **Rule 5 (Autonomous Execution)** to `PROTOCOL_PRINCIPLES.md`: an
+  invoked protocol runs end-to-end without permission-gating; the
+  greenfield questionnaire is input (asked once, only when a new project
+  has no facts), not intervention; genuine blockers remain the only pauses.
+- Soften REVERSE_BOOTSTRAP's two approval gates to "report inline, proceed."
+- Canonicalize the 4 invocation prompts in `bootstrap/RUN.md`.
+
+**Consequences.** Skills conformant + kept so by CI. Protocols are
+systematic: "execute the full X protocol" runs to completion, not a
+stop-and-ask dialogue — while data-safety gates are preserved.
+
+**Deferred (tracked by the new advisory check):** 6 skills have duplicate
+section headings; a few have broken step numbering — cosmetic, surfaced by
+`validate-coherence.sh` §3b, to be swept in v3.8.2.
+
+---
+
 # ADR-019: Lean Core — Always-On Context Budget (v3.8.0)
 
 **Status:** Accepted   **Date:** 2026-06-03
@@ -1084,6 +1115,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-017 | Canonical "4-Layer" Architecture Framing (v3.7) | Accepted | 2026-05-08 |
 | ADR-018 | Close the Deferred Review Findings (v3.7.1) | Accepted | 2026-05-08 |
 | ADR-019 | Lean Core — Always-On Context Budget (v3.8.0) | Accepted | 2026-06-03 |
+| ADR-020 | Skill name conformance + autonomous protocol execution (v3.8.1) | Accepted | 2026-06-03 |
 
 ---
 

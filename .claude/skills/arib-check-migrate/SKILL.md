@@ -1,4 +1,5 @@
 ---
+name: arib-check-migrate
 argument-hint: "<migration-file>"
 description: Check | Database migration safety review - risk classification, lock analysis, rollback verification
 ---
