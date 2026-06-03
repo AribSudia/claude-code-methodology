@@ -1,16 +1,9 @@
 name: Token budget
 
 on:
+  # Required check → runs on every PR to main (see hooks.yml note).
   pull_request:
-    paths:
-      - 'CLAUDE.md'
-      - '.claude/settings.json'
-      - '.claude/rules/**'
-      - 'architecture/**'
-      - 'implementation/**'
-      - 'memory/MEMORY_PROTOCOL.md'
-      - 'operations/WORKFLOW.md'
-      - 'scripts/token-audit.sh'
+    branches: [main]
 
 permissions:
   contents: read

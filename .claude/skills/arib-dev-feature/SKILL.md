@@ -38,14 +38,22 @@ Outcome: A one-paragraph summary of what the feature needs, what constraints app
 
 ### Step 2: Create Feature Branch
 
-Always branch from `develop`, never from `main`. Feature branches are your sandbox.
+Branch from the project's **integration branch** — never commit features
+directly to it. The integration branch is `develop` if the repo has one,
+otherwise `main`. Detect it; don't assume.
 
 ```bash
-git checkout develop
-git pull origin develop
+# Detect the integration branch: prefer develop, else main.
+INTEGRATION=$(git show-ref --verify --quiet refs/heads/develop && echo develop || echo main)
+git checkout "$INTEGRATION"
+git pull origin "$INTEGRATION"
 git checkout -b feature/[feature-name]
 git push -u origin feature/[feature-name]
 ```
+
+(A v3.7 audit found this step hard-coded `git checkout develop`, which
+fails on the common main-only repo — every feature broke at step 2. The
+detection above is the fix.)
 
 **Branch naming conventions:**
 - ✅ `feature/user-authentication` (kebab-case, descriptive)
@@ -185,7 +193,7 @@ Before writing code, verify:
 - [ ] I've read CONSTRAINTS.md (checked max function length, test coverage %, forbidden patterns)
 - [ ] I've read TECH_STACK.md (confirmed all libraries are approved)
 - [ ] I've searched the codebase (confirmed no duplicate feature exists)
-- [ ] I've created a feature branch from `develop`
+- [ ] I've created a feature branch from the integration branch (develop or main)
 - [ ] I've created a safety snapshot tag
 - [ ] I've presented the implementation plan to the user
 - [ ] I've received explicit user approval
@@ -208,14 +216,14 @@ These cause rework and frustration. Avoid them.
 
 ### Feature Depends on Another Unmerged Feature
 
-Branch from that feature branch instead of develop:
+Branch from that feature branch instead of the integration branch:
 
 ```bash
 git checkout feature/dependency-feature
 git checkout -b feature/new-feature
 ```
 
-Document this dependency in the implementation plan. When the dependency merges, rebase onto develop.
+Document this dependency in the implementation plan. When the dependency merges, rebase onto the integration branch.
 
 ### Feature Requires Database Migration
 
@@ -235,7 +243,7 @@ If you can't finish in one session:
 
 ## Related Skills
 
-- `/arib-dev-review` — Review the feature before merging to develop
+- `/arib-dev-review` — Review the feature before merging to the integration branch
 - `/arib-dev-debug` — If bugs arise during implementation
 - `/arib-check-perf` — Performance check before merge
 - `/arib-check-a11y` — Accessibility check for frontend features

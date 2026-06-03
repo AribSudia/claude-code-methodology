@@ -1,10 +1,9 @@
 name: JSON validation
 
 on:
+  # Required check → runs on every PR to main (see hooks.yml note).
   pull_request:
-    paths:
-      - '**/*.json'
-      - '!**/node_modules/**'
+    branches: [main]
   push:
     branches: [main]
     paths:

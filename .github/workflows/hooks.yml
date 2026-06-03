@@ -1,14 +1,10 @@
 name: Hooks regression
 
 on:
+  # Required check → MUST run on every PR to main, or a PR that doesn't touch
+  # these paths blocks forever waiting for a status that never reports.
   pull_request:
-    paths:
-      - '.claude/hooks/**'
-      - '.claude/settings.json'
-      - 'scripts/**'
-      - 'tests/**'
-      - 'architecture/CONTEXT_MAP.md'
-      - 'architecture/DESIGN_SYSTEM.md'
+    branches: [main]
   push:
     branches:
       - main
