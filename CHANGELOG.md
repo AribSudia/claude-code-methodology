@@ -7,6 +7,26 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.9.1] "Live Update" — 2026-06-03
+
+Doc correction to v3.9.0: makes explicit that the **curl one-liner is the
+universal entry** — it works for first install AND for upgrading from any
+older version, including versions that predate `ccm-fetch.sh` and so have no
+local script to run. (The one-liner downloads the fetch script fresh from
+GitHub, so it depends on nothing already installed.)
+
+### Changed
+- `bootstrap/RUN.md` — "Update direct from GitHub" reframed: the curl
+  one-liner is the every-situation path (with a situation table); the local
+  `./claude-code-methodology/scripts/ccm-fetch.sh` is demoted to a shortcut
+  "only once you already have a recent CCM."
+- `bootstrap/UPGRADE_PROTOCOL.md` Step 0 — leads with the curl one-liner and
+  states it works on old versions with no local script.
+- `README.md` Use Case 3 (Upgrade) — replaced the local-script command (which
+  an old user wouldn't have) with the universal curl one-liner.
+
+---
+
 ## [3.9.0] "Live Update" — 2026-06-03
 
 Answers "do I have to manually re-download CCM every release?" — no. CCM now

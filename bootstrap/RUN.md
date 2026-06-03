@@ -43,21 +43,41 @@ and the router is deterministic (Rule 2: no menus when one answer is correct).
 ## ⚡ Update direct from GitHub (no manual download)
 
 You no longer have to download a fresh `claude-code-methodology/` folder by
-hand every release. One line pulls the latest source straight from GitHub:
+hand every release. One line pulls the latest source straight from GitHub.
 
-**First install** (no CCM in the project yet) — run from your project root:
+### Use this in EVERY situation (install **and** update)
+
+Run from your project root:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/AribSudia/claude-code-methodology/main/scripts/ccm-fetch.sh | bash
 ```
 
-**Update** (CCM already vendored) — the script is already in your project:
+This one line works **whether or not CCM is already in your project**,
+because it downloads the fetch script fresh from GitHub each time — it
+depends on **nothing** already installed:
+
+| Your situation | What the one-liner does |
+|----------------|-------------------------|
+| No CCM yet | Creates `./claude-code-methodology/` with the latest version |
+| **Old CCM, no `ccm-fetch.sh`** (the common upgrade case) | Fetches the new source, moves your old copy to `claude-code-methodology.prev` |
+| Recent CCM | Same — refreshes the source, keeps `.prev` for rollback |
+
+> **Upgrading from an older CCM?** Use the line above. Older versions don't
+> ship `ccm-fetch.sh`, so there's no local script to run — the curl one-liner
+> is how you get it. You don't need to find or download anything first.
+
+### Shortcut (only once you already have a recent CCM)
+
+If `claude-code-methodology/scripts/ccm-fetch.sh` already exists in your
+project, you can call it directly instead of curling — same result:
 
 ```bash
 ./claude-code-methodology/scripts/ccm-fetch.sh
 ```
 
-Pin a specific version with `--ref v3.9.0` (or any branch / tag / commit).
+Either form accepts `--ref v3.9.0` (or any branch / tag / commit) to pin a
+specific version.
 
 `ccm-fetch.sh` does **only** the download: it refreshes
 `./claude-code-methodology/` (keeping the prior copy at
