@@ -1,4 +1,5 @@
 ---
+name: arib-wave-end
 argument-hint: ""
 description: "Wave | Close a wave — deep-audit gate, stakeholder report, audit-hash tag"
 ---

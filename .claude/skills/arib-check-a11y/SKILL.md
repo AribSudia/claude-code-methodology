@@ -1,4 +1,5 @@
 ---
+name: arib-check-a11y
 argument-hint: "[component|page]"
 description: Check | Accessibility audit - WCAG 2.1 AA compliance, color contrast, ARIA, keyboard navigation, screen reader
 ---

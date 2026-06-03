@@ -1,4 +1,5 @@
 ---
+name: arib-dev-debug
 argument-hint: "<issue-description>"
 description: Dev | Scientific debugging - observe, 3 hypotheses, test, fix, verify, document
 ---

@@ -1,4 +1,5 @@
 ---
+name: arib-check-arabic
 argument-hint: "[<path>]"
 description: "Check | Arabic typography, RTL, numerals, punctuation — MENA compliance"
 ---

@@ -1,4 +1,5 @@
 ---
+name: arib-check-design
 argument-hint: "[<path-or-glob>]"
 description: "Check | Design system contract — tokens, components, typography, dark mode"
 ---

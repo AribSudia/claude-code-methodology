@@ -1,4 +1,5 @@
 ---
+name: arib-dev-feature
 argument-hint: "<feature-name>"
 description: "Dev | Start a new feature with branch, planning, TDD workflow, and safety snapshot"
 ---

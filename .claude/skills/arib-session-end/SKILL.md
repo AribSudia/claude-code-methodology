@@ -1,4 +1,5 @@
 ---
+name: arib-session-end
 description: "Session | Close session — update all memory files, run tests, commit, push, report next steps"
 ---
 

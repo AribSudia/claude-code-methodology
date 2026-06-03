@@ -1,4 +1,5 @@
 ---
+name: arib-wave-start
 argument-hint: "<wave-name>"
 description: "Wave | Start a multi-session delivery wave — branch, plan, parallel architect+planner"
 ---

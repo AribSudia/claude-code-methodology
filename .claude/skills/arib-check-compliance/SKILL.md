@@ -1,4 +1,5 @@
 ---
+name: arib-check-compliance
 argument-hint: "<owasp|gdpr|iso27001|soc2|pdpl|all>"
 description: "Check | Compliance alignment — runs code-checkable rules per framework"
 ---

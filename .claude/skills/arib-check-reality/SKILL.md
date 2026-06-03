@@ -1,4 +1,5 @@
 ---
+name: arib-check-reality
 argument-hint: "<scope>"
 description: Check | Scan for mock data, fake APIs, hardcoded responses - verify the system is genuinely connected
 ---

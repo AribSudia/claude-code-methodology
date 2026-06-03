@@ -57,7 +57,7 @@ the full reverse bootstrap protocol on this existing codebase. Follow every phas
    Read EVERY file in core/ for extra context beyond the code itself.
    If core/ doesn't exist or is empty, skip to step 2.
 2. Perform the Deep Codebase Scan (Phase 1) - scan every file, route, model, config
-3. Analyze & Synthesize findings (Phase 2) - present what you found (from code AND core/), wait for confirmation
+3. Analyze & Synthesize findings (Phase 2) - report what you found (from code AND core/) inline, then PROCEED autonomously (per PROTOCOL_PRINCIPLES Rule 5 — no stop-and-wait gate; only the genuine blockers pause execution)
 4. Create the directory structure in my project root:
    mkdir -p .claude/agents .claude/skills .claude/rules .claude/agent-memory .claude/output-styles
    mkdir -p memory architecture implementation operations
@@ -318,8 +318,11 @@ After completing Phase 1, synthesize your findings. Answer ALL of these:
 20. **What's missing** (features planned but not built)
 21. **What needs fixing** (bugs, tech debt, security gaps)
 
-Present these answers clearly, then wait for user confirmation before
-proceeding to Phase 3.
+Report these answers clearly inline, then **proceed autonomously to
+Phase 3** (PROTOCOL_PRINCIPLES Rule 5). Do not stop and wait for approval
+— the scan is deterministic and the scaffolding is non-destructive. Pause
+only on a genuine blocker (e.g., the project already has conflicting CCM
+files that would be overwritten — then surface the conflict, don't guess).
 
 ---
 

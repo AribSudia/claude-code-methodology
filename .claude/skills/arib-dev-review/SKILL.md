@@ -1,4 +1,5 @@
 ---
+name: arib-dev-review
 argument-hint: "<target-branch-or-path>"
 description: "Dev | Code review with quality gates — function length, duplication, security, tests"
 ---

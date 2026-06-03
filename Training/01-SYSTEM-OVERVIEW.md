@@ -1,4 +1,4 @@
-# Claude Code Methodology v3.8.0 "Lean Core" — System Overview & User Manual
+# Claude Code Methodology v3.8.1 "Lean Core" — System Overview & User Manual
 
 > **Complete Training Manual for the AI Development Operating System**
 
@@ -54,7 +54,7 @@ It works like an operating system for your project:
 
 | Attribute | Value |
 |-----------|-------|
-| **Version** | 3.8.0 |
+| **Version** | 3.8.1 |
 | **Codename** | "Lean Core" |
 | **Release Date** | 2026-05-08 |
 | **Engineered By** | Abdullah × Claude Opus 4.6 / 4.7 / 4.8 |
@@ -1180,10 +1180,10 @@ claude-code-methodology/
 
 | Attribute | Value |
 |-----------|-------|
-| **Current Version** | 3.8.0 |
+| **Current Version** | 3.8.1 |
 | **Codename** | "Self-Policing" |
 | **Release Date** | 2026-05-08 |
-| **Previous Version** | 3.7.2 |
+| **Previous Version** | 3.8.0 |
 | **Status** | Production-Ready |
 | **License** | MIT |
 

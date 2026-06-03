@@ -1,4 +1,5 @@
 ---
+name: arib-check-security
 argument-hint: "[<path-or-glob>]"
 description: "Check | Application security audit — OWASP Top 10 + supply chain"
 ---

@@ -1,4 +1,5 @@
 ---
+name: arib-ci-audit
 argument-hint: "[audit | init | review <file> | branch-protection]"
 description: "CI | Audit, init, or review CI/PR posture — workflows, templates, CODEOWNERS, branch protection"
 ---

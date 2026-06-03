@@ -1,4 +1,5 @@
 ---
+name: arib-docs-generate
 argument-hint: "<target>"
 description: Docs | Generate documentation - analyze target, extract interfaces, create docs, commit
 ---
