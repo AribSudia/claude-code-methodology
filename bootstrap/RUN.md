@@ -40,6 +40,40 @@ and the router is deterministic (Rule 2: no menus when one answer is correct).
 
 ---
 
+## ⚡ Update direct from GitHub (no manual download)
+
+You no longer have to download a fresh `claude-code-methodology/` folder by
+hand every release. One line pulls the latest source straight from GitHub:
+
+**First install** (no CCM in the project yet) — run from your project root:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/AribSudia/claude-code-methodology/main/scripts/ccm-fetch.sh | bash
+```
+
+**Update** (CCM already vendored) — the script is already in your project:
+
+```bash
+./claude-code-methodology/scripts/ccm-fetch.sh
+```
+
+Pin a specific version with `--ref v3.9.0` (or any branch / tag / commit).
+
+`ccm-fetch.sh` does **only** the download: it refreshes
+`./claude-code-methodology/` (keeping the prior copy at
+`claude-code-methodology.prev` for rollback) and **never touches your
+project data**. It then prints the one-prompt above. Paste that into Claude
+Code and CCM detects "already installed" → runs **UPGRADE_PROTOCOL.md**
+(drift detection + Phase 1.6 re-verification), merging the new framework
+while preserving your `memory/`, decisions, and project-specific files.
+
+> **Why a fetch + a separate merge?** The download is mechanical (a shell
+> script). The merge is *intelligent* — it has to keep your data, reconcile
+> diverged files, and re-verify changed skills. That's Claude's job via the
+> protocol, not a blind `cp -r`. See `architecture/DECISIONS.md` ADR-024.
+
+---
+
 ## Explicit invocations (advanced — when you want to force a specific protocol)
 
 Use these only if you want to override the router.

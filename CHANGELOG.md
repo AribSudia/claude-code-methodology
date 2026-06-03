@@ -7,6 +7,40 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.9.0] "Live Update" — 2026-06-03
+
+Answers "do I have to manually re-download CCM every release?" — no. CCM now
+pulls itself directly from GitHub. ADR-024.
+
+### Added — fetch CCM directly from GitHub
+- `scripts/ccm-fetch.sh` — pulls the latest CCM source (default `main` =
+  latest release) into `./claude-code-methodology/`, keeping the prior copy
+  at `claude-code-methodology.prev` for rollback. Writes ONLY the framework
+  source folder; never touches `memory/` or project data. `--ref` pins any
+  branch/tag/commit; `--repo`/`--dest` override source/target. `scripts` 14→15.
+- **First-install one-liner** (no clone needed):
+  `curl -fsSL https://raw.githubusercontent.com/AribSudia/claude-code-methodology/main/scripts/ccm-fetch.sh | bash`
+
+### Changed — docs + protocol wiring
+- `bootstrap/RUN.md` — new "⚡ Update direct from GitHub" section (one-liner +
+  update command + the fetch/merge split rationale).
+- `bootstrap/UPGRADE_PROTOCOL.md` — new "Step 0 — Get the new version (fetch
+  from GitHub)" pointing at `ccm-fetch.sh` before the merge phases.
+- `README.md` — all three install/upgrade use-cases lead with the GitHub
+  fetch one-liner (manual `git clone … && cp -r` kept as the equivalent).
+- `architecture/CONTEXT_MAP.md` — `allowed_write_paths` now lists the root
+  release docs (`README.md`, `CHANGELOG.md`, `VERSION.json`, `SYSTEM.md`) so
+  the path-scoping hook permits editing them.
+
+### Design note
+- Deliberately a **fetch + separate intelligent merge**, not a one-shot
+  clone-and-apply: the mechanical download stays in shell; the
+  data-preserving merge (drift detection + Phase 1.6 re-verification) stays
+  with Claude via `UPGRADE_PROTOCOL.md`. ADR-024 records the rejected
+  alternatives (one-shot copy, git submodule, release tarball).
+
+---
+
 ## [3.8.4] "Lean Core" — 2026-06-03
 
 Answers "when I upgrade and an old skill was weak/partially used, how does

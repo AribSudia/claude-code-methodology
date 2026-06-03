@@ -9,7 +9,7 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.8.4 "Lean Core"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.9.0 "Live Update"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -173,10 +173,10 @@ This methodology solves all of that:
 You have an idea but no code. CCM gives you a fully structured project with all architecture, constraints, memory, and CI/CD from day one.
 
 ```bash
-# 1. Clone the methodology
-git clone https://github.com/AribSudia/claude-code-methodology.git
-cp -r claude-code-methodology/ my-new-project/
+# 1. Pull CCM straight from GitHub into your project (no manual download)
 cd my-new-project
+curl -fsSL https://raw.githubusercontent.com/AribSudia/claude-code-methodology/main/scripts/ccm-fetch.sh | bash
+#    (equivalent manual path: git clone … && cp -r claude-code-methodology/ my-new-project/)
 
 # 2. Open Claude Code and paste the bootstrap prompt from bootstrap/BOOTSTRAP.md
 #    Claude asks a guided questionnaire (25 core + conditional 2026 categories: AI/LLM, vector DB, multi-tenancy, realtime, edge)
@@ -194,10 +194,10 @@ cd my-new-project
 You have a codebase but no structure. CCM auto-scans everything and generates methodology files from your actual code.
 
 ```bash
-# 1. Copy methodology into your existing project
-git clone https://github.com/AribSudia/claude-code-methodology.git
-cp -r claude-code-methodology/* /path/to/your-existing-project/
+# 1. Pull CCM straight from GitHub into your existing project (no manual download)
 cd /path/to/your-existing-project
+curl -fsSL https://raw.githubusercontent.com/AribSudia/claude-code-methodology/main/scripts/ccm-fetch.sh | bash
+#    (equivalent manual path: git clone … && cp -r claude-code-methodology/* .)
 
 # 2. Create a safety branch
 git checkout -b methodology/overlay
@@ -219,7 +219,10 @@ git checkout -b methodology/overlay
 You are on an older CCM and want the latest. The upgrade protocol detects your version, runs drift detection, and preserves all your project data.
 
 ```bash
-# Open Claude Code and paste bootstrap/UPGRADE_PROTOCOL.md
+# 1. Pull the latest CCM source from GitHub (no manual re-download)
+./claude-code-methodology/scripts/ccm-fetch.sh        # latest; --ref vX.Y.Z to pin
+
+# 2. Open Claude Code and paste bootstrap/UPGRADE_PROTOCOL.md (or the one-prompt)
 # Claude:
 #   1. Backs up your current files
 #   2. Copies new structure (skills, rules, .mcp.json)
@@ -686,7 +689,9 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.8 | Lean Core | Always-on context 45.9K→7.4K (84%), under the 8K target — reference docs load on demand (ADR-019). The C+→A+ token gate, cleared. |
 | v3.8.1 | Lean Core | Skill `name:` conformance (all 26, CI-enforced) + autonomous bootstrap execution (PROTOCOL_PRINCIPLES Rule 5) (ADR-020) |
 | v3.8.2 | Lean Core | Migration modernized to "From Any System" (Cursor/Windsurf/Copilot/Kiro), legacy path retired to Appendix A (ADR-021) |
-| **v3.8.3** | **Lean Core** | **One-prompt unified entry + Situation Router, skill-hygiene sweep, dead `agent-memory/` removed (ADR-022)** |
+| v3.8.3 | Lean Core | One-prompt unified entry + Situation Router, skill-hygiene sweep, dead `agent-memory/` removed (ADR-022) |
+| v3.8.4 | Lean Core | Invocation telemetry (`invocation-log.sh`) + upgrade Phase 1.6 re-verification recommendations (ADR-023) |
+| **v3.9.0** | **Live Update** | **Fetch CCM directly from GitHub — `scripts/ccm-fetch.sh` + curl one-liner; no manual re-download (ADR-024)** |
 
 ---
 
