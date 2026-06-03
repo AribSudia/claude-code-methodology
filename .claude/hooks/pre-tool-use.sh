@@ -24,13 +24,20 @@ fi
 
 if [[ "$SKIP_SECRET_SCAN" != "true" ]]; then
   SECRET_PATTERNS=(
-    'sk-ant-[a-zA-Z0-9_-]{20,}'
-    'sk-proj-[a-zA-Z0-9_-]{20,}'
-    'ghp_[a-zA-Z0-9]{36}'
-    'gho_[a-zA-Z0-9]{36}'
-    'AKIA[0-9A-Z]{16}'
-    'AIza[0-9A-Za-z_-]{35}'
-    'xox[baprs]-[a-zA-Z0-9-]{10,}'
+    'sk-ant-[a-zA-Z0-9_-]{20,}'                 # Anthropic
+    'sk-proj-[a-zA-Z0-9_-]{20,}'                # OpenAI project
+    'ghp_[a-zA-Z0-9]{36}'                       # GitHub PAT
+    'gho_[a-zA-Z0-9]{36}'                        # GitHub OAuth
+    'github_pat_[a-zA-Z0-9_]{22,}'              # GitHub fine-grained PAT
+    'glpat-[a-zA-Z0-9_-]{20,}'                  # GitLab PAT
+    'AKIA[0-9A-Z]{16}'                          # AWS access key
+    'AIza[0-9A-Za-z_-]{35}'                     # Google API key
+    'xox[baprs]-[a-zA-Z0-9-]{10,}'              # Slack
+    'sk_live_[0-9a-zA-Z]{24,}'                  # Stripe secret (live)
+    'sk_test_[0-9a-zA-Z]{24,}'                  # Stripe secret (test)
+    'rk_live_[0-9a-zA-Z]{24,}'                  # Stripe restricted
+    'npm_[a-zA-Z0-9]{36}'                       # npm token
+    'eyJ[a-zA-Z0-9_-]{10,}\.eyJ[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}'  # JWT
     '-----BEGIN (RSA|EC|OPENSSH|PGP|DSA) PRIVATE KEY-----'
   )
 
@@ -151,24 +158,32 @@ if [[ "$TOOL_NAME" == "Bash" ]]; then
     fi
   fi
 
+  # Normalize runs of whitespace to a single space so 'rm -rf  /' (double
+  # space) and tabbed variants can't slip past the patterns. Matching is
+  # done against $CMD_NORM; reporting still shows the original $CMD.
+  CMD_NORM="$(printf '%s' "$CMD" | tr '\t' ' ' | tr -s ' ')"
+
   DANGEROUS_PATTERNS=(
     'rm -rf /( |$)'
     'rm -rf \*'
     'rm -rf ~'
     'rm -rf \$HOME'
+    'rm -fr /( |$)'                               # flag-order variant
     'mkfs\.'
     'dd if=.*of=/dev/'
     ':\(\)\{ *:\|: *& *\};:'
     'chmod -R 777 /'
     'curl [^|]*\| *(sh|bash)( |$)'
     'wget [^|]*\| *(sh|bash)( |$)'
-    'git push.*--force.*\b(main|master|production)\b'
+    'git push.*(--force|--force-with-lease|-f)\b.*\b(main|master|production)\b'
+    'git push.*\b(main|master|production)\b.*(--force|-f)\b'   # flag-after-ref
     'git reset --hard origin/(main|master|production)'
-    'DROP DATABASE'
+    'git clean -[a-z]*f[a-z]*d'                   # force-clean wipes untracked
+    'DROP (DATABASE|TABLE)'
     'TRUNCATE.*production'
   )
   for pattern in "${DANGEROUS_PATTERNS[@]}"; do
-    if printf '%s' "$CMD" | grep -Eiq -- "$pattern"; then
+    if printf '%s' "$CMD_NORM" | grep -Eiq -- "$pattern"; then
       notify_cowork "dangerous-bash-block" "Command: ${CMD:0:120}"
       block "Dangerous command pattern detected: matches '$pattern'. If intentional, run it manually outside Claude Code."
     fi

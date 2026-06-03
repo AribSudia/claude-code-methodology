@@ -296,7 +296,7 @@ git log --all --oneline -- path/to/file
 
 ## Hybrid Memory (v3.2 — Item #3)
 
-The seven markdown files described above remain the **audit layer**. They are
+The six markdown files described above remain the **audit layer**. They are
 human-readable, git-versioned, and authoritative. v3.2 adds an **optional
 semantic layer** for retrieval at scale.
 
@@ -310,7 +310,7 @@ loss of correctness — only loss of recall on novel paraphrases.
 
 ### Layer 2 — audit (always)
 
-The seven markdown files. The semantic layer is exported into
+The six markdown files. The semantic layer is exported into
 `memory/semantic_export.md` by `scripts/memory-export.sh`, run nightly via
 cron or on the Stop hook. This is the contract that keeps git the source of
 truth even when an external service holds the live index.

@@ -9,9 +9,19 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.7.0 "Self-Policing"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~43.4K
+**v3.7.1 "Self-Policing"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~43.4K
 (measure yours: `./scripts/token-audit.sh` — path-scoped rules ~4.8K load on demand, not counted)
 
+> **What changed in v3.7.1 (patch)** — closes the review's deferred
+> P2/P3 findings: `memory-export.sh` no longer writes failure strings
+> into the git-committed audit trail (honest header + last-known-good
+> preserved); a **real drift classifier** (`gen-template-hashes.sh` +
+> `reference/template-hashes.json` + `drift-detect.sh`) replaces the
+> upgrade heuristic that could overwrite user edits; hook hardening
+> (whitespace-normalized bash matching, `git push -f`, Stripe/GitLab/
+> npm/JWT secret patterns); the session ledger now records transport +
+> notifications; stale counts in SYSTEM.md/Training corrected. ADR-018.
+>
 > **What changed in v3.7** — a 23-agent review of CCM found that the
 > system did not fully live up to its own principles, and v3.7 fixes the
 > critical gaps. **The enforcement layer now actually enforces**:
@@ -646,7 +656,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.5 | Engineered | CI/PR as an executable subsystem: `ci-pr-engineer` agent + `/arib-ci-audit` skill with audit/init/review/branch-protection modes |
 | v3.5.1 | Engineered | Decisive bootstrap protocols: no STOP on matching versions, no options-menus, mandatory drift detection (ADR-014) |
 | v3.6 | Flowing | Wave auto-advance: `/arib-wave-run` executes wave steps without asking between them, pausing only on issue/checkpoint (ADR-015) |
-| **v3.7** | **Self-Policing** | **Post-review fixes: `block()` exit-2 (enforcement now real), agent frontmatter (subagents functional), coherence validator + CI, honest token metric (ADR-016/017)** |
+| v3.7 | Self-Policing | Post-review fixes: `block()` exit-2 (enforcement now real), agent frontmatter (subagents functional), coherence validator + CI, honest token metric (ADR-016/017) |
+| **v3.7.1** | **Self-Policing** | **Deferred-findings patch: honest memory-export, real drift classifier (no edit-clobbering), hook hardening, ledger transport fields (ADR-018)** |
 
 ---
 

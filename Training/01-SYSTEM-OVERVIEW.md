@@ -1,4 +1,4 @@
-# Claude Code Methodology v3.7.0 "Self-Policing" — System Overview & User Manual
+# Claude Code Methodology v3.7.1 "Self-Policing" — System Overview & User Manual
 
 > **Complete Training Manual for the AI Development Operating System**
 
@@ -8,7 +8,7 @@
 
 1. [What is CCM?](#what-is-ccm)
 2. [The Problem It Solves](#the-problem-it-solves)
-3. [5-Layer Architecture](#5-layer-architecture)
+3. [4-Layer Architecture](#4-layer-architecture)
 4. [Layer Override Rules](#layer-override-rules)
 5. [The 7 Golden Rules](#the-7-golden-rules)
 6. [The Session Protocol](#the-session-protocol)
@@ -28,7 +28,7 @@
 It works like an operating system for your project:
 
 - **Persistent Memory** — Every session reads from and writes to shared knowledge files
-- **Specialist Agents** — 13 autonomous agents, each with expertise and constraints
+- **Specialist Agents** — 15 autonomous agents, each with expertise and constraints
 - **Safety Hooks** — Automated gates that prevent mistakes before they happen
 - **Architectural Governance** — Decisions recorded, architecture enforced, rework eliminated
 - **Inter-Agent Communication** — Structured I/O channel for agent collaboration
@@ -54,7 +54,7 @@ It works like an operating system for your project:
 
 | Attribute | Value |
 |-----------|-------|
-| **Version** | 3.7.0 |
+| **Version** | 3.7.1 |
 | **Codename** | "Self-Policing" |
 | **Release Date** | 2026-05-08 |
 | **Engineered By** | Abdullah × Claude Opus 4.6 / 4.7 / 4.8 |
@@ -82,7 +82,7 @@ Every Claude Code session without CCM suffers from:
 
 | Problem | Solution | Benefit |
 |---------|----------|---------|
-| **Context Loss** | **Persistent Memory** (7 file types) | Every session reads `memory/` at start, writes before end |
+| **Context Loss** | **Persistent Memory** (6 file types) | Every session reads `memory/` at start, writes before end |
 | **Quality Drift** | **13 Specialist Agents** with checklists | Code Reviewer, Test Engineer, Security Auditor run automatically |
 | **No Communication** | **I/O Channel** (structured requests/results) | Agents coordinate through documented protocols |
 | **Rework Cycle** | **Decision Records** + **CONSTRAINTS.md** | Architecture decisions are permanent, searchable, enforced |
@@ -102,14 +102,14 @@ With CCM in place:
 
 ---
 
-## 5-Layer Architecture
+## 4-Layer Architecture
 
-CCM operates on exactly **5 layers**. Each layer has a specific responsibility. They are read **bottom-to-top at session start** (L1 first) but designed **top-to-bottom** (user requests flow down).
+CCM operates on **4 numbered layers (L1–L4)** plus a cross-cutting I/O Channel and Persistent Memory (ADR-017). Each layer has a specific responsibility. They are read **bottom-to-top at session start** (L1 first) but designed **top-to-bottom** (user requests flow down).
 
 ```
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                                                                      ║
-║  L4 — AGENTS                   13 autonomous specialists             ║
+║  L4 — AGENTS                   15 autonomous specialists             ║
 ║  (Architect, Security, Reviewer, Tester, Debugger, Refactor,       ║
 ║   Language, Deploy Guardian, Reality Auditor, Database Guardian,    ║
 ║   Performance, API Docs, Accessibility)                             ║
@@ -138,7 +138,7 @@ CCM operates on exactly **5 layers**. Each layer has a specific responsibility. 
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
-║  L2 — SKILLS                  21 auto-invoked knowledge packs        ║
+║  L2 — SKILLS                  26 auto-invoked skills        ║
 ║  (Frontend, Testing, Security, Git, Database, CI/CD, etc.)          ║
 ║                                                                      ║
 ║  Files: .claude/skills/*/SKILL.md                                    ║
@@ -187,7 +187,7 @@ CCM operates on exactly **5 layers**. Each layer has a specific responsibility. 
 **What it does:** Provides reusable knowledge and best practices.
 
 **Contains:**
-- 21 auto-invoked skill guides
+- 26 auto-invoked skill guides
 - Step-by-step walkthroughs
 - Checklists and patterns
 - Code examples
@@ -1037,7 +1037,7 @@ claude-code-methodology/
 ├── .claude/                               (Claude Code system files)
 │   ├── settings.json                      (Claude Code configuration)
 │   │
-│   ├── agents/                            (13 specialist agents)
+│   ├── agents/                            (15 specialist agents)
 │   │   ├── architect.md                   (System design authority)
 │   │   ├── security-auditor.md            (OWASP Top 10 expert)
 │   │   ├── code-reviewer.md               (Quality gates)
@@ -1052,7 +1052,7 @@ claude-code-methodology/
 │   │   ├── api-docs.md                    (API documentation)
 │   │   └── accessibility.md               (WCAG 2.1 AA compliance)
 │   │
-│   ├── skills/                            (21 knowledge packs)
+│   ├── skills/                            (26 skills)
 │   │   ├── frontend-optimization/SKILL.md
 │   │   ├── tdd-typescript/SKILL.md
 │   │   ├── security-hardening/SKILL.md
@@ -1180,10 +1180,10 @@ claude-code-methodology/
 
 | Attribute | Value |
 |-----------|-------|
-| **Current Version** | 3.7.0 |
+| **Current Version** | 3.7.1 |
 | **Codename** | "Self-Policing" |
 | **Release Date** | 2026-05-08 |
-| **Previous Version** | 3.6.0 |
+| **Previous Version** | 3.7.0 |
 | **Status** | Production-Ready |
 | **License** | MIT |
 
@@ -1250,7 +1250,7 @@ claude-code-methodology/
 ### The 5 Layers at a Glance
 
 ```
-L4 AGENTS       ← What gets executed (13 specialists)
+L4 AGENTS       ← What gets executed (15 specialists)
 I/O CHANNEL     ← How agents communicate (requests/results)
 L3 HOOKS        ← Safety enforcement (gates, cannot bypass)
 L2 SKILLS       ← Reusable knowledge (advisory, L1 overrides)
@@ -1300,7 +1300,7 @@ Claude Code Methodology v2.6.0 "Fortress" transforms Claude Code from a code ass
 - **Inter-agent communication** that ensures coordination
 - **Upgradable design** so it grows with your project
 
-The 7 Golden Rules are your foundation. The 5-Layer Architecture is your structure. The Session Protocol is your workflow. Master these three, and you have everything you need.
+The 7 Golden Rules are your foundation. The 4-Layer Architecture is your structure. The Session Protocol is your workflow. Master these three, and you have everything you need.
 
 **Welcome to the Fortress. Build with confidence.**
 

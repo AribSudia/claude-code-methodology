@@ -119,6 +119,20 @@ done < <(grep -rhoE 'Task\(([a-z-]+)' .claude/skills 2>/dev/null | sed -E 's/Tas
 [ "$REF_BAD" = "0" ] && note_ok "all Task(<agent>) references resolve"
 
 echo ""
+echo "7. Template-hashes manifest (drift classifier)"
+MANIFEST="reference/template-hashes.json"
+if [[ ! -f "$MANIFEST" ]]; then
+  note_fail "$MANIFEST missing — run scripts/gen-template-hashes.sh (drift-detect depends on it)"
+else
+  MAN_VER="$(jq -r '.version // "?"' "$MANIFEST")"
+  if [[ "$MAN_VER" == "$VER" ]]; then
+    note_ok "manifest version matches ($MAN_VER), $(jq '.files | length' "$MANIFEST") files"
+  else
+    note_fail "manifest version $MAN_VER != VERSION.json $VER — regenerate with scripts/gen-template-hashes.sh"
+  fi
+fi
+
+echo ""
 echo "=== Result ==="
 if [ "$FAIL" = "0" ]; then
   echo "COHERENT — all invariants hold."

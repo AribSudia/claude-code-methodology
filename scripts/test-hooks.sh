@@ -68,10 +68,20 @@ echo ""
 echo "1. PreToolUse — Bash"
 run_test "safe bash (ls)"             "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-safe.json"      0
 run_test "dangerous bash (rm -rf /)"  "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-dangerous.json" 2
+run_test "dangerous bash (rm -rf  / double-space)" "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-doublespace.json" 2
+run_test "force-push to main (git push -f)" "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-forcepush.json" 2
 
 echo ""
 echo "2. PreToolUse — Secret detection"
 run_test "real secret in src/"         "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-secret.json"        2
+# Stripe-key test: assemble the fake key at RUNTIME so no committed file
+# contains a literal sk_live_<24+ chars> (GitHub push-protection would flag
+# a static fixture, even a fake one). The payload still exercises the hook's
+# Stripe pattern. Temp file is created here and removed after.
+STRIPE_TMP="$(mktemp)"
+printf '{"tool_name":"Write","tool_input":{"file_path":"src/pay.ts","content":"const k=\\"sk_live_%s\\";"}}' "$(printf 'A%.0s' $(seq 1 26))" > "$STRIPE_TMP"
+run_test "stripe live secret in src/"  "$HOOKS/pre-tool-use.sh" "$STRIPE_TMP" 2
+rm -f "$STRIPE_TMP"
 run_test "secret in tests/ (exempt)"   "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-test-fixture.json"  0
 
 echo ""
@@ -91,11 +101,14 @@ run_test "notification fan-out"        "$HOOKS/notification.sh"  "$PAYLOADS/noti
 
 echo ""
 echo "6. Autonomy guard"
-run_test "autonomy off (no-op)"        "$HOOKS/autonomy-guard.sh" "$PAYLOADS/pretooluse-bash-safe.json"         0
-run_test "autonomy on, fresh state"    "$HOOKS/autonomy-guard.sh" "$PAYLOADS/pretooluse-bash-safe.json"         0   CCM_AUTONOMY=1
-
-# Cleanup any state files autonomy-guard wrote.
-rm -rf "${REPO_ROOT}/io/.autonomy" 2>/dev/null
+# Run against an ISOLATED CCM_ROOT (temp dir) so "fresh state" is genuinely
+# fresh. Otherwise the guard's BLOCK-rate check counts the BLOCK events the
+# earlier tests in THIS suite just generated into the shared io/hook-logs/,
+# and trips (this differs across macOS/Linux date parsing — caught by CI).
+AUTONOMY_TMP="$(mktemp -d)"
+run_test "autonomy off (no-op)"        "$HOOKS/autonomy-guard.sh" "$PAYLOADS/pretooluse-bash-safe.json"         0   CCM_ROOT="$AUTONOMY_TMP"
+run_test "autonomy on, fresh state"    "$HOOKS/autonomy-guard.sh" "$PAYLOADS/pretooluse-bash-safe.json"         0   CCM_AUTONOMY=1 CCM_ROOT="$AUTONOMY_TMP"
+rm -rf "$AUTONOMY_TMP"
 
 echo ""
 echo "7. Static checks"
