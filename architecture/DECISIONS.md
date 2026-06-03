@@ -550,6 +550,63 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-019: Lean Core — Always-On Context Budget (v3.8.0)
+
+**Status:** Accepted   **Date:** 2026-06-03
+
+**Context.** The single defect keeping CCM at C+ (per two external reviews
+and the v3.7 self-audit) was the always-on session-start token cost:
+**~45.9K tokens** — ~23% of a 200K window consumed before the user types.
+`token-audit.sh` measured it; the `<8K` target was missed ~5.7x. The
+bloat was 13 files in `settings.json` `context.include` (and the
+session-start protocol bulk-reading them), dominated by reference docs:
+DECISIONS.md (11.7K), SECURITY.md (6.1K), ERROR_PATTERNS.md (5.1K),
+CONTEXT_MAP.md (3.5K), the three implementation/ schemas (9K), WORKFLOW.md
+(1.7K), TECH_STACK.md (1.4K).
+
+**Decision.** Adopt a **Lean Core**: always-on context is the minimum
+Claude must see *before acting*. Everything else is read **on demand** by
+the skill/agent/hook that needs it.
+
+Always-on (4 files, ~7.3K):
+- `CLAUDE.md` — master brain (governance).
+- `architecture/CONSTRAINTS.md` — hard rules (must precede any action).
+- `memory/project_status.md` — current state (rewritten lean; history → CHANGELOG).
+- `memory/session_notes.md` — last handoff.
+
+On-demand (read when the task touches them; mapped in CLAUDE.md §6):
+- TECH_STACK (new feature/lib), CONTEXT_MAP (placement; the hook already
+  reads its allowed_write_paths block directly), ERROR_PATTERNS (debug),
+  DECISIONS (rationale), SECURITY (auth/data), API_ENDPOINTS/EVENT_SCHEMA/
+  MIGRATION_ORDER (those subsystems), WORKFLOW (process questions).
+
+Enforced in `settings.json` `context.include` (4 entries) AND in the
+session-start protocol/skill (read lean core only; lazy-load the rest).
+
+**Result (measured):** always-on **45,855 → 7,315 tokens (84% cut)** —
+UNDER the 8K target for the first time. `token-audit.sh` confirms.
+
+**Why CONSTRAINTS stays always-on:** moving hard rules to lazy-load would
+let Claude act before seeing them — the one thing Lean Core must not do.
+Same for CLAUDE.md. Reference material (the "why" and the schemas) can be
+pulled when relevant; rules and current state cannot.
+
+**Consequences.** ~38K tokens of headroom returned to every session;
+latency and cost drop; the C+→A+ token gate is cleared. Trade-off: a
+session that needs a reference doc must read it (one extra tool call) —
+acceptable, and the on-demand map in CLAUDE.md §6 makes it obvious which
+file to pull. KPI #3 (always-on token cost) now passes.
+
+**Alternatives rejected.**
+- "Move the target to 45K" — dishonest goalpost-moving (forbidden by
+  ADR-016). Cut the cost instead.
+- "Lazy-load CONSTRAINTS too, to hit <5K" — unsafe; Claude could act
+  without seeing hard rules.
+- "@-import the reference docs in CLAUDE.md" — that just re-inlines them
+  into always-on; defeats the purpose.
+
+---
+
 # ADR-018: Close the Deferred Review Findings (v3.7.1)
 
 **Status:** Accepted   **Date:** 2026-05-08
@@ -1026,6 +1083,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-016 | Self-Policing — Make CCM Enforce Its Own Rules (v3.7) | Accepted | 2026-05-08 |
 | ADR-017 | Canonical "4-Layer" Architecture Framing (v3.7) | Accepted | 2026-05-08 |
 | ADR-018 | Close the Deferred Review Findings (v3.7.1) | Accepted | 2026-05-08 |
+| ADR-019 | Lean Core — Always-On Context Budget (v3.8.0) | Accepted | 2026-06-03 |
 
 ---
 

@@ -79,21 +79,13 @@
       }
     ]
   },
+  "_context_note": "v3.8.0 Lean Core (ADR-019): always-on context is the minimum Claude must see BEFORE acting — master brain, hard rules, current state, last handoff. Everything else (TECH_STACK, CONTEXT_MAP, ERROR_PATTERNS, DECISIONS, SECURITY, API_ENDPOINTS, EVENT_SCHEMA, MIGRATION_ORDER, WORKFLOW) is read ON DEMAND by the skill/agent/hook that needs it — see CLAUDE.md section 6. This cut always-on cost ~45.9K -> ~8.3K (82%).",
   "context": {
     "include": [
       "CLAUDE.md",
       "architecture/CONSTRAINTS.md",
-      "architecture/TECH_STACK.md",
-      "architecture/CONTEXT_MAP.md",
-      "architecture/ERROR_PATTERNS.md",
-      "architecture/DECISIONS.md",
-      "architecture/SECURITY.md",
-      "implementation/API_ENDPOINTS.md",
-      "implementation/EVENT_SCHEMA.md",
-      "implementation/MIGRATION_ORDER.md",
       "memory/project_status.md",
-      "memory/session_notes.md",
-      "operations/WORKFLOW.md"
+      "memory/session_notes.md"
     ]
   },
   "MAX_THINKING_TOKENS": 16000,
