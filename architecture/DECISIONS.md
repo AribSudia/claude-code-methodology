@@ -550,6 +550,50 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-024: Fetch CCM Directly from GitHub (v3.9.0)
+
+**Status:** Accepted   **Date:** 2026-06-03
+
+**Context.** Until now, getting a new CCM version into a project meant a
+manual `git clone … && cp -r claude-code-methodology/ <project>/` every
+release. The maintainer asked to make updates pull straight from GitHub
+instead of re-downloading by hand. The temptation is a single script that
+clones *and* applies the new version — but a blind `cp -r` would clobber
+`memory/`, diverged `CLAUDE.md`, and project data, and would skip the drift
+detection / Phase 1.6 re-verification that `UPGRADE_PROTOCOL.md` exists to do.
+
+**Decision.** Split the concern into a thin **fetch** + the existing
+**intelligent merge**:
+1. `scripts/ccm-fetch.sh` — shallow-clones the requested ref (default `main`
+   = latest release; CCM ships from `main`, no tags) from
+   `github.com/AribSudia/claude-code-methodology`, strips `.git`, and swaps
+   it into `./claude-code-methodology/`, preserving the prior copy at
+   `claude-code-methodology.prev` for rollback. It writes ONLY the framework
+   source dir — never project data — and then prints the one-prompt that
+   hands off to the protocol. Curl-bootstrappable for first install:
+   `curl -fsSL …/main/scripts/ccm-fetch.sh | bash`.
+2. The Claude-driven upgrade is unchanged: the one-prompt / `RUN.md`
+   Situation Router detects "CCM installed" and runs `UPGRADE_PROTOCOL.md`
+   (Step 0 now references `ccm-fetch.sh`), which does the data-preserving
+   merge + drift detection + Phase 1.6.
+
+**Consequences.** One mechanism covers first install and every update; no
+manual download. The mechanical step (download) stays in shell where it
+belongs; the judgment step (merge, reconcile, re-verify) stays with Claude.
+Fetch is auditable and offline-safe for project data — its only write target
+is the vendored source folder. `scripts` count 14→15.
+
+**Alternatives rejected.**
+- **One script that fetches *and* applies** — couples a blind copy to the
+  download, defeating data preservation and the upgrade protocol. Rejected.
+- **Git submodule / subtree for `claude-code-methodology/`** — entangles the
+  user's VCS with CCM's, breaks the "plain vendored files" model, and makes
+  `.prev` rollback awkward. Rejected; we strip `.git` and vendor plain files.
+- **GitHub Releases tarball** — CCM doesn't cut tagged releases (ships from
+  `main`); `--ref` already covers pinning a branch/tag/commit when needed.
+
+---
+
 # ADR-023: Invocation Telemetry + Upgrade Re-Verification (v3.8.4)
 
 **Status:** Accepted   **Date:** 2026-06-03
@@ -1258,6 +1302,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-021 | Migration modernization — "From Any System" (v3.8.2) | Accepted | 2026-06-03 |
 | ADR-022 | Unified entry + skill-hygiene sweep + dead-infra removal (v3.8.3) | Accepted | 2026-06-03 |
 | ADR-023 | Invocation telemetry + upgrade re-verification (v3.8.4) | Accepted | 2026-06-03 |
+| ADR-024 | Fetch CCM directly from GitHub (`ccm-fetch.sh`) (v3.9.0) | Accepted | 2026-06-03 |
 
 ---
 

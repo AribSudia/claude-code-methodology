@@ -350,4 +350,9 @@ clear error message. Hard-denied paths (`.git/`, `.env*`, `~/.ssh/`, `~/.aws/`,
 - Training/
 - .github/
 - .claude/
+- README.md
+- CHANGELOG.md
+- VERSION.json
+- SYSTEM.md
+- CLAUDE.md
 <!-- allowed_write_paths:end -->
