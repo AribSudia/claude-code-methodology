@@ -12,6 +12,15 @@ Claude Code work durable.
 **v3.8.3 "Lean Core"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
+> **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
+> on all 26 skills (CI-enforced); bootstrap protocols made autonomous
+> (PROTOCOL_PRINCIPLES Rule 5 — run to completion, no permission gates);
+> migration modernized to **"From Any System"** (Cursor/Windsurf/Copilot/Kiro;
+> legacy path retired to an appendix); a **one-prompt unified entry** +
+> Situation Router (you no longer pick a protocol); skill-hygiene sweep
+> (linear steps, no duplicate headings); dead `agent-memory/` removed.
+> ADR-020/021/022.
+>
 > **What changed in v3.8.0 "Lean Core"** — the headline fix. Always-on
 > session-start context cut **~45.9K → ~7.4K tokens (84%)** — UNDER the 8K
 > target for the first time. Only the master brain, hard rules, and current
@@ -91,14 +100,24 @@ Claude Code work durable.
  ║                                                                   ║
  ║   YOUR PROJECT  ──▶  claude-code-methodology/  ──▶  EXCELLENCE   ║
  ║                                                                   ║
- ║   New project?      ──▶  Bootstrap Protocol (25 questions)       ║
- ║   Existing project? ──▶  Reverse Bootstrap (auto-scan)           ║
- ║   Old CCM version?  ──▶  Upgrade Protocol (preserve + update)    ║
- ║   Old code-system?  ──▶  Migration Guide (6-phase migration)     ║
- ║   Overlay on legacy ──▶  Reengineering Guide                     ║
+ ║   ⭐ ONE PROMPT (all situations):                                 ║
+ ║      "Read claude-code-methodology/bootstrap/RUN.md and set up    ║
+ ║       (or upgrade) CCM for this project."                         ║
+ ║      → CCM detects your situation and runs the right protocol.    ║
+ ║                                                                   ║
+ ║   It auto-routes to:                                              ║
+ ║   New project?       ──▶  Bootstrap (guided questionnaire)        ║
+ ║   Existing project?  ──▶  Reverse Bootstrap (auto-scan)           ║
+ ║   CCM installed?     ──▶  Upgrade (drift detection, preserves data)║
+ ║   From Cursor/etc.?  ──▶  Migration (From Any System)             ║
+ ║   Overlay on legacy  ──▶  Reengineering                          ║
  ║                                                                   ║
  ╚═══════════════════════════════════════════════════════════════════╝
 ```
+
+> **The one-prompt method** (v3.8.3): you don't choose a protocol — paste the
+> single prompt above and CCM's Situation Router detects your state from the
+> filesystem and runs the right one autonomously. See `bootstrap/RUN.md`.
 
 ---
 
@@ -116,7 +135,7 @@ This methodology solves all of that:
 | Every session starts from scratch| **Session Protocol** — read → work → write    |
 | Architecture decisions are lost  | **Decision Records** — permanent, searchable  |
 | "It works on my machine"         | **Implementation Layer** — docker, runbook, env|
-| Skills are shallow checklists    | **Deep Skills** — 7,393 lines of reference docs |
+| Skills are shallow checklists    | **Deep Skills** — 26 comprehensive reference skills |
 
 ---
 
@@ -133,7 +152,7 @@ This methodology solves all of that:
 ║  PreToolUse · PostToolUse · PreCommit · Notification        ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  L2 — SKILLS          26 branded /arib-* deep reference     ║
-║  Session · Dev · Check · Docs (7,393 lines total)           ║
+║  Session·Dev·Check·Wave·Audit·Docs (26 skills)           ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  I/O — CHANNEL        Inter-agent nervous system            ║
 ║  Requests · Results · Signals · Pipelines · Threads         ║
@@ -160,7 +179,7 @@ cp -r claude-code-methodology/ my-new-project/
 cd my-new-project
 
 # 2. Open Claude Code and paste the bootstrap prompt from bootstrap/BOOTSTRAP.md
-#    Claude asks 25 questions about your project (name, stack, features, auth, DB...)
+#    Claude asks a guided questionnaire (25 core + conditional 2026 categories: AI/LLM, vector DB, multi-tenancy, realtime, edge)
 #    Then generates ALL methodology files filled with YOUR real data
 
 # 3. Start building
@@ -168,7 +187,7 @@ cd my-new-project
 #    Claude reads everything, knows your project, and begins
 ```
 
-**What you get**: Every file populated — CONSTRAINTS.md with your rules, TECH_STACK.md with your libraries, API_ENDPOINTS.md with your routes, CONTEXT_MAP.md with your folders, and all 13 agents configured for your stack.
+**What you get**: Every file populated — CONSTRAINTS.md with your rules, TECH_STACK.md with your libraries, API_ENDPOINTS.md with your routes, CONTEXT_MAP.md with your folders, and all 15 agents configured for your stack.
 
 ### Use Case 2: Existing Project (Reverse Bootstrap)
 
@@ -197,7 +216,7 @@ git checkout -b methodology/overlay
 
 ### Use Case 3: Upgrading from Older CCM Version
 
-You're on v2.x and want v3.1. The upgrade protocol preserves all your project data.
+You are on an older CCM and want the latest. The upgrade protocol detects your version, runs drift detection, and preserves all your project data.
 
 ```bash
 # Open Claude Code and paste bootstrap/UPGRADE_PROTOCOL.md
@@ -209,13 +228,17 @@ You're on v2.x and want v3.1. The upgrade protocol preserves all your project da
 #   5. Validates everything works
 ```
 
-### Use Case 4: Legacy System Migration
+### Use Case 4: Migrate from another AI-coding system
 
-You used the old `claude-code-system` and want to move to CCM.
+You're coming from Cursor, Windsurf, GitHub Copilot, Kiro, an unstructured
+`CLAUDE.md` — or the legacy `claude-code-system`. The one-prompt method
+detects which and migrates your real content (rules, context, conventions)
+into CCM; you don't have to choose "migrate."
 
 ```bash
-# Open Claude Code and paste bootstrap/MIGRATION_GUIDE.md
-# 6-phase migration: Preparation → Backup → Structure → Content → Validation → Cleanup
+# Just use the one-prompt method — it auto-detects tool markers and routes
+# to bootstrap/MIGRATION_GUIDE.md (From Any System). The legacy
+# claude-code-system path is retired to that guide's Appendix A.
 ```
 
 ### Use Case 5: Overlay on Legacy Codebase (Reengineering)
@@ -227,29 +250,20 @@ You have a legacy project with tech debt and want to gradually introduce the met
 # Adds methodology as an overlay — non-destructive, incremental adoption
 ```
 
-### Copy-Paste Prompts (Ready to Use)
+### Copy-Paste Prompt (Ready to Use)
 
-Just paste one of these directly into Claude Code to get started:
+**Just paste this — it works in every situation.** CCM detects whether you're
+starting new, overlaying existing code, upgrading, or migrating from another
+tool, and runs the right protocol autonomously:
 
-**New Project:**
 ```
-Read claude-code-methodology/bootstrap/BOOTSTRAP.md and execute the full bootstrap protocol for this new project.
-```
-
-**Existing Project:**
-```
-Read claude-code-methodology/bootstrap/REVERSE_BOOTSTRAP.md and execute the full reverse bootstrap protocol on this existing codebase.
+Read claude-code-methodology/bootstrap/RUN.md and set up (or upgrade) CCM for
+this project. Detect my situation from the filesystem per the Situation Router
+and execute the matching protocol autonomously to completion.
 ```
 
-**Version Upgrade:**
-```
-Read claude-code-methodology/bootstrap/UPGRADE_PROTOCOL.md and execute the full upgrade protocol.
-```
-
-**Legacy Migration:**
-```
-Read claude-code-methodology/bootstrap/MIGRATION_GUIDE.md and execute the full migration protocol.
-```
+That's it — no protocol to choose. (Advanced users who want to force a specific
+protocol can use the explicit prompts in `bootstrap/RUN.md`.)
 
 ---
 
@@ -293,7 +307,7 @@ All skills are deep reference documents (250-800 lines each) with decision trees
 | **Doc Generator** | `/arib-docs-generate <target>` | Generate or update documentation — JSDoc, README, architecture docs | 575 |
 | **Language/i18n** | `/arib-docs-language <component>` | Universal i18n audit — RTL, LTR, CJK, Indic, fonts, formatting | 766 |
 
-**Total Skill Content**: 7,393 lines of deep reference documentation.
+**Total**: 26 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
 
 ### How to Use a Skill
 
@@ -356,7 +370,7 @@ The `Training/` directory contains **10 comprehensive user manuals** — everyth
 | Manual | File | What It Covers |
 |--------|------|----------------|
 | **01 — System Overview** | `Training/01-SYSTEM-OVERVIEW.md` | Complete system architecture, how all layers connect, mental model |
-| **02 — Agents Manual** | `Training/02-AGENTS-MANUAL.md` | All 13 agents explained — triggers, checklists, outputs, customization |
+| **02 — Agents Manual** | `Training/02-AGENTS-MANUAL.md` | All 15 agents explained — triggers, checklists, outputs, customization |
 | **03 — Skills Manual** | `Training/03-SKILLS-MANUAL.md` | Skills system — how they work, how to use /arib-* commands |
 | **04 — Hooks Manual** | `Training/04-HOOKS-MANUAL.md` | Safety hooks — 6 types, 7 recipes, configuration, custom hooks |
 | **05 — Commands Manual** | `Training/05-COMMANDS-MANUAL.md` | All slash commands explained with examples and workflows |
@@ -523,7 +537,7 @@ claude-code-methodology/                  ← v3.3 "Operating" — see VERSION.j
 │
 ├── Training/                             ← 10 comprehensive user manuals
 │   ├── 01-SYSTEM-OVERVIEW.md             ← Complete system architecture
-│   ├── 02-AGENTS-MANUAL.md               ← All 13 agents explained
+│   ├── 02-AGENTS-MANUAL.md               ← All 15 agents explained
 │   ├── 03-SKILLS-MANUAL.md               ← Skills system & /arib-* commands
 │   ├── 04-HOOKS-MANUAL.md                ← Safety hooks — 6 types, 7 recipes
 │   ├── 05-COMMANDS-MANUAL.md             ← All slash commands with examples
@@ -584,7 +598,7 @@ claude-code-methodology/                  ← v3.3 "Operating" — see VERSION.j
 │   └── HOOKS_PROTOCOL.md                 ← 6 hook types, 7 production recipes
 │
 ├── bootstrap/                            ← Project instantiation
-│   ├── BOOTSTRAP.md                      ← New project (25 questions)
+│   ├── BOOTSTRAP.md                      ← New project (guided questionnaire)
 │   ├── REVERSE_BOOTSTRAP.md              ← Existing project (10-step auto-scan)
 │   ├── REENGINEERING_GUIDE.md            ← Overlay methodology on legacy code
 │   ├── UPGRADE_PROTOCOL.md               ← Safe v-old → v-new upgrade
@@ -669,7 +683,10 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.7 | Self-Policing | Post-review fixes: `block()` exit-2 (enforcement now real), agent frontmatter (subagents functional), coherence validator + CI, honest token metric (ADR-016/017) |
 | v3.7.1 | Self-Policing | Deferred-findings patch: honest memory-export, real drift classifier (no edit-clobbering), hook hardening, ledger transport fields (ADR-018) |
 | v3.7.2 | Self-Policing | 26-skill forensic audit, v3.8 roadmap, dev-feature `develop`-branch blocker fix |
-| **v3.8** | **Lean Core** | **Always-on context 45.9K→7.4K (84%), under the 8K target — reference docs load on demand (ADR-019). The C+→A+ token gate, cleared.** |
+| v3.8 | Lean Core | Always-on context 45.9K→7.4K (84%), under the 8K target — reference docs load on demand (ADR-019). The C+→A+ token gate, cleared. |
+| v3.8.1 | Lean Core | Skill `name:` conformance (all 26, CI-enforced) + autonomous bootstrap execution (PROTOCOL_PRINCIPLES Rule 5) (ADR-020) |
+| v3.8.2 | Lean Core | Migration modernized to "From Any System" (Cursor/Windsurf/Copilot/Kiro), legacy path retired to Appendix A (ADR-021) |
+| **v3.8.3** | **Lean Core** | **One-prompt unified entry + Situation Router, skill-hygiene sweep, dead `agent-memory/` removed (ADR-022)** |
 
 ---
 
