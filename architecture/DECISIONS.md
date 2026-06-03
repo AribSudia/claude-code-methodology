@@ -550,6 +550,67 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-018: Close the Deferred Review Findings (v3.7.1)
+
+**Status:** Accepted   **Date:** 2026-05-08
+
+**Context.** v3.7.0 fixed the three SEVERE findings from the 23-agent
+review (exit-2, agent frontmatter, coherence validator). Several P2/P3
+findings were explicitly deferred. This patch closes them.
+
+**Decision.** Ship the deferred fixes:
+1. **memory-export.sh honesty.** It wrote failure-sentinel strings
+   ("claude-mem CLI failed…") straight into the git-committed audit
+   trail and referenced a `semantic_export.md` that did not exist. Now:
+   failure reasons go to STDERR only (never the ledger); the export is
+   appended ONLY on a real, non-empty dump (last-known-good preserved
+   on failure, as the docs always promised); `semantic_export.md` is
+   seeded with an honest "no live export has run yet" header so the
+   reference is never dangling. Fixed the "seven files" miscount
+   (six data files) in MEMORY_PROTOCOL.md, VERSION.json, CLAUDE.md.
+2. **Real drift classifier.** `UPGRADE_PROTOCOL` Phase 1.5 depended on
+   `reference/template-hashes.json`, which did not exist — so
+   classification degraded to a heuristic that could overwrite user
+   edits (the exact data loss the protocol claims to prevent). Added
+   `scripts/gen-template-hashes.sh` (generates a sha256 manifest of 151
+   shipped framework files; excludes project-state), the committed
+   `reference/template-hashes.json`, and `scripts/drift-detect.sh`
+   (classifies a target tree IDENTICAL/DIFFERS/MISSING and NEVER
+   auto-overwrites — DIFFERS is reported NEEDS-REVIEW because stale-
+   template vs local-edit cannot be distinguished without history).
+   Phase 1.5 now invokes the real script.
+3. **Hook hardening.** Whitespace-normalize bash commands before
+   matching (catches `rm -rf  /` double-space, tabs); added `git push
+   -f`/`--force-with-lease` short forms, `git clean -fd`, `DROP TABLE`,
+   `rm -fr`; added Stripe/GitLab/GitHub-fine-grained/npm/JWT secret
+   patterns. New fixtures + regression tests.
+4. **Ledger honesty.** `stop.sh` now records `transport` and
+   `notifications_sent` (the fields IO_PROTOCOL promised but the ledger
+   omitted) — populated only with what is actually configured/sent.
+5. **PR template** no longer hard-codes "31/31 pass" (the suite prints
+   its own count); adds the coherence check to the checklist.
+6. **Manifest freshness** is CI-enforced: `validate-coherence.sh`
+   fails if `template-hashes.json` is missing or its version != VERSION.
+7. **Training-doc reconciliation (partial):** corrected unambiguous
+   stale counts in SYSTEM.md and Training/01 (13→15 agents, 21→26
+   skills, 8→15, 7→6 memory files) and the 4-vs-5-layer framing in
+   Training/01 to match ADR-017.
+
+**Consequences.** The audit trail can no longer be polluted by export
+failures; the upgrade path no longer risks clobbering user edits; the
+enforcement backstop catches more real-world dangerous forms; the
+ledger keeps its promises. None of these overclaim — the drift
+classifier is explicitly honest that it cannot auto-distinguish
+stale-template from local-edit, so it defers to the human.
+
+**Known remaining (honest):** SYSTEM.md and Training/01 still contain
+illustrative prose/diagrams that may reference older specifics; the
+GDPR consent/deletion checks remain advisory (documented in gdpr.md,
+not yet a hook); the <8K token target remains ~5x off with a ratchet
+plan in ADR-016. These are tracked, not hidden.
+
+---
+
 # ADR-017: Canonical "4-Layer" Architecture Framing (v3.7)
 
 **Status:** Accepted   **Date:** 2026-05-08
@@ -964,6 +1025,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-015 | Wave Auto-Advance Execution (v3.6) | Accepted | 2026-05-08 |
 | ADR-016 | Self-Policing — Make CCM Enforce Its Own Rules (v3.7) | Accepted | 2026-05-08 |
 | ADR-017 | Canonical "4-Layer" Architecture Framing (v3.7) | Accepted | 2026-05-08 |
+| ADR-018 | Close the Deferred Review Findings (v3.7.1) | Accepted | 2026-05-08 |
 
 ---
 

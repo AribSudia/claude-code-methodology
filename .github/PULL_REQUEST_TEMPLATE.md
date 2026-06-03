@@ -28,7 +28,8 @@ new architectural decision, ADR added in this PR is required. -->
 ./scripts/test-hooks.sh must pass. For skill changes: cite the
 sections of the skill that exercise the new logic. -->
 
-- [ ] `./scripts/test-hooks.sh` — 31/31 pass
+- [ ] `./scripts/test-hooks.sh` — all green (suite prints its own count)
+- [ ] `./scripts/validate-coherence.sh` — COHERENT
 - [ ] `./scripts/token-audit.sh` — recorded delta below
 - [ ] Manual smoke test of the changed surface
 

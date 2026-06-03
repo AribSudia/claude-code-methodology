@@ -38,6 +38,15 @@ if [[ -n "$START_SHA" ]] && git -C "${CCM_ROOT}" cat-file -e "${START_SHA}" 2>/d
   fi
 fi
 
+# Determine which transport(s) are configured (honest: only what's set).
+TRANSPORT="filesystem"
+[[ -n "${CCM_COWORK_WEBHOOK:-}" ]] && TRANSPORT="cowork+filesystem"
+[[ -n "${CCM_NOTIFY_WEBHOOK:-}" ]] && TRANSPORT="${TRANSPORT/filesystem/webhook+filesystem}"
+# Count notifications sent this session from the best-effort jsonl trace.
+NOTIF_LOG="${CCM_ROOT}/io/ledger/.notifications.jsonl"
+NOTIFS_SENT=0
+[[ -f "$NOTIF_LOG" ]] && NOTIFS_SENT="$(wc -l < "$NOTIF_LOG" | tr -d ' ')"
+
 cat > "${LEDGER_FILE}" <<EOF
 # Session Ledger Entry
 
@@ -47,6 +56,8 @@ cat > "${LEDGER_FILE}" <<EOF
 - end_sha: ${HEAD_SHA}
 - commits_this_session: ${COMMITS_THIS_SESSION}
 - files_changed: ${FILES_CHANGED}
+- transport: ${TRANSPORT}
+- notifications_sent: ${NOTIFS_SENT}
 - ccm_root: ${CCM_ROOT}
 
 ## Commits this session

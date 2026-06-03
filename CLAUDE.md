@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.7.0 "Self-Policing"                    |
+| Version           | 3.7.1 "Self-Policing"                    |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7         |
@@ -97,7 +97,7 @@ your-project/
 |   |-- agent-memory/                  <- Persistent memory per agent
 |   +-- output-styles/                 <- Custom output styles
 |-- io/                                <- I/O Channel (inter-agent comms + ledger)
-|-- memory/                            <- Persistent memory (7 files)
+|-- memory/                            <- Persistent memory (6 data files + protocol)
 |-- architecture/                      <- Layer A - what to build (incl. AGENT_ARCHITECTURE, DESIGN_SYSTEM)
 |-- implementation/                    <- Layer B - how to start coding
 |-- operations/                        <- How work gets done (incl. AUTONOMY_MODE)

@@ -21,7 +21,7 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.7.0                                                    |
+| **Version**          | 3.7.1                                                    |
 | **Codename**         | "Self-Policing"                                          |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
@@ -58,7 +58,7 @@ Without CCM, every Claude Code session:
 With CCM, every Claude Code session:
 - Starts with full context — reads 7+ files before writing a single line
 - Follows architectural governance — constraints, approved stack, decision records
-- Maintains quality — 8 specialist agents enforce standards automatically
+- Maintains quality — 15 specialist agents enforce standards automatically
 - Communicates through I/O — structured requests, results, signals, pipelines
 - Eliminates rework — every decision documented, every pattern recorded
 - Is fully auditable — operations log, change log, session notes, testing log
@@ -96,7 +96,7 @@ The system is built on five engineering principles:
 ```
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                                                                      ║
-║  L4 — AGENTS                   13 autonomous specialists             ║
+║  L4 — AGENTS                   15 autonomous specialists             ║
 ║  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐               ║
 ║  │Architect │ │ Security │ │ Reviewer │ │  Tester  │               ║
 ║  └──────────┘ └──────────┘ └──────────┘ └──────────┘               ║
@@ -117,7 +117,7 @@ The system is built on five engineering principles:
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
-║  L2 — SKILLS                    21 auto-invoked knowledge packs      ║
+║  L2 — SKILLS                    26 auto-invoked skills      ║
 ║  Category A: 15 Coding Skills │ Category B: 6 Design/Automation     ║
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣

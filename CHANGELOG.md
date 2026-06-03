@@ -7,6 +7,60 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.7.1] "Self-Policing" — 2026-05-08
+
+Patch release closing the P2/P3 findings the v3.7.0 review deferred.
+No overclaiming — several fixes make a previously-aspirational claim
+true or downgrade it to the truth. ADR-018 records it.
+
+### Fixed
+- **memory-export.sh no longer pollutes the audit trail.** Failure
+  reasons go to STDERR only; the export is appended ONLY on a real,
+  non-empty claude-mem dump (last-known-good preserved on failure).
+  `memory/semantic_export.md` is seeded with an honest "no live export
+  has run yet" header so the reference is never dangling.
+- **"seven files" miscount** corrected to six data files in
+  MEMORY_PROTOCOL.md, VERSION.json (`memoryFiles` 7→6), CLAUDE.md.
+- **PR template** dropped the hard-coded "31/31 pass" (the suite prints
+  its own count) and added the coherence check.
+
+### Added
+- `scripts/gen-template-hashes.sh` + `reference/template-hashes.json`
+  (sha256 manifest of 151 shipped framework files; project-state
+  excluded) + `scripts/drift-detect.sh` — the real drift classifier
+  that `UPGRADE_PROTOCOL` Phase 1.5 depended on. Classifies
+  IDENTICAL/DIFFERS/MISSING and NEVER auto-overwrites (DIFFERS →
+  NEEDS-REVIEW, human decides). Replaces the heuristic that could
+  clobber user edits — the exact data loss the protocol claimed to
+  prevent.
+- `validate-coherence.sh` now also checks the manifest exists and its
+  version matches VERSION.json (CI-enforced freshness).
+
+### Changed — hook hardening
+- pre-tool-use.sh normalizes whitespace before matching (`rm -rf  /`
+  double-space, tabs now caught); added `git push -f` /
+  `--force-with-lease` short forms, `git clean -fd`, `DROP TABLE`,
+  `rm -fr`; added Stripe (`sk_live_`/`sk_test_`/`rk_live_`), GitLab
+  (`glpat-`), GitHub fine-grained (`github_pat_`), npm (`npm_`), and
+  JWT secret patterns. New fixtures + 5 new regression tests
+  (suite now 35+).
+- stop.sh ledger records `transport` and `notifications_sent` (the
+  fields IO_PROTOCOL promised but the ledger omitted).
+- UPGRADE_PROTOCOL Phase 1.5 invokes `scripts/drift-detect.sh` instead
+  of describing a heuristic.
+- SYSTEM.md / Training/01 stale counts corrected (13→15 agents,
+  21→26 skills, 8→15, 7→6 memory files); Training/01 layer framing
+  reconciled to canonical 4-Layer (ADR-017).
+- VERSION.json bumped 3.7.0 → 3.7.1; scripts 12→14.
+
+### Known remaining (tracked, not hidden)
+- GDPR consent/deletion checks remain advisory (gdpr.md), not yet a hook.
+- <8K token target remains ~5x off; ratchet plan in ADR-016.
+- SYSTEM.md/Training/01 illustrative prose may still reference older
+  specifics in places; high-visibility counts are corrected.
+
+---
+
 ## [3.7.0] "Self-Policing" — 2026-05-08
 
 A 23-agent workflow review graded CCM v3.6.0 at **C+**: best-in-class
