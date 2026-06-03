@@ -21,7 +21,7 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.9.1                                                    |
+| **Version**          | 3.9.2                                                    |
 | **Codename**         | "Live Update"                                        |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
