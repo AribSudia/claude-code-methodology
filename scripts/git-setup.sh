@@ -35,27 +35,20 @@ CURRENT_BRANCH=$(git branch --show-current 2>/dev/null || echo "")
 
 if [ -z "$CURRENT_BRANCH" ]; then
   # No commits yet — create initial commit
+  CCM_VER="$(command -v jq >/dev/null 2>&1 && jq -r '.version // "unknown"' VERSION.json 2>/dev/null || echo unknown)"
   git add .
-  git commit -m "[chore]: initialize project with Claude Code Methodology v1.0
+  git commit -m "[chore]: initialize project with Claude Code Methodology v${CCM_VER}
 
   - 4-Layer Architecture (CLAUDE.md, Skills, Hooks, Agents)
-  - Persistent Memory System (6 memory files)
-  - 8 Specialist Agents
-  - 21 Skills Registry
-  - 6 Architecture Templates
-  - 7 Implementation Templates
-  - 8 Slash Commands
-  - Bootstrap Protocol for project instantiation"
+  - Persistent memory system + I/O Channel
+  - Specialist agents, branded /arib-* skills, safety hooks
+  - Bootstrap protocol for project instantiation
+  (see VERSION.json for the exact inventory)"
   log "Initial commit created on main"
 fi
 
-# Create develop branch if it doesn't exist
-if ! git rev-parse --verify develop &>/dev/null; then
-  git branch develop
-  log "Branch 'develop' created"
-else
-  info "Branch 'develop' already exists"
-fi
+# NOTE (v3.10.0): no 'develop' branch — CCM governance is PR-to-main only
+# (feature branches -> PR -> squash merge; see CONTRIBUTING.md).
 
 # Step 3: Verify .gitignore
 if [ -f ".gitignore" ]; then

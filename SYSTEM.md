@@ -21,11 +21,11 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.9.2                                                    |
-| **Codename**         | "Live Update"                                        |
+| **Version**          | 3.10.0                                                   |
+| **Codename**         | "Integrity"                                          |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
-| **Last Updated**     | 2026-04-18                                               |
+| **Last Updated**     | 2026-06-10                                               |
 | **Engineered By**    | Abdullah × Claude Opus 4.6                               |
 | **License**          | MIT                                                      |
 | **Status**           | Production-Ready                                         |
@@ -56,7 +56,7 @@ Without CCM, every Claude Code session:
 - Cannot be audited — no operations log, no change trail, no accountability
 
 With CCM, every Claude Code session:
-- Starts with full context — reads 7+ files before writing a single line
+- Starts with full context — reads the lean core (4 always-on files), pulls references on demand
 - Follows architectural governance — constraints, approved stack, decision records
 - Maintains quality — 15 specialist agents enforce standards automatically
 - Communicates through I/O — structured requests, results, signals, pipelines
@@ -118,7 +118,7 @@ The system is built on five engineering principles:
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
 ║  L2 — SKILLS                    26 auto-invoked skills      ║
-║  Category A: 15 Coding Skills │ Category B: 6 Design/Automation     ║
+║  6 categories: Session · Dev · Wave · Check · CI · Docs             ║
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
@@ -174,10 +174,10 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 │
 ├── .claude/                     ← CLAUDE CODE CONFIG (28 files)
 │   ├── settings.json            ← Permissions, hooks, context
-│   ├── agents/ (13)             ← Specialist agent definitions
-│   ├── commands/ (14)           ← Slash command definitions
+│   ├── agents/ (15)             ← Specialist agent definitions
+│   ├── skills/ (26)             ← Branded /arib-* skills (canonical)
 │   ├── hooks/                   ← Hook scripts
-│   └── skills/                  ← Installed skill packs
+│   └── commands/                ← Legacy commands (deprecated)
 │
 ├── memory/                      ← PERSISTENT MEMORY (7 files)
 │   ├── MEMORY_PROTOCOL.md       ← How memory works

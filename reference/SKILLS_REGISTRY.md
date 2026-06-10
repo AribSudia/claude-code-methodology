@@ -808,7 +808,8 @@ The methodology includes a comprehensive install script that installs
 all Category A and B skills automatically with fallback stubs:
 
 ```bash
-bash scripts/install-claude-skills-v2.sh
+# Skills are project-local — they live in .claude/skills/ and need no installer.
+# (install-claude-skills-v2.sh was removed in v3.10.0 — dead infra)
 ```
 
 This script:

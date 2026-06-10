@@ -10,6 +10,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/common.sh
 source "${SCRIPT_DIR}/lib/common.sh"
 
+# Fail CLOSED. This is a blocking gate: without jq we cannot inspect the
+# payload, and under `set -e` a failing payload_get would abort with exit 1 —
+# which Claude Code treats as a NON-blocking error, i.e. the tool call would
+# proceed unchecked (v3.10.0 fix; jq is in VERSION.json requiredTools).
+# CCM_TEST_NO_JQ is a test seam used by scripts/test-hooks.sh.
+if [[ -n "${CCM_TEST_NO_JQ:-}" ]] || ! command -v jq >/dev/null 2>&1; then
+  block "jq is required by CCM safety hooks but was not found. Install it (brew install jq | apt-get install -y jq) — failing closed rather than skipping safety checks."
+fi
+
 TOOL_NAME="$(payload_get '.tool_name')"
 TOOL_INPUT="$(payload_get '.tool_input')"
 TARGET_PATH="$(payload_get '.tool_input.file_path')"
@@ -38,7 +47,10 @@ if [[ "$SKIP_SECRET_SCAN" != "true" ]]; then
     'rk_live_[0-9a-zA-Z]{24,}'                  # Stripe restricted
     'npm_[a-zA-Z0-9]{36}'                       # npm token
     'eyJ[a-zA-Z0-9_-]{10,}\.eyJ[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}'  # JWT
-    '-----BEGIN (RSA|EC|OPENSSH|PGP|DSA) PRIVATE KEY-----'
+    'SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}'  # SendGrid
+    # Algorithm prefix optional: PKCS#8 blocks ("BEGIN PRIVATE KEY") and
+    # "BEGIN ENCRYPTED PRIVATE KEY" carry no algorithm token (v3.10.0 fix).
+    '-----BEGIN ((RSA|EC|OPENSSH|PGP|DSA|ENCRYPTED) )?PRIVATE KEY-----'
   )
 
   for pattern in "${SECRET_PATTERNS[@]}"; do
@@ -83,7 +95,9 @@ if [[ "$TOOL_NAME" == "Write" || "$TOOL_NAME" == "Edit" || "$TOOL_NAME" == "Mult
      && [[ "$TARGET_PATH" != *theme* ]] \
      && [[ "$TARGET_PATH" != *.generated.* ]] \
      && ! is_test_or_fixture_path "$TARGET_PATH"; then
-    NEW_CONTENT="$(payload_get '.tool_input.content // .tool_input.new_string')"
+    # Covers Write (.content), Edit (.new_string) AND MultiEdit
+    # (.edits[].new_string) — MultiEdit was previously unscanned (v3.10.0 fix).
+    NEW_CONTENT="$(payload_get '[.tool_input.content, .tool_input.new_string, (.tool_input.edits[]?.new_string)] | map(select(. != null)) | join("\n")')"
     if [[ -n "$NEW_CONTENT" ]]; then
       if printf '%s' "$NEW_CONTENT" | grep -Eq -- '#[0-9a-fA-F]{3,8}\b|\brgb[a]?\([^)]*\)|\bhsl[a]?\([^)]*\)'; then
         notify_cowork "design-token-block" "$TARGET_PATH"
@@ -115,7 +129,8 @@ if [[ "$TOOL_NAME" =~ ^(Write|Edit|MultiEdit)$ ]] \
    && [[ "$TARGET_PATH" != *node_modules* ]] \
    && [[ "$TARGET_PATH" != *.config.* ]] \
    && ! is_test_or_fixture_path "$TARGET_PATH"; then
-  NEW_CONTENT_OWASP="$(payload_get '.tool_input.content // .tool_input.new_string')"
+  # Same MultiEdit-inclusive extraction as the design-token check above.
+  NEW_CONTENT_OWASP="$(payload_get '[.tool_input.content, .tool_input.new_string, (.tool_input.edits[]?.new_string)] | map(select(. != null)) | join("\n")')"
   if [[ -n "$NEW_CONTENT_OWASP" ]]; then
     # eval(<not a literal string>)
     if printf '%s' "$NEW_CONTENT_OWASP" | grep -Eq -- '\beval\s*\(\s*[^"'"'"']'; then
@@ -150,7 +165,10 @@ if [[ "$TOOL_NAME" == "Bash" ]]; then
     # Web-UI merges are NOT catchable by a local hook — those are governed
     # by GitHub branch protection (required checks), see CONTRIBUTING.md §6.
     if printf '%s' "$CMD" | grep -Eq -- '\bgit (merge|push)\b.*\b(main|master|production)\b|\bgh pr merge\b'; then
-      LATEST_AUDIT="$(ls -1t "${CCM_ROOT}/io/ledger/audit-"*.md 2>/dev/null | head -1)"
+      # `|| true` matters: with zero audit files, ls fails and set -e/pipefail
+      # would abort the hook with exit 1 — a NON-blocking error, silently
+      # failing the gate OPEN in exactly the case it must block (v3.10.0 fix).
+      LATEST_AUDIT="$(ls -1t "${CCM_ROOT}/io/ledger/audit-"*.md 2>/dev/null | head -1 || true)"
       if [[ -z "$LATEST_AUDIT" ]] || ! grep -q -- "wave: ${WAVE_NAME}" "$LATEST_AUDIT" 2>/dev/null; then
         notify_cowork "wave-gate-block" "branch=${CURRENT_BRANCH} cmd=${CMD:0:80}"
         block "Wave-merge gate: no audit hash found for wave '${WAVE_NAME}' in io/ledger/. Run /arib-wave-end first."
@@ -158,12 +176,16 @@ if [[ "$TOOL_NAME" == "Bash" ]]; then
     fi
   fi
 
-  # Normalize runs of whitespace to a single space so 'rm -rf  /' (double
-  # space) and tabbed variants can't slip past the patterns. Matching is
-  # done against $CMD_NORM; reporting still shows the original $CMD.
-  CMD_NORM="$(printf '%s' "$CMD" | tr '\t' ' ' | tr -s ' ')"
+  # Normalize before matching: runs of whitespace to a single space (so
+  # 'rm -rf  /' and tabbed variants can't slip past), and runs of slashes
+  # to one (so 'rm -rf //' — which IS '/' on Unix — can't either; v3.10.0).
+  # Matching is done against $CMD_NORM; reporting still shows the original $CMD.
+  CMD_NORM="$(printf '%s' "$CMD" | tr '\t' ' ' | tr -s ' ' | sed -E 's#/{2,}#/#g')"
 
   DANGEROUS_PATTERNS=(
+    # Recursive rm against /, ~, or $HOME with the flags in ANY arrangement —
+    # catches 'rm -rf /', 'rm -fr /', 'rm -r -f /', 'rm -v -r /' (v3.10.0).
+    'rm( -[A-Za-z]+)* -[A-Za-z]*[rR][A-Za-z]*( -[A-Za-z]+)* (/|~|\$HOME)( |$)'
     'rm -rf /( |$)'
     'rm -rf \*'
     'rm -rf ~'

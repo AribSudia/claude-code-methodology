@@ -69,6 +69,21 @@ if ! command -v git >/dev/null 2>&1; then
   exit 1
 fi
 
+# Input validation (v3.10.0 hardening). The script promises to write ONLY
+# inside ./<DEST>/ — enforce that promise, and keep flag-like values out of
+# the git invocations (git's parser scans the whole argv for options).
+case "${REF}" in
+  -*) echo "ccm-fetch: --ref must not start with '-' (got: ${REF})." >&2; exit 2 ;;
+esac
+case "${DEST}" in
+  -*|/*|*..*|*/*|"")
+    echo "ccm-fetch: --dest must be a simple relative directory name (got: '${DEST}')." >&2
+    exit 2 ;;
+esac
+case "${REPO}" in
+  -*|*" "*|"") echo "ccm-fetch: --repo must be a plain owner/name (got: '${REPO}')." >&2; exit 2 ;;
+esac
+
 URL="https://github.com/${REPO}.git"
 
 # Read a version string out of a VERSION.json (best-effort, no jq dependency).
@@ -107,16 +122,19 @@ if ! git clone --depth 1 --quiet "${URL}" "${TMP}/repo" 2>/dev/null; then
 fi
 
 if [[ "${REF}" != "main" ]]; then
-  if ! ( cd "${TMP}/repo" && git fetch --depth 1 --quiet origin "${REF}" \
+  # `--` terminates option parsing so REF can never be read as a git flag.
+  if ! ( cd "${TMP}/repo" && git fetch --depth 1 --quiet origin -- "${REF}" \
          && git checkout --quiet FETCH_HEAD ) 2>/dev/null; then
     echo "ccm-fetch: could not resolve ref '${REF}' in ${REPO}." >&2
     exit 1
   fi
 fi
 
-# Sanity-check: did we actually get a CCM tree?
-if [[ ! -f "${TMP}/repo/VERSION.json" ]]; then
-  echo "ccm-fetch: fetched tree has no VERSION.json — not a CCM repo? Aborting." >&2
+# Sanity-check: did we actually get a CCM tree? VERSION.json alone is too
+# weak a marker (any repo can have one) — require the CCM skeleton too,
+# since the swap below replaces a known-good copy (v3.10.0 hardening).
+if [[ ! -f "${TMP}/repo/VERSION.json" || ! -f "${TMP}/repo/CLAUDE.md" || ! -d "${TMP}/repo/.claude/skills" ]]; then
+  echo "ccm-fetch: fetched tree doesn't look like CCM (need VERSION.json + CLAUDE.md + .claude/skills/). Aborting; nothing was changed." >&2
   exit 1
 fi
 

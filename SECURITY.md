@@ -13,10 +13,10 @@ see `architecture/SECURITY.md` and `compliance/frameworks/owasp.md`.
 
 | Version | Supported          |
 |---------|--------------------|
-| 3.4.x   | ✅ active          |
-| 3.3.x   | ✅ critical fixes only |
-| 3.2.x   | ⚠️ best-effort     |
-| < 3.2   | ❌ unsupported     |
+| 3.10.x  | ✅ active          |
+| 3.9.x   | ✅ critical fixes only |
+| 3.8.x   | ⚠️ best-effort     |
+| < 3.8   | ❌ unsupported — upgrade via the one-liner in bootstrap/RUN.md |
 
 The single canonical version is in `VERSION.json`. If you're on an
 older release, upgrade per `bootstrap/UPGRADE_PROTOCOL.md` before

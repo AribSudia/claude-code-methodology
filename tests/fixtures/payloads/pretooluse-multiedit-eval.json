@@ -1,0 +1,1 @@
+{"tool_name":"MultiEdit","tool_input":{"file_path":"src/handlers/input.ts","edits":[{"old_string":"const x = 1;","new_string":"const x = 1;"},{"old_string":"// process","new_string":"const out = eval(userInput);"}]}}

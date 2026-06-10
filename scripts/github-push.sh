@@ -59,22 +59,16 @@ git status --short
 if git rev-parse HEAD &>/dev/null 2>&1; then
   echo -e "${CYAN}ℹ️  Repository already has commits${NC}"
 else
-  git commit -m "Initial commit: Claude Code Methodology v1.0
+  CCM_VER="$(command -v jq >/dev/null 2>&1 && jq -r '.version // "unknown"' VERSION.json 2>/dev/null || echo unknown)"
+  git commit -m "Initial commit: Claude Code Methodology v${CCM_VER}
 
   Complete AI Development Operating System:
   - 4-Layer Architecture (CLAUDE.md, Skills, Hooks, Agents)
-  - Persistent Memory System (6 memory file types)
-  - 8 Specialist Agents (Architect → Deploy Guardian)
-  - 21 Skills Registry (Coding + Design + Automation)
-  - Safety Hooks Protocol (6 types, 7 production recipes)
-  - Bootstrap Protocol (new projects — 25 questions)
-  - Reverse Bootstrap (existing projects — auto-scan)
-  - Reengineering Guide (overlay methodology on existing code)
-  - 8 Slash Commands (/session-start through /document)
-  - Full Architecture + Implementation templates
-  - Operations layer (Workflow, Deployment, Ops Log)
-
-  54 files | 13 directories | ~17,000 lines"
+  - Persistent memory system + I/O Channel
+  - Specialist agents, branded /arib-* skills, safety hooks
+  - Bootstrap / Reverse Bootstrap / Upgrade / Migration / Reengineering
+  - Architecture + Implementation + Operations templates
+  (see VERSION.json for the exact inventory)"
   echo -e "${GREEN}✅ Initial commit created${NC}"
 fi
 

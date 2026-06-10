@@ -81,9 +81,9 @@ Hooks execute in the agent's security context and can access:
 **What it receives:**
 ```json
 {
-  "hookType": "PreToolUse",
-  "toolName": "bash",
-  "toolArgs": {
+  "hook_event_name": "PreToolUse",
+  "tool_name": "bash",
+  "tool_input": {
     "command": "rm -rf /path/to/dir"
   },
   "context": {
@@ -115,9 +115,9 @@ Hooks execute in the agent's security context and can access:
 **What it receives:**
 ```json
 {
-  "hookType": "PostToolUse",
-  "toolName": "write",
-  "toolArgs": {
+  "hook_event_name": "PostToolUse",
+  "tool_name": "write",
+  "tool_input": {
     "filePath": "/project/src/index.js",
     "content": "..."
   },
@@ -155,7 +155,7 @@ Hooks execute in the agent's security context and can access:
 **What it receives:**
 ```json
 {
-  "hookType": "SessionStart",
+  "hook_event_name": "SessionStart",
   "session": {
     "sessionId": "abc123",
     "startTime": "2026-04-15T10:30:00Z",
@@ -192,7 +192,7 @@ Hooks execute in the agent's security context and can access:
 **What it receives:**
 ```json
 {
-  "hookType": "SessionSummarize",
+  "hook_event_name": "SessionSummarize",
   "session": {
     "sessionId": "abc123",
     "duration": 1800,
@@ -233,7 +233,7 @@ Hooks execute in the agent's security context and can access:
 **What it receives:**
 ```json
 {
-  "hookType": "PreCommit",
+  "hook_event_name": "PreCommit",
   "commit": {
     "message": "feat: add OAuth2 support",
     "files": ["src/auth.js", "tests/auth.test.js"],
@@ -273,7 +273,7 @@ Hooks execute in the agent's security context and can access:
 **What it receives:**
 ```json
 {
-  "hookType": "Notification",
+  "hook_event_name": "Notification",
   "event": "security_issue_detected",
   "severity": "high",
   "details": {
@@ -313,10 +313,14 @@ Hooks control Claude Code flow through exit codes:
 
 | Exit Code | Meaning | Behavior |
 |-----------|---------|----------|
-| **0** | Success, allow operation | Operation proceeds normally |
-| **1** | Warning, allow operation | Operation proceeds with warning logged |
-| **2** | Block operation | Operation is rejected, error shown to user |
-| **Other** | Error, block operation | Operation blocked, error message shown |
+| **0** | Allow | Operation proceeds normally |
+| **2** | BLOCK | Operation rejected; stderr is fed back to Claude |
+| **1 / any other non-zero** | NON-blocking error | Error is shown — but the tool call PROCEEDS |
+
+> ⚠️ **Only exit 2 blocks.** An exit-1 "warning gate" does nothing — the
+> action goes through. This is why CCM's `block()` uses exit 2 and why
+> `pre-tool-use.sh` fails CLOSED (blocks) when jq is missing rather than
+> erroring out with exit 1 (which would silently allow).
 
 ### Exit Code Examples
 
@@ -422,10 +426,10 @@ set -e
 INPUT=$(cat)
 
 # Extract hook type and relevant data
-HOOK_TYPE=$(echo "$INPUT" | jq -r '.hookType')
-TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName // empty')
-COMMAND=$(echo "$INPUT" | jq -r '.toolArgs.command // empty')
-FILE_PATH=$(echo "$INPUT" | jq -r '.toolArgs.filePath // empty')
+HOOK_TYPE=$(echo "$INPUT" | jq -r '.hook_event_name')
+TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.filePath // empty')
 
 # Implement logic
 case "$HOOK_TYPE" in
@@ -454,7 +458,7 @@ exit 0  # Allow: 0, Warn: 1, Block: 2
 set -e
 
 INPUT=$(cat)
-COMMAND=$(echo "$INPUT" | jq -r '.toolArgs.command // empty')
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 
 # Dangerous patterns to block
 DANGEROUS_PATTERNS=(
@@ -547,7 +551,7 @@ exit 0  # ALLOW
 #!/bin/bash
 
 INPUT=$(cat)
-FILE_PATH=$(echo "$INPUT" | jq -r '.toolArgs.filePath // empty')
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.filePath // empty')
 
 # Only lint JavaScript/TypeScript files
 if [[ ! "$FILE_PATH" =~ \.(js|ts|jsx|tsx)$ ]]; then
@@ -658,7 +662,7 @@ exit 0  # ALLOW
 #!/bin/bash
 
 INPUT=$(cat)
-FILE_PATH=$(echo "$INPUT" | jq -r '.toolArgs.filePath // empty')
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.filePath // empty')
 
 # Files that trigger security notifications
 SENSITIVE_FILES=(
@@ -704,7 +708,7 @@ exit 0  # ALLOW
 #!/bin/bash
 
 INPUT=$(cat)
-FILE_PATH=$(echo "$INPUT" | jq -r '.toolArgs.filePath // empty')
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.filePath // empty')
 
 # Files that should never be overwritten by Claude
 PROTECTED_FILES=(
@@ -746,8 +750,8 @@ set -e
 INPUT=$(cat)
 
 # Extract data
-HOOK_TYPE=$(echo "$INPUT" | jq -r '.hookType')
-TOOL_NAME=$(echo "$INPUT" | jq -r '.toolName // empty')
+HOOK_TYPE=$(echo "$INPUT" | jq -r '.hook_event_name')
+TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
 
 # Your custom logic here
 echo "Hook executed: $HOOK_TYPE"
@@ -786,9 +790,9 @@ chmod +x hooks/pre-tool-use/my-custom-hook.sh
 # Create test input
 cat > test-input.json << 'EOF'
 {
-  "hookType": "PreToolUse",
-  "toolName": "bash",
-  "toolArgs": {
+  "hook_event_name": "PreToolUse",
+  "tool_name": "bash",
+  "tool_input": {
     "command": "ls -la"
   },
   "context": {
@@ -821,7 +825,7 @@ EOF
 
 ```bash
 # Test a hook directly
-echo '{"hookType":"PreToolUse","toolName":"bash","toolArgs":{"command":"rm -rf /"}}' | \
+echo '{"hook_event_name":"PreToolUse","tool_name":"bash","tool_input":{"command":"rm -rf /"}}' | \
   ./hooks/pre-tool-use/block-dangerous-bash.sh
 
 # Check exit code
@@ -847,9 +851,9 @@ cp ../hooks/pre-tool-use/block-dangerous-bash.sh .
 # Create test data
 cat > test.json << 'EOF'
 {
-  "hookType": "PreToolUse",
-  "toolName": "bash",
-  "toolArgs": {"command": "rm -rf /"}
+  "hook_event_name": "PreToolUse",
+  "tool_name": "bash",
+  "tool_input": {"command": "rm -rf /"}
 }
 EOF
 
@@ -1075,7 +1079,7 @@ Here's a production-ready `settings.json` with comprehensive hooks:
 ### JSON Parsing Errors
 
 1. Verify jq is installed: `which jq`
-2. Test jq extraction: `echo "$INPUT" | jq '.hookType'`
+2. Test jq extraction: `echo "$INPUT" | jq '.hook_event_name'`
 3. Check hook receives valid JSON
 4. Add error handling: `jq -r '.field // "default"'`
 5. Use proper quoting in shell scripts

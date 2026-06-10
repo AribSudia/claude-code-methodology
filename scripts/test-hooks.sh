@@ -69,7 +69,23 @@ echo "1. PreToolUse — Bash"
 run_test "safe bash (ls)"             "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-safe.json"      0
 run_test "dangerous bash (rm -rf /)"  "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-dangerous.json" 2
 run_test "dangerous bash (rm -rf  / double-space)" "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-doublespace.json" 2
+run_test "dangerous bash (rm -rf // slash-collapse)" "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-doubleslash.json" 2
+run_test "dangerous bash (rm -r -f / split flags)"   "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-splitflags.json"  2
 run_test "force-push to main (git push -f)" "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-forcepush.json" 2
+run_test "no jq -> fail CLOSED (block, not allow)" "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-bash-safe.json" 2 CCM_TEST_NO_JQ=1
+
+# Wave-merge gate: on a wave/<name> branch, `git push ... main` without an
+# audit entry in io/ledger/ must block. Isolated temp git repo as CCM_ROOT.
+WAVE_TMP="$(mktemp -d)"
+(
+  cd "$WAVE_TMP" \
+    && git init -q \
+    && git -c user.email=t@t -c user.name=t commit -q --allow-empty -m init \
+    && git checkout -q -b wave/testwave
+) >/dev/null 2>&1
+printf '{"tool_name":"Bash","tool_input":{"command":"git push origin main"}}' > "$WAVE_TMP/payload.json"
+run_test "wave-merge gate blocks unaudited push" "$HOOKS/pre-tool-use.sh" "$WAVE_TMP/payload.json" 2 CCM_ROOT="$WAVE_TMP"
+rm -rf "$WAVE_TMP"
 
 echo ""
 echo "2. PreToolUse — Secret detection"
@@ -82,7 +98,29 @@ STRIPE_TMP="$(mktemp)"
 printf '{"tool_name":"Write","tool_input":{"file_path":"src/pay.ts","content":"const k=\\"sk_live_%s\\";"}}' "$(printf 'A%.0s' $(seq 1 26))" > "$STRIPE_TMP"
 run_test "stripe live secret in src/"  "$HOOKS/pre-tool-use.sh" "$STRIPE_TMP" 2
 rm -f "$STRIPE_TMP"
+
+# GitHub PAT — runtime-assembled for the same push-protection reason.
+GHP_TMP="$(mktemp)"
+printf '{"tool_name":"Write","tool_input":{"file_path":"src/auth.ts","content":"const t=\\"ghp_%s\\";"}}' "$(printf 'a%.0s' $(seq 1 36))" > "$GHP_TMP"
+run_test "github PAT in src/"          "$HOOKS/pre-tool-use.sh" "$GHP_TMP" 2
+rm -f "$GHP_TMP"
+
+# PKCS#8 private-key block (no algorithm token) — the v3.10.0 regex fix.
+# Header assembled at runtime so no committed file contains the literal.
+PK_TMP="$(mktemp)"
+PK_HEADER="$(printf -- '-----BEGIN %s KEY-----' 'PRIVATE')"
+printf '{"tool_name":"Write","tool_input":{"file_path":"src/tls.ts","content":"const pem=\\"%s\\";"}}' "$PK_HEADER" > "$PK_TMP"
+run_test "PKCS#8 private key in src/"  "$HOOKS/pre-tool-use.sh" "$PK_TMP" 2
+rm -f "$PK_TMP"
+
 run_test "secret in tests/ (exempt)"   "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-test-fixture.json"  0
+
+# src/latest/ must NOT be exempt — the old '*test*' substring match wrongly
+# exempted it ("la-TEST") and skipped the secret scan (v3.10.0 fix).
+LATEST_TMP="$(mktemp)"
+printf '{"tool_name":"Write","tool_input":{"file_path":"src/latest/client.ts","content":"const k=\\"sk-ant-%s\\";"}}' "$(printf 'b%.0s' $(seq 1 24))" > "$LATEST_TMP"
+run_test "src/latest/ NOT exempt from scan" "$HOOKS/pre-tool-use.sh" "$LATEST_TMP" 2
+rm -f "$LATEST_TMP"
 
 echo ""
 echo "3. PreToolUse — Path scoping"
@@ -92,6 +130,7 @@ run_test "write to non-allowed path"   "$HOOKS/pre-tool-use.sh" "$PAYLOADS/preto
 echo ""
 echo "4. PreToolUse — OWASP A03"
 run_test "eval(input) in src/"         "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-write-eval.json"          2
+run_test "eval via MultiEdit edits[] (was unscanned)" "$HOOKS/pre-tool-use.sh" "$PAYLOADS/pretooluse-multiedit-eval.json" 2
 
 echo ""
 echo "5. SessionStart / Stop / Notification"
@@ -100,6 +139,18 @@ run_test "stop default"                "$HOOKS/stop.sh"          "$PAYLOADS/stop
 run_test "notification fan-out"        "$HOOKS/notification.sh"  "$PAYLOADS/notification-test.json"             0
 run_test "invocation-log: skill (UserPromptSubmit)" "$HOOKS/invocation-log.sh" "$PAYLOADS/userpromptsubmit-skill.json" 0
 run_test "invocation-log: agent (Task)"             "$HOOKS/invocation-log.sh" "$PAYLOADS/pretooluse-task-agent.json"  0
+
+# invocation-log MUST emit nothing on stdout: UserPromptSubmit stdout is
+# injected into Claude's context, so any output would poison the prompt.
+IL_STDOUT="$(cat "$PAYLOADS/userpromptsubmit-skill.json" | "$HOOKS/invocation-log.sh" 2>/dev/null)"
+if [[ -z "$IL_STDOUT" ]]; then
+  PASS=$((PASS+1))
+  printf '  [PASS] %-50s stdout empty\n' "invocation-log: silent on stdout"
+else
+  FAIL=$((FAIL+1))
+  FAIL_LIST+=("invocation-log: silent on stdout (got: ${IL_STDOUT:0:40})")
+  printf '  [FAIL] %-50s stdout NOT empty\n' "invocation-log: silent on stdout"
+fi
 
 echo ""
 echo "6. Autonomy guard"

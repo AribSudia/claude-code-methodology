@@ -26,7 +26,7 @@ Router and execute the matching protocol autonomously to completion
 | Detected on disk | Situation | Protocol |
 |------------------|-----------|----------|
 | `.claude/` + `VERSION.json` with a CCM version | CCM already installed | **UPGRADE_PROTOCOL.md** (Phase 0 detects version → upgrade phases, or drift detection if versions match — never "already up to date / stop") |
-| Other-tool markers (`.cursor/`, `.windsurfrules`, `.github/copilot-instructions.md`, `.kiro/`, or a bare `CLAUDE.md`) and no CCM structure | Coming from another AI-coding tool | **MIGRATION_GUIDE.md** (From Any System) |
+| Other-tool markers (`.cursor/rules/` or `.cursorrules`, `.windsurfrules` or `.windsurf/`, `.github/copilot-instructions.md`, `.kiro/`, or a bare `CLAUDE.md`) and no CCM structure | Coming from another AI-coding tool | **MIGRATION_GUIDE.md** (From Any System) |
 | Flat `AGENTS.md` + `docs/` + root architecture files | Legacy claude-code-system | **MIGRATION_GUIDE.md Appendix A** (retired path) |
 | Substantial existing code, no CCM, no tool markers | Existing codebase to overlay | **REVERSE_BOOTSTRAP.md** |
 | Empty / near-empty project | Brand-new project | **BOOTSTRAP.md** (greenfield) |

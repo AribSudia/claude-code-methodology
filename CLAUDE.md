@@ -10,12 +10,12 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.9.2 "Live Update"                  |
+| Version           | 3.10.0 "Integrity"                   |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
-| Engineered By     | Abdullah x Claude Opus 4.6 / 4.7         |
+| Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |
 | Created           | 2026-04-15                               |
-| Last Updated      | 2026-05-08                               |
+| Last Updated      | 2026-06-10                               |
 | Language Support   | Universal (RTL, LTR, CJK, Indic, Bidi)  |
 | Methodology       | 4-Layer Architecture + I/O Channel + Memory |
 | Status            | Production-Ready                         |
@@ -30,7 +30,8 @@
 |  Autonomous subagents with scoped context and tools.         |
 +--------------------------------------------------------------+
 |  L3 - HOOKS         .claude/hooks/ + settings.json           |
-|  Safety gates: PreToolUse, PostToolUse, PreCommit. ALWAYS run.|
+|  Safety gates: SessionStart, UserPromptSubmit, PreToolUse,   |
+|  Stop, Notification (+ git pre-commit). ALWAYS run.          |
 +--------------------------------------------------------------+
 |  L2 - SKILLS        .claude/skills/*/SKILL.md                |
 |  Reusable prompts invoked by /name or auto-matched by Claude.|
@@ -96,7 +97,7 @@ your-project/
 |   |-- agents/                        <- 15 specialist subagents
 |   +-- output-styles/                 <- Custom output styles
 |-- io/                                <- I/O Channel (inter-agent comms + ledger)
-|-- memory/                            <- Persistent memory (6 data files + protocol)
+|-- memory/                            <- Persistent memory (7 data files + protocol)
 |-- architecture/                      <- Layer A - what to build (incl. AGENT_ARCHITECTURE, DESIGN_SYSTEM)
 |-- implementation/                    <- Layer B - how to start coding
 |-- operations/                        <- How work gets done (incl. AUTONOMY_MODE)

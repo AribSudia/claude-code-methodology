@@ -93,7 +93,7 @@ deeper reference) or a new check that this skill owns directly.
 
 ### Step 2 — Dispatch (Mode 1)
 
-Fan out wherever parallel-safe. The 13-agent table in `AGENT_ARCHITECTURE.md`
+Fan out wherever parallel-safe. The 15-agent table in `AGENT_ARCHITECTURE.md`
 governs which calls share a Task batch.
 
 ```text
