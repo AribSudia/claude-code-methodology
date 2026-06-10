@@ -88,12 +88,16 @@ path_under() {
 
 # Return 0 if the path is a test/fixture file (where secret-pattern false-positives
 # are common — commit hashes, mock tokens, sample API keys in docs).
+# Anchored to path SEGMENTS and conventional suffixes — a bare '*test*'
+# substring would exempt real source like src/latest/ or src/contest/
+# from the secret scan (v3.10.0 fix).
 is_test_or_fixture_path() {
   local p="$1"
   case "$p" in
-    *test*|*spec*|*__fixtures__*|*__mocks__*|*tests/*|*fixtures/*|*examples/*|*.example|*.example.*)
-      return 0
-      ;;
+    test/*|tests/*|spec/*|specs/*|fixtures/*|examples/*|testdata/*) return 0 ;;
+    */test/*|*/tests/*|*/spec/*|*/specs/*|*/fixtures/*|*/examples/*|*/testdata/*) return 0 ;;
+    *__tests__*|*__fixtures__*|*__mocks__*|*__snapshots__*) return 0 ;;
+    *.test.*|*.spec.*|*_test.*|*_spec.*|*.fixture.*|*.example|*.example.*) return 0 ;;
   esac
   return 1
 }

@@ -550,6 +550,65 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-025: The Integrity Audit — Fail Closed, Validate Dynamically, Docs Match Disk (v3.10.0)
+
+**Status:** Accepted   **Date:** 2026-06-10
+
+**Context.** A six-agent full audit (hooks, skills, docs-vs-disk, bootstrap,
+scripts, security) found that while CCM's core logic was sound, three classes
+of defect undercut its own principles: (1) **fail-open holes in the
+enforcement layer** — the PreToolUse gate aborted with exit 1 (non-blocking)
+when jq was absent; `rm -rf //` and split-flag `rm -r -f /` bypassed the
+dangerous-bash blocklist; MultiEdit payloads skipped the design-token and
+OWASP scans; the `*test*` substring exemption skipped the secret scan for
+real paths like `src/latest/`; the wave-merge gate failed open when zero
+audit files existed (caught by a new test written during this audit);
+(2) **a validator validating a system that no longer exists** —
+`validate-system.sh` still required `.claude/agent-memory/` (removed
+v3.8.3), listed 16 skills / 13 agents by name, and never exited non-zero;
+(3) **docs lying about the system** — README's tree was 6 versions stale
+(16 skills, 13 agents, 10 manuals, deleted dirs), HOOKS_PROTOCOL.md
+documented a camelCase payload schema and an exit-code table that inverted
+the real contract, SECURITY.md supported 3.4.x.
+
+**Decision.**
+1. **Hooks fail CLOSED and scan everything.** jq missing → block (exit 2)
+   with install instructions; CMD_NORM collapses repeated slashes; a
+   flag-arrangement-agnostic recursive-rm pattern; MultiEdit
+   `edits[].new_string` included in token/OWASP scans; segment-anchored
+   test-path exemptions; PKCS#8/ENCRYPTED private-key + SendGrid patterns;
+   wave-gate `ls` failure no longer aborts the hook. Every fix has a
+   regression test (suite 41 → 50).
+2. **validate-system.sh rewritten dynamic.** Counts derive from
+   VERSION.json stats vs disk at runtime; retired paths asserted ABSENT;
+   settings.json hook commands resolved to files; executable bits checked;
+   exits 1 on failure (the old one never did).
+3. **Docs-match-disk sweep.** README tree regenerated compact (counts
+   defer to VERSION.json); HOOKS_PROTOCOL.md schema → real snake_case +
+   corrected exit-code table + reality banner; rules/hooks.md lists the
+   events actually wired; SECURITY.md supports 3.10.x/3.9.x; bootstrap
+   docs say 26 skills/15 agents; ccm-fetch input validation (dash-refs,
+   dest traversal, CCM-skeleton sanity check).
+4. **Dead infra deleted:** `install-claude-skills-v2.sh` (global-install
+   pattern, pre-v3.0); `git-setup.sh` no longer creates a `develop` branch
+   (PR-to-main governance); `io-archive.sh` uses POSIX grep (BSD grep has
+   no `-P`).
+
+**Consequences.** The enforcement layer now fails closed in every audited
+path and the validator can't drift from reality (it reads VERSION.json).
+Doc counts that previously rotted in six places now live in one. Scripts
+14 (installer deleted). Test suite 50 green.
+
+**Alternatives rejected.**
+- *Patch validate-system's stale lines in place* — hard-coded inventories
+  rot by design; dynamic comparison is the only stable fix.
+- *Document the jq requirement instead of blocking* — a safety gate that
+  silently disarms itself fails its one job; fail closed.
+- *Full HOOKS_PROTOCOL.md rewrite* — surgical schema/exit-table fixes plus
+  a reality banner deliver the correction without a 1,200-line churn.
+
+---
+
 # ADR-024: Fetch CCM Directly from GitHub (v3.9.0)
 
 **Status:** Accepted   **Date:** 2026-06-03
@@ -1303,6 +1362,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-022 | Unified entry + skill-hygiene sweep + dead-infra removal (v3.8.3) | Accepted | 2026-06-03 |
 | ADR-023 | Invocation telemetry + upgrade re-verification (v3.8.4) | Accepted | 2026-06-03 |
 | ADR-024 | Fetch CCM directly from GitHub (`ccm-fetch.sh`) (v3.9.0) | Accepted | 2026-06-03 |
+| ADR-025 | The Integrity audit — fail closed, dynamic validation, docs match disk (v3.10.0) | Accepted | 2026-06-10 |
 
 ---
 

@@ -2,8 +2,9 @@
 # .claude/hooks/pre-commit.sh
 # Pre-commit guard. Blocks commits with secrets, .env files, debug statements,
 # oversized files. Test/fixture paths are exempted from secret-pattern checks.
-# Runs as a real git pre-commit hook (installed via scripts/install-hooks.sh)
-# and as a Claude PreToolUse hook when `git commit` is detected.
+# Runs as a real git pre-commit hook (installed via scripts/install-hooks.sh).
+# It is NOT wired as a Claude PreToolUse hook — a Claude-issued `git commit`
+# is still caught because git itself invokes .git/hooks/pre-commit.
 
 HOOK_NAME="pre-commit"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -64,8 +65,8 @@ if (( ${#FAILURES[@]} > 0 )); then
   done
   printf '\nFix the issues above, then re-run the commit.\nLast resort (leaves audit trail): git commit --no-verify\n\n'
   notify_cowork "pre-commit-block" "$(printf '%s; ' "${FAILURES[@]}")"
-  # Exit 2: blocks when run as a Claude PreToolUse hook (git-commit matcher);
-  # git also aborts the commit on any non-zero when run as a .git/hooks/pre-commit.
+  # Exit 2: git aborts the commit on any non-zero when run as
+  # .git/hooks/pre-commit; 2 kept for consistency with the block() contract.
   exit 2
 fi
 

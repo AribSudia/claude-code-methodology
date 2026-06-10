@@ -45,7 +45,7 @@ You have a project like this:
 ```
 ~/ARIB/                              ← PROJECT ROOT (cd here, run claude)
 ├── claude-code-methodology/         ← NEW VERSION (template source)
-│   └── (96 files — the new release)
+│   └── (the new release — file count varies by version)
 ├── .claude/
 │   ├── skills/                      ← YOUR current 16 branded skills
 │   ├── rules/                       ← YOUR path-scoped rules
@@ -382,7 +382,7 @@ Replace them entirely with the new version from claude-code-methodology/.
 write to `./[path]` (project root).
 
 ```bash
-# Agents — replace all 13 with improved versions
+# Agents — replace ALL of them with the new versions (15 as of v3.10.0)
 cp claude-code-methodology/.claude/agents/*.md .claude/agents/
 
 # Skills — replace commands with skills (v3.0 migration)

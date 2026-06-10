@@ -9,7 +9,7 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.9.2 "Live Update"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.10.0 "Integrity"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -273,7 +273,7 @@ protocol can use the explicit prompts in `bootstrap/RUN.md`.)
 
 ---
 
-## The 16 /arib-* Skills
+## The 26 /arib-* Skills
 
 All skills are deep reference documents (250-800 lines each) with decision trees, examples, templates, edge cases, and common mistakes. They live in `.claude/skills/arib-*/SKILL.md`.
 
@@ -331,7 +331,7 @@ Each skill guides Claude Code through a complete protocol — reading context, c
 
 ---
 
-## The 13 Specialist Agents
+## The 15 Specialist Agents
 
 Agents activate automatically based on keywords in your instructions. Each operates with a specific checklist and delivers a structured output.
 
@@ -350,6 +350,8 @@ Agents activate automatically based on keywords in your instructions. Each opera
 | **API Docs**          | "API docs", "OpenAPI", "Swagger"| OpenAPI spec + sync report              |
 | **Accessibility**     | "a11y", "WCAG", "screen reader" | WCAG AA compliance report               |
 | **Deploy Guardian**   | "deploy", "ship", "release"     | CLEARED or BLOCKED with reasons         |
+| **Planner**           | wave-start, "sequence", "plan steps" | Step sequence + dependency map + risk register |
+| **CI/PR Engineer**    | "/arib-ci-audit", workflows, CODEOWNERS | CI/PR posture report (audit/init/review/BP) |
 
 Agent definitions live in `.claude/agents/`.
 
@@ -369,9 +371,9 @@ This file is read during bootstrap and referenced by agents. It ensures Claude C
 
 ---
 
-## Training Manuals (10 Guides)
+## Training Manuals (11 Guides)
 
-The `Training/` directory contains **10 comprehensive user manuals** — everything a developer needs to learn and master the methodology.
+The `Training/` directory contains **11 comprehensive user manuals** — everything a developer needs to learn and master the methodology.
 
 | Manual | File | What It Covers |
 |--------|------|----------------|
@@ -385,6 +387,7 @@ The `Training/` directory contains **10 comprehensive user manuals** — everyth
 | **08 — Bootstrap Manual** | `Training/08-BOOTSTRAP-MANUAL.md` | All 5 bootstrap methods — new, existing, upgrade, migrate, reengineer |
 | **09 — Microservices Manual** | `Training/09-MICROSERVICES-MANUAL.md` | Microservices extension — service map, contracts, orchestration |
 | **10 — Production Safety** | `Training/10-PRODUCTION-SAFETY-MANUAL.md` | Incident response, monitoring, SLOs, on-call, post-mortems |
+| **11 — CI/PR Manual** | `Training/11-CI-PR-MANUAL.md` | CI workflows, PR governance, CODEOWNERS, branch protection, /arib-ci-audit |
 
 Start with **Manual 01** for the big picture, then dive into whichever area you need.
 
@@ -483,147 +486,83 @@ Every Claude Code session follows this protocol:
 ## What's Inside (Complete File Tree)
 
 ```
-claude-code-methodology/                  ← v3.3 "Operating" — see VERSION.json for stats
+claude-code-methodology/                  ← v3.10 "Integrity" — counts live in VERSION.json
 │
-├── CLAUDE.md                             ← The Master Brain (179 lines)
-├── SYSTEM.md                             ← Full system spec (135 features)
-├── VERSION.json                          ← Version metadata + stats
-├── CHANGELOG.md                          ← Full version history (v1.0 → v3.1)
-├── .mcp.json                             ← MCP server configuration
-├── .worktreeinclude                      ← Files to include in worktrees
+├── CLAUDE.md                             ← The Master Brain (lean core, always-on)
+├── SYSTEM.md                             ← Full system spec
+├── VERSION.json                          ← Version metadata + canonical stats
+├── CHANGELOG.md                          ← Full version history (v1.0 → current)
+├── CONTRIBUTING.md / SECURITY.md / CODE_OF_CONDUCT.md
+├── .mcp.json                             ← MCP server configuration (opt-in servers)
+├── .worktreeinclude                      ← Gitignored files to copy into worktrees
 │
 ├── .claude/
-│   ├── settings.json                     ← Claude Code configuration
+│   ├── settings.json                     ← Permissions + hook wiring (committed)
 │   ├── settings.local.json               ← Personal overrides (gitignored)
-│   ├── rules/                            ← 7 path-scoped rule files
-│   │   ├── session-protocol.md           ← Always loaded
-│   │   ├── memory.md                     ← Loads on memory/** changes
-│   │   ├── io-channel.md                 ← Loads on io/** changes
-│   │   ├── agents.md                     ← Loads on agents/** changes
-│   │   ├── hooks.md                      ← Loads on hooks/** changes
-│   │   ├── architecture.md               ← Loads on architecture/** changes
-│   │   └── implementation.md             ← Loads on implementation/** changes
-│   ├── skills/                           ← 16 branded deep-reference skills
-│   │   ├── arib-session-start/SKILL.md   ← /arib-session-start (302 lines)
-│   │   ├── arib-session-end/SKILL.md     ← /arib-session-end (448 lines)
-│   │   ├── arib-io/SKILL.md              ← /arib-io (799 lines)
-│   │   ├── arib-dev-feature/SKILL.md     ← /arib-dev-feature (253 lines)
-│   │   ├── arib-dev-review/SKILL.md      ← /arib-dev-review (569 lines)
-│   │   ├── arib-dev-debug/SKILL.md       ← /arib-dev-debug (327 lines)
-│   │   ├── arib-check-a11y/SKILL.md      ← /arib-check-a11y (453 lines)
-│   │   ├── arib-check-deploy/SKILL.md    ← /arib-check-deploy (481 lines)
-│   │   ├── arib-check-deps/SKILL.md      ← /arib-check-deps (484 lines)
-│   │   ├── arib-check-migrate/SKILL.md   ← /arib-check-migrate (386 lines)
-│   │   ├── arib-check-perf/SKILL.md      ← /arib-check-perf (328 lines)
-│   │   ├── arib-check-reality/SKILL.md   ← /arib-check-reality (412 lines)
-│   │   ├── arib-check-services/SKILL.md  ← /arib-check-services (414 lines)
-│   │   ├── arib-docs-api/SKILL.md        ← /arib-docs-api (396 lines)
-│   │   ├── arib-docs-generate/SKILL.md   ← /arib-docs-generate (575 lines)
-│   │   └── arib-docs-language/SKILL.md   ← /arib-docs-language (766 lines)
-│   ├── agents/                           ← 15 specialist agent definitions
-│   │   ├── architect.md                  ← System design authority
-│   │   ├── security-auditor.md           ← OWASP Top 10 expert
-│   │   ├── code-reviewer.md              ← Quality gatekeeper
-│   │   ├── test-engineer.md              ← TDD specialist
-│   │   ├── debugger.md                   ← Scientific debugging
-│   │   ├── refactor-specialist.md        ← Safe code improvement
-│   │   ├── language.md                   ← Universal i18n specialist
-│   │   ├── reality-auditor.md            ← Mock data detector
-│   │   ├── database-guardian.md          ← Migration safety
-│   │   ├── performance.md                ← N+1 & performance budgets
-│   │   ├── api-docs.md                   ← OpenAPI generator
-│   │   ├── accessibility.md              ← WCAG 2.1 AA auditor
-│   │   └── deploy-guardian.md            ← Deployment gatekeeper
-│   ├── commands/                         ← 16 legacy commands (deprecated, backward compat)
-│   ├── agent-memory/                     ← Persistent memory per subagent
+│   ├── rules/                            ← 9 path-scoped rule files (load on matching paths)
+│   ├── skills/                           ← 26 branded skills (/arib-*) — see the table above
+│   ├── agents/                           ← 15 specialist agent definitions — see the table above
+│   ├── hooks/                            ← 7 hook scripts + lib/common.sh (exit-2 blocking gates)
+│   ├── commands/                         ← legacy commands (deprecated; kept for back-compat)
 │   └── output-styles/                    ← Custom output styles
 │
-├── core/                                 ← Living project context
-│   └── CORE_CONTEXT.md                   ← Business goals, stakeholders, domain terms
+├── core/                                 ← Living project context (your specs, schemas)
 │
-├── Training/                             ← 10 comprehensive user manuals
-│   ├── 01-SYSTEM-OVERVIEW.md             ← Complete system architecture
-│   ├── 02-AGENTS-MANUAL.md               ← All 15 agents explained
-│   ├── 03-SKILLS-MANUAL.md               ← Skills system & /arib-* commands
-│   ├── 04-HOOKS-MANUAL.md                ← Safety hooks — 6 types, 7 recipes
-│   ├── 05-COMMANDS-MANUAL.md             ← All slash commands with examples
-│   ├── 06-IO-CHANNEL-MANUAL.md           ← Inter-agent communication
-│   ├── 07-MEMORY-MANUAL.md               ← Memory system & continuity
-│   ├── 08-BOOTSTRAP-MANUAL.md            ← All 5 bootstrap methods
-│   ├── 09-MICROSERVICES-MANUAL.md        ← Microservices extension
-│   └── 10-PRODUCTION-SAFETY-MANUAL.md    ← Incident response & monitoring
+├── Training/                             ← 11 user manuals (01-SYSTEM-OVERVIEW → 11-CI-PR)
 │
-├── memory/                               ← Persistent memory system
-│   ├── MEMORY_PROTOCOL.md                ← How memory works
-│   ├── project_status.md                 ← Where the project stands
-│   ├── session_notes.md                  ← Session handoff log
-│   ├── change_log.md                     ← Chronological changes
-│   ├── architecture_decisions.md         ← ADRs (why things are this way)
-│   ├── bugs_and_fixes.md                 ← Bug pattern database
-│   └── testing_log.md                    ← Test results & coverage
+├── memory/                               ← Persistent memory (7 data files + MEMORY_PROTOCOL.md)
+│   ├── project_status.md                 ← Where the project stands (always-on)
+│   ├── session_notes.md                  ← Session handoff log (always-on)
+│   └── change_log / architecture_decisions / bugs_and_fixes / testing_log / semantic_export
 │
-├── architecture/                         ← What to build
-│   ├── CONSTRAINTS.md                    ← Rules that must never break
-│   ├── TECH_STACK.md                     ← Approved technologies only
-│   ├── CONTEXT_MAP.md                    ← Folder structure & data flows
-│   ├── ERROR_PATTERNS.md                 ← Universal pitfalls + prevention
-│   ├── DECISIONS.md                      ← Architecture Decision Records
-│   ├── SECURITY.md                       ← Security specification
-│   ├── WORKFLOW.md                       ← Branch strategy & conventions
-│   ├── SERVICE_MAP.md                    ← [Microservices] Service registry
-│   └── INTER_SERVICE.md                  ← [Microservices] Communication patterns
+├── architecture/                         ← Layer A — what to build
+│   ├── CONSTRAINTS.md                    ← Hard rules (always-on)
+│   ├── TECH_STACK / CONTEXT_MAP / ERROR_PATTERNS / DECISIONS / SECURITY / WORKFLOW
+│   ├── AGENT_ARCHITECTURE.md             ← Agent dispatch governance
+│   ├── DESIGN_SYSTEM.md                  ← Design-token contract (hook-enforced)
+│   └── SERVICE_MAP / INTER_SERVICE       ← [Microservices extension]
 │
-├── implementation/                       ← How to start coding
-│   ├── API_ENDPOINTS.md                  ← Complete route inventory
-│   ├── docker-compose.yml                ← Container orchestration
-│   ├── DOCKER_LOCAL.md                   ← Local dev environment guide
-│   ├── EVENT_SCHEMA.md                   ← Async event contracts
-│   ├── MIGRATION_ORDER.md                ← Database dependency graph
-│   ├── LOCAL_RUNBOOK.md                  ← Clone to running in 15 min
-│   ├── GATEWAY_ROUTES.md                 ← API gateway routing
-│   └── CONTRACT_TESTING.md              ← [Microservices] Inter-service contracts
+├── implementation/                       ← Layer B — how to start coding
+│   ├── API_ENDPOINTS / EVENT_SCHEMA / MIGRATION_ORDER / GATEWAY_ROUTES
+│   ├── docker-compose.yml / DOCKER_LOCAL / LOCAL_RUNBOOK
+│   └── CONTRACT_TESTING                  ← [Microservices extension]
 │
 ├── operations/                           ← How work gets done
-│   ├── WORKFLOW.md                       ← Git flow & CI/CD pipeline
-│   ├── DEPLOYMENT.md                     ← Ship to production guide
-│   ├── OPERATIONS_LOG.md                 ← Audit trail of all operations
-│   ├── INCIDENT_RESPONSE.md              ← SEV1-4, post-mortems, runbooks
-│   ├── MONITORING.md                     ← SLOs, golden signals, alerting
-│   ├── OBSERVABILITY.md                  ← [Microservices] Logging & tracing
-│   └── ORCHESTRATION.md                  ← [Microservices] K8s, Helm, scaling
+│   ├── WORKFLOW / DEPLOYMENT / OPERATIONS_LOG / AUTONOMY_MODE
+│   ├── INCIDENT_RESPONSE / MONITORING
+│   └── OBSERVABILITY / ORCHESTRATION     ← [Microservices extension]
 │
-├── io/                                   ← I/O Channel (inter-agent comms)
-│   ├── IO_PROTOCOL.md                    ← The law governing all I/O
-│   ├── status.md                         ← Live dashboard
-│   ├── BRIEFING_COWORK.md                ← Role brief for Cowork
-│   ├── BRIEFING_CLAUDE_CODE.md           ← Role brief for Claude Code
-│   ├── COWORK_PROMPT.md                  ← Cowork session prompt
-│   └── .templates/                       ← 9 pre-built request templates
+├── io/                                   ← I/O Channel (inter-agent comms + audit ledger)
+│   ├── IO_PROTOCOL.md / status.md / BRIEFING_* / COWORK_PROMPT.md
+│   ├── ledger/                           ← Audit reports, invocation telemetry
+│   └── .templates/                       ← Pre-built request templates
 │
-├── hooks/
-│   └── HOOKS_PROTOCOL.md                 ← 6 hook types, 7 production recipes
+├── waves/                                ← Multi-session delivery overlay (PLAN/REPORT/HISTORY)
+├── compliance/                           ← OWASP/GDPR/ISO/SOC2/PDPL alignment + honesty principle
+├── hooks/                                ← HOOKS_PROTOCOL.md (executables live in .claude/hooks/)
 │
-├── bootstrap/                            ← Project instantiation
+├── bootstrap/                            ← Project instantiation (one-prompt entry: RUN.md)
+│   ├── RUN.md                            ← ⭐ Situation Router — the one prompt for all cases
+│   ├── PROTOCOL_PRINCIPLES.md            ← Binding charter (Rules 1-5, autonomous execution)
 │   ├── BOOTSTRAP.md                      ← New project (guided questionnaire)
-│   ├── REVERSE_BOOTSTRAP.md              ← Existing project (10-step auto-scan)
-│   ├── REENGINEERING_GUIDE.md            ← Overlay methodology on legacy code
-│   ├── UPGRADE_PROTOCOL.md               ← Safe v-old → v-new upgrade
-│   └── MIGRATION_GUIDE.md               ← Old system → CCM migration
+│   ├── REVERSE_BOOTSTRAP.md              ← Existing project (auto-scan)
+│   ├── REENGINEERING_GUIDE.md            ← Overlay on legacy code (non-destructive)
+│   ├── UPGRADE_PROTOCOL.md               ← Safe v-old → v-new upgrade (drift detection)
+│   └── MIGRATION_GUIDE.md                ← From Any System (Cursor/Windsurf/Copilot/Kiro)
 │
-├── reference/                            ← Quick references
-│   ├── MASTER_GUIDE.md                   ← Quick reference card
-│   ├── SKILLS_REGISTRY.md                ← Skills catalog
-│   ├── USAGE_GUIDE.md                    ← How to use Agents, Skills, Hooks
-│   ├── COMMANDS_GUIDE.md                 ← Complete command reference
-│   └── COMMAND_PREFIX.md                 ← Branded prefix system
+├── reference/                            ← MASTER_GUIDE, registries, template-hashes.json
 │
-└── scripts/                              ← Automation
-    ├── git-setup.sh                      ← One-time repo initialization
-    ├── validate-system.sh                ← System integrity check (102 checks)
-    ├── services-check.sh                 ← Verify all services running
-    ├── io-watcher.sh                     ← I/O channel monitor
-    ├── io-archive.sh                     ← Archive completed I/O pairs
-    └── install-claude-skills-v2.sh       ← Skill installer
+├── tests/fixtures/payloads/              ← Hook regression fixtures
+│
+└── scripts/                              ← 14 automation scripts
+    ├── ccm-fetch.sh                      ← ⭐ Pull latest CCM from GitHub (install + update)
+    ├── validate-coherence.sh             ← Self-policing invariants (CI-enforced)
+    ├── validate-system.sh                ← Structure + counts vs VERSION.json (dynamic)
+    ├── test-hooks.sh                     ← Hook regression suite
+    ├── token-audit.sh                    ← Always-on vs path-scoped token cost
+    ├── drift-detect.sh / gen-template-hashes.sh  ← Upgrade drift classifier
+    ├── install-hooks.sh / io-watcher.sh / io-archive.sh / memory-export.sh
+    └── git-setup.sh / github-push.sh / services-check.sh
 ```
 
 ---
@@ -696,7 +635,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.8.4 | Lean Core | Invocation telemetry (`invocation-log.sh`) + upgrade Phase 1.6 re-verification recommendations (ADR-023) |
 | v3.9.0 | Live Update | Fetch CCM directly from GitHub — `scripts/ccm-fetch.sh` + curl one-liner; no manual re-download (ADR-024) |
 | v3.9.1 | Live Update | Doc fix: curl one-liner is the universal entry — old versions without a local `ccm-fetch.sh` upgrade with the same line |
-| **v3.9.2** | **Live Update** | **`ccm-fetch.sh` UX: explicit 2-step output (source vs. project root), reads the deployed version, install-vs-upgrade-aware hand-off** |
+| v3.9.2 | Live Update | `ccm-fetch.sh` UX: explicit 2-step output (source vs. project root), reads the deployed version, install-vs-upgrade-aware hand-off |
+| **v3.10.0** | **Integrity** | **Six-agent full audit + fix wave: hooks fail CLOSED (jq, rm bypasses, MultiEdit, wave gate), validate-system.sh rewritten dynamic, docs-match-disk sweep, ccm-fetch hardening, dead infra deleted (ADR-025)** |
 
 ---
 

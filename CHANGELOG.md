@@ -7,6 +7,70 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.10.0] "Integrity" — 2026-06-10
+
+A six-agent full audit (hooks, skills, docs-vs-disk, bootstrap, scripts,
+security) followed by the fix wave. Theme: the enforcement layer fails
+CLOSED, the validator validates the system that actually exists, and the
+docs match the disk. ADR-025.
+
+### Security — hooks fail closed (`.claude/hooks/`)
+- **jq absent → BLOCK, not bypass.** `pre-tool-use.sh` previously aborted
+  with exit 1 (non-blocking) when jq was missing — every gate silently
+  disarmed. Now blocks with install instructions (test seam: `CCM_TEST_NO_JQ`).
+- **`rm -rf //` and `rm -r -f /` bypasses closed.** CMD_NORM now collapses
+  repeated slashes; new flag-arrangement-agnostic recursive-rm pattern.
+- **MultiEdit was unscanned** by the design-token and OWASP checks
+  (`edits[].new_string` ignored) — now included.
+- **`*test*` substring exemption over-matched** — `src/latest/` skipped the
+  secret scan. Exemptions now anchor to path segments/suffixes.
+- **Wave-merge gate failed OPEN with zero audit files** (ls + set -e abort
+  → exit 1). Found by a new regression test written during this audit; fixed.
+- **PKCS#8 / ENCRYPTED private-key blocks** now caught (algorithm prefix
+  optional); SendGrid pattern added; `session-start.sh` sha256sum fallback.
+- Hook regression suite **41 → 50 tests** (every fix has a test; plus
+  invocation-log stdout-must-be-silent and wave-gate coverage).
+
+### Changed — `scripts/validate-system.sh` rewritten (dynamic)
+- The old script validated a v1.0-era system: required `.claude/agent-memory/`
+  (removed v3.8.3), hard-coded 16 skills / 13 agents by name, and **never
+  exited non-zero**. Now derives expectations from VERSION.json stats vs
+  disk at runtime, asserts retired paths are ABSENT, resolves settings.json
+  hook commands to real files, checks executable bits, and exits 1 on failure.
+
+### Changed — `scripts/ccm-fetch.sh` hardening
+- Rejects dash-leading `--ref`/flag-smuggling (` -- ` terminator added),
+  `--dest` path traversal/absolute paths, malformed `--repo`; the "is this
+  CCM?" sanity check now requires CLAUDE.md + .claude/skills/, not just any
+  VERSION.json.
+
+### Changed — docs match disk
+- README: tree regenerated for v3.10 (was labeled v3.3 — 16 skills,
+  13 agents, 10 manuals, 7 rules, deleted `agent-memory/` still listed);
+  skills/agents/training headers and tables corrected (26/15/11; planner +
+  ci-pr-engineer rows added).
+- `hooks/HOOKS_PROTOCOL.md`: payload schema corrected to real snake_case
+  (`tool_name`/`tool_input`, 28 occurrences), exit-code table fixed (only
+  exit 2 blocks — exit 1 PROCEEDS), reality banner on what CCM actually
+  wires. `.claude/rules/hooks.md` rewritten to the real event set.
+- `CLAUDE.md`: L3 lists actual wired events; memory = 7 data files + protocol.
+- `SECURITY.md`: supported versions 3.10.x/3.9.x (was 3.4.x).
+- Bootstrap: BOOTSTRAP/REVERSE_BOOTSTRAP "16 skills" → 26; UPGRADE_PROTOCOL
+  "13 agents"/"96 files" examples corrected; RUN.md router markers aligned
+  with MIGRATION_GUIDE (`.cursor/rules/` or `.cursorrules`).
+- `arib-deep-audit`: "13-agent table" → 15. SYSTEM.md structure/date fixes.
+- VERSION.json stats recounted: totalFiles 238, dirs 58, memoryFiles 8.
+
+### Removed
+- `scripts/install-claude-skills-v2.sh` — dead infra (global-install
+  pattern; skills are project-local). `scripts` 15 → 14.
+- `git-setup.sh` no longer creates a `develop` branch (PR-to-main
+  governance); v1.0-era hardcoded commit messages now read VERSION.json.
+- `io-archive.sh` Perl-regex `grep -oP` → POSIX `grep -oE` (BSD grep
+  compatibility — macOS).
+
+---
+
 ## [3.9.2] "Live Update" — 2026-06-03
 
 UX polish on `ccm-fetch.sh` so the two-step model is unmistakable for the

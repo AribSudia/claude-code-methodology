@@ -455,7 +455,7 @@ cp claude-code-methodology/.claude/rules/*.md .claude/rules/
 ```
 
 **Skills (official arib brand — replaces deprecated commands):**
-24. Copy all 16 skill directories from `claude-code-methodology/.claude/skills/arib-*/`
+24. Copy ALL skill directories (26 as of v3.10.0 — count them on disk, not from this doc) from `claude-code-methodology/.claude/skills/arib-*/`
 
 ```bash
 # Copy arib-branded skills to project root:

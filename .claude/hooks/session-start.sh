@@ -12,7 +12,11 @@ source "${SCRIPT_DIR}/lib/common.sh"
 if [[ ! -f "${CCM_ROOT}/CLAUDE.md" ]]; then
   log WARN "CLAUDE.md not found at repo root"
 else
-  CLAUDE_MD_HASH="$(shasum -a 256 "${CCM_ROOT}/CLAUDE.md" | awk '{print $1}')"
+  if command -v sha256sum >/dev/null 2>&1; then
+    CLAUDE_MD_HASH="$(sha256sum "${CCM_ROOT}/CLAUDE.md" | awk '{print $1}')"
+  else
+    CLAUDE_MD_HASH="$(shasum -a 256 "${CCM_ROOT}/CLAUDE.md" | awk '{print $1}')"
+  fi
   log INFO "CLAUDE.md hash: ${CLAUDE_MD_HASH:0:12}"
 fi
 

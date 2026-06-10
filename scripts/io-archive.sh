@@ -48,7 +48,7 @@ for result_file in "$RESULTS_DIR"/*-result.md; do
   request_file="$REQUESTS_DIR/$request_name"
 
   # Extract date for archive folder (YYYY-MM from filename)
-  date_part=$(echo "$result_name" | grep -oP '\d{4}-\d{2}' | head -1)
+  date_part=$(echo "$result_name" | grep -oE '[0-9]{4}-[0-9]{2}' | head -1)
   if [ -z "$date_part" ]; then
     echo -e "  ${YELLOW}⚠️  Cannot extract date from: $result_name — skipping${NC}"
     ((SKIPPED++))
@@ -65,7 +65,7 @@ for result_file in "$RESULTS_DIR"/*-result.md; do
   fi
 
   # Extract request ID for thread lookup
-  req_id=$(grep -oP 'REQ-\d{4}-\d{2}-\d{2}-\d{3}' "$request_file" 2>/dev/null | head -1)
+  req_id=$(grep -oE 'REQ-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{3}' "$request_file" 2>/dev/null | head -1)
 
   if $DRY_RUN; then
     echo -e "  ${CYAN}Would archive:${NC} $request_name + $result_name"

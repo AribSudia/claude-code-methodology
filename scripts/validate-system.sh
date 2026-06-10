@@ -1,211 +1,163 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════════
-# System Validation v3.0 — Verify all methodology files exist
-# and are properly structured for the aligned architecture
+# System Validation (v3.10.0 rewrite) — verify the deployed CCM
+# structure against VERSION.json, DYNAMICALLY.
+#
+# The previous version hard-coded a v1.0-era inventory: it still
+# required `.claude/agent-memory/` (removed v3.8.3, ADR-022), listed
+# 16 skills and 13 agents by name (reality: 26 and 15), and never
+# exited non-zero on failure. This rewrite derives expectations from
+# VERSION.json stats + the actual layout, so counts cannot go stale:
+#   - structural: every load-bearing dir/file exists
+#   - counts: disk inventory == VERSION.json stats
+#   - retired: deprecated paths are ABSENT (agent-memory)
+#   - executable bits on hooks and scripts
+#   - settings.json hook commands resolve to real files
+#
+# Exit 0 = valid, exit 1 = failures found.
 # ═══════════════════════════════════════════════════════════════
 
 set -uo pipefail
 
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-BOLD='\033[1m'
-NC='\033[0m'
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "${REPO_ROOT}"
 
-PASS=0
-FAIL=0
-WARN=0
+GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; BOLD='\033[1m'; NC='\033[0m'
+PASS=0; FAIL=0; WARN=0
 
-check() {
-  if [ -f "$1" ]; then
-    echo -e "  ${GREEN}✅${NC} $1"
-    ((PASS++))
+ok()   { echo -e "  ${GREEN}✅${NC} $1"; PASS=$((PASS+1)); }
+bad()  { echo -e "  ${RED}❌${NC} $1";   FAIL=$((FAIL+1)); }
+note() { echo -e "  ${YELLOW}⚠️${NC}  $1"; WARN=$((WARN+1)); }
+
+check_file() { [ -f "$1" ] && ok "$1" || bad "$1 — MISSING"; }
+check_dir()  { [ -d "$1" ] && ok "$1/" || bad "$1/ — MISSING"; }
+check_gone() { [ ! -e "$1" ] && ok "$1 absent (retired)" || bad "$1 still present — retired in $2; remove it"; }
+
+# check_count <expected> <label> <actual>
+check_count() {
+  local expected="$1" label="$2" actual="$3"
+  if [ "$actual" = "$expected" ]; then
+    ok "$label: $actual (matches VERSION.json)"
   else
-    echo -e "  ${RED}❌${NC} $1 — MISSING"
-    ((FAIL++))
+    bad "$label: disk=$actual but VERSION.json says $expected — update whichever is wrong"
   fi
 }
 
-check_dir() {
-  if [ -d "$1" ]; then
-    echo -e "  ${GREEN}✅${NC} $1/"
-    ((PASS++))
-  else
-    echo -e "  ${RED}❌${NC} $1/ — MISSING"
-    ((FAIL++))
-  fi
-}
+echo -e "${BOLD}═══ CCM System Validation ═══${NC}"
 
-warn_check() {
-  if [ -f "$1" ]; then
-    echo -e "  ${GREEN}✅${NC} $1"
-    ((PASS++))
-  else
-    echo -e "  ${YELLOW}⚠️${NC}  $1 — optional, not found"
-    ((WARN++))
-  fi
-}
+# ---------- 0. Prerequisites ----------
+echo -e "\n${BOLD}0. Prerequisites${NC}"
+if ! command -v jq >/dev/null 2>&1; then
+  bad "jq not installed — required (VERSION.json requiredTools); cannot run count checks"
+  echo -e "\n${RED}Install jq and re-run.${NC}"
+  exit 1
+fi
+ok "jq available"
+check_file "VERSION.json"
+[ -f VERSION.json ] || { echo -e "\n${RED}VERSION.json missing — cannot validate.${NC}"; exit 1; }
 
-echo ""
-echo -e "${BOLD}╔══════════════════════════════════════════════════╗${NC}"
-echo -e "${BOLD}║  Claude Code Methodology v3.0 — Validation      ║${NC}"
-echo -e "${BOLD}╚══════════════════════════════════════════════════╝${NC}"
-echo ""
+stat() { jq -r ".stats.$1" VERSION.json; }
+echo -e "  ${BOLD}Validating against VERSION.json v$(jq -r '.version' VERSION.json)${NC}"
 
-echo -e "${BOLD}Core Files:${NC}"
-check "CLAUDE.md"
-check ".mcp.json"
-warn_check ".worktreeinclude"
+# ---------- 1. Lean core (always-on context, ADR-019) ----------
+echo -e "\n${BOLD}1. Lean core (always-on)${NC}"
+check_file "CLAUDE.md"
+check_file "architecture/CONSTRAINTS.md"
+check_file "memory/project_status.md"
+check_file "memory/session_notes.md"
 
-echo -e "\n${BOLD}Claude Directory — Settings:${NC}"
-check ".claude/settings.json"
-warn_check ".claude/settings.local.json"
+# ---------- 2. Layer dirs ----------
+echo -e "\n${BOLD}2. Structure${NC}"
+for d in .claude .claude/skills .claude/agents .claude/rules .claude/hooks \
+         architecture implementation operations memory io \
+         bootstrap reference scripts Training compliance waves hooks core; do
+  check_dir "$d"
+done
 
-echo -e "\n${BOLD}Claude Directory — Rules (path-scoped):${NC}"
-check ".claude/rules/io-channel.md"
-check ".claude/rules/memory.md"
-check ".claude/rules/session-protocol.md"
-check ".claude/rules/agents.md"
-check ".claude/rules/hooks.md"
-check ".claude/rules/architecture.md"
-check ".claude/rules/implementation.md"
+# ---------- 3. Dynamic counts vs VERSION.json ----------
+echo -e "\n${BOLD}3. Inventory vs VERSION.json${NC}"
+check_count "$(stat agents)"  "agents"  "$(ls .claude/agents/*.md 2>/dev/null | grep -civ readme || true)"
+check_count "$(stat skills)"  "skills"  "$(ls -d .claude/skills/*/ 2>/dev/null | wc -l | tr -d ' ')"
+check_count "$(stat rules)"   "rules"   "$(ls .claude/rules/*.md 2>/dev/null | wc -l | tr -d ' ')"
+HOOK_COUNT="$(( $(ls .claude/hooks/*.sh 2>/dev/null | wc -l) + $(ls .claude/hooks/lib/*.sh 2>/dev/null | wc -l) ))"
+check_count "$(stat hookScripts)" "hook scripts (incl. lib)" "$HOOK_COUNT"
+check_count "$(stat scripts)" "scripts" "$(ls scripts/*.sh 2>/dev/null | wc -l | tr -d ' ')"
+check_count "$(stat trainingManuals)" "training manuals" "$(ls Training/*.md 2>/dev/null | wc -l | tr -d ' ')"
+check_count "$(stat githubWorkflows)" "github workflows" "$(ls .github/workflows/*.yml 2>/dev/null | wc -l | tr -d ' ')"
+check_count "$(stat memoryFiles)" "memory files" "$(ls memory/*.md 2>/dev/null | wc -l | tr -d ' ')"
+check_count "$(stat bootstrapMethods)" "bootstrap protocols" "$(ls bootstrap/BOOTSTRAP.md bootstrap/REVERSE_BOOTSTRAP.md bootstrap/UPGRADE_PROTOCOL.md bootstrap/MIGRATION_GUIDE.md bootstrap/REENGINEERING_GUIDE.md 2>/dev/null | wc -l | tr -d ' ')"
 
-echo -e "\n${BOLD}Claude Directory — Skills (branded arib-*):${NC}"
-check ".claude/skills/arib-session-start/SKILL.md"
-check ".claude/skills/arib-session-end/SKILL.md"
-check ".claude/skills/arib-io/SKILL.md"
-check ".claude/skills/arib-dev-feature/SKILL.md"
-check ".claude/skills/arib-dev-debug/SKILL.md"
-check ".claude/skills/arib-dev-review/SKILL.md"
-check ".claude/skills/arib-check-deploy/SKILL.md"
-check ".claude/skills/arib-check-services/SKILL.md"
-check ".claude/skills/arib-check-reality/SKILL.md"
-check ".claude/skills/arib-check-migrate/SKILL.md"
-check ".claude/skills/arib-check-perf/SKILL.md"
-check ".claude/skills/arib-check-deps/SKILL.md"
-check ".claude/skills/arib-check-a11y/SKILL.md"
-check ".claude/skills/arib-docs-api/SKILL.md"
-check ".claude/skills/arib-docs-generate/SKILL.md"
-check ".claude/skills/arib-docs-language/SKILL.md"
+# Every skill dir must contain a SKILL.md
+SKILL_BAD=0
+for d in .claude/skills/*/; do
+  s="${d%/}"
+  if [ ! -f "$s/SKILL.md" ]; then bad "$s/SKILL.md missing"; SKILL_BAD=1; fi
+done
+[ "$SKILL_BAD" -eq 0 ] && ok "every skill dir has SKILL.md"
 
-echo -e "\n${BOLD}Claude Directory — Legacy Commands (deprecated, kept for compat):${NC}"
-LEGACY_COUNT=$(ls .claude/commands/arib-*.md 2>/dev/null | wc -l)
-if [ "$LEGACY_COUNT" -gt 0 ]; then
-  echo -e "  ${YELLOW}⚠️${NC}  $LEGACY_COUNT legacy command files in .claude/commands/ (deprecated)"
-  ((WARN++))
+# ---------- 4. Retired infra must be ABSENT ----------
+echo -e "\n${BOLD}4. Retired infra (must be absent)${NC}"
+check_gone ".claude/agent-memory" "v3.8.3 (ADR-022)"
+
+# ---------- 5. Key files ----------
+echo -e "\n${BOLD}5. Key files${NC}"
+for f in SYSTEM.md CHANGELOG.md README.md CONTRIBUTING.md SECURITY.md \
+         .claude/settings.json .mcp.json \
+         architecture/DECISIONS.md architecture/CONTEXT_MAP.md \
+         bootstrap/RUN.md bootstrap/PROTOCOL_PRINCIPLES.md \
+         memory/MEMORY_PROTOCOL.md io/IO_PROTOCOL.md hooks/HOOKS_PROTOCOL.md \
+         reference/template-hashes.json compliance/README.md; do
+  check_file "$f"
+done
+
+# ---------- 6. Executable bits ----------
+echo -e "\n${BOLD}6. Executable bits${NC}"
+# lib/*.sh are sourced, not executed — no +x needed there.
+NOEXEC=""
+for s in .claude/hooks/*.sh scripts/*.sh; do
+  [ -f "$s" ] && [ ! -x "$s" ] && NOEXEC="${NOEXEC} ${s}"
+done
+if [ -z "$NOEXEC" ]; then
+  ok "all hook + script files executable"
 else
-  echo -e "  ${GREEN}✅${NC} No legacy commands (clean)"
-  ((PASS++))
+  bad "not executable:${NOEXEC} — run: chmod +x${NOEXEC}"
 fi
 
-echo -e "\n${BOLD}Claude Directory — Agents:${NC}"
-check ".claude/agents/architect.md"
-check ".claude/agents/security-auditor.md"
-check ".claude/agents/code-reviewer.md"
-check ".claude/agents/test-engineer.md"
-check ".claude/agents/debugger.md"
-check ".claude/agents/refactor-specialist.md"
-check ".claude/agents/language.md"
-check ".claude/agents/reality-auditor.md"
-check ".claude/agents/database-guardian.md"
-check ".claude/agents/performance.md"
-check ".claude/agents/api-docs.md"
-check ".claude/agents/accessibility.md"
-check ".claude/agents/deploy-guardian.md"
+# ---------- 7. settings.json hook wiring ----------
+echo -e "\n${BOLD}7. Hook wiring${NC}"
+if jq -e '.hooks.PreToolUse[0].hooks[0].command' .claude/settings.json >/dev/null 2>&1; then
+  ok "settings.json hooks shape valid"
+else
+  bad "settings.json hooks shape invalid (expected .hooks.PreToolUse[].hooks[].command)"
+fi
+MISSING_HOOK=""
+while IFS= read -r cmd; do
+  [ -z "$cmd" ] && continue
+  rel="${cmd#\$CLAUDE_PROJECT_DIR/}"
+  [ -f "$rel" ] || MISSING_HOOK="${MISSING_HOOK} ${rel}"
+done < <(jq -r '.hooks | to_entries[] | .value[].hooks[].command' .claude/settings.json 2>/dev/null | sort -u)
+if [ -z "$MISSING_HOOK" ]; then
+  ok "every settings.json hook command exists on disk"
+else
+  bad "settings.json references missing hook script(s):${MISSING_HOOK}"
+fi
 
-echo -e "\n${BOLD}Claude Directory — Agent Memory & Output Styles:${NC}"
-check_dir ".claude/agent-memory"
-check_dir ".claude/output-styles"
+# ---------- 8. Legacy commands (informational) ----------
+echo -e "\n${BOLD}8. Legacy${NC}"
+if [ -d .claude/commands ]; then
+  note ".claude/commands/ present ($(ls .claude/commands/*.md 2>/dev/null | wc -l | tr -d ' ') files) — deprecated, kept for back-compat; skills are canonical"
+else
+  ok ".claude/commands/ not present (fine — skills are canonical)"
+fi
 
-echo -e "\n${BOLD}Memory Layer:${NC}"
-check "memory/MEMORY_PROTOCOL.md"
-check "memory/project_status.md"
-check "memory/session_notes.md"
-check "memory/change_log.md"
-check "memory/architecture_decisions.md"
-check "memory/bugs_and_fixes.md"
-check "memory/testing_log.md"
-
-echo -e "\n${BOLD}Architecture Layer:${NC}"
-check "architecture/CONSTRAINTS.md"
-check "architecture/TECH_STACK.md"
-check "architecture/CONTEXT_MAP.md"
-check "architecture/ERROR_PATTERNS.md"
-check "architecture/DECISIONS.md"
-check "architecture/SECURITY.md"
-
-echo -e "\n${BOLD}Implementation Layer:${NC}"
-check "implementation/API_ENDPOINTS.md"
-check "implementation/DOCKER_LOCAL.md"
-check "implementation/docker-compose.yml"
-check "implementation/EVENT_SCHEMA.md"
-check "implementation/MIGRATION_ORDER.md"
-check "implementation/LOCAL_RUNBOOK.md"
-check "implementation/GATEWAY_ROUTES.md"
-
-echo -e "\n${BOLD}Operations Layer:${NC}"
-check "operations/WORKFLOW.md"
-check "operations/OPERATIONS_LOG.md"
-check "operations/DEPLOYMENT.md"
-
-echo -e "\n${BOLD}Microservices Extension (optional):${NC}"
-warn_check "architecture/SERVICE_MAP.md"
-warn_check "architecture/INTER_SERVICE.md"
-warn_check "operations/OBSERVABILITY.md"
-warn_check "implementation/CONTRACT_TESTING.md"
-warn_check "operations/ORCHESTRATION.md"
-
-echo -e "\n${BOLD}Incident Response & Production Safety:${NC}"
-check "operations/INCIDENT_RESPONSE.md"
-check "operations/MONITORING.md"
-
-echo -e "\n${BOLD}I/O Channel:${NC}"
-check "io/IO_PROTOCOL.md"
-check "io/status.md"
-check "io/BRIEFING_COWORK.md"
-check "io/BRIEFING_CLAUDE_CODE.md"
-check "io/.templates/audit.md"
-check "io/.templates/verify.md"
-check "io/.templates/review.md"
-check "io/.templates/result.md"
-check "io/.templates/signal.md"
-check "io/.templates/pipeline.md"
-
-echo -e "\n${BOLD}Core Project Context:${NC}"
-check "core/CORE_CONTEXT.md"
-
-echo -e "\n${BOLD}Version & System:${NC}"
-check "SYSTEM.md"
-check "VERSION.json"
-check "CHANGELOG.md"
-
-echo -e "\n${BOLD}Bootstrap:${NC}"
-check "bootstrap/BOOTSTRAP.md"
-check "bootstrap/REVERSE_BOOTSTRAP.md"
-check "bootstrap/REENGINEERING_GUIDE.md"
-check "bootstrap/UPGRADE_PROTOCOL.md"
-check "bootstrap/MIGRATION_GUIDE.md"
-
-echo -e "\n${BOLD}Configuration:${NC}"
-check "hooks/HOOKS_PROTOCOL.md"
-check "reference/SKILLS_REGISTRY.md"
-check "reference/USAGE_GUIDE.md"
-check "reference/COMMANDS_GUIDE.md"
-check "reference/COMMAND_PREFIX.md"
-check "scripts/git-setup.sh"
-check "scripts/services-check.sh"
-warn_check "scripts/install-claude-skills-v2.sh"
-warn_check ".env.example"
-warn_check ".gitignore"
-
+# ---------- Summary ----------
 echo ""
 echo -e "${BOLD}═══════════════════════════════════════════════════${NC}"
 echo -e "  ${GREEN}Passed: $PASS${NC}  ${RED}Failed: $FAIL${NC}  ${YELLOW}Warnings: $WARN${NC}"
 echo ""
-
-if [ $FAIL -eq 0 ]; then
-  echo -e "${GREEN}${BOLD}System is complete and ready!${NC}"
-else
-  echo -e "${RED}${BOLD}System has $FAIL missing files. Fix before proceeding.${NC}"
+if [ "$FAIL" -gt 0 ]; then
+  echo -e "${RED}${BOLD}System has $FAIL validation failure(s). Fix before proceeding.${NC}"
+  exit 1
 fi
-echo ""
+echo -e "${GREEN}${BOLD}System valid — structure, counts, and wiring all match.${NC}"
+exit 0

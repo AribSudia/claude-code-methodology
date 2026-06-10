@@ -1,28 +1,28 @@
 {
   "name": "claude-code-methodology",
-  "version": "3.9.2",
-  "codename": "Live Update",
-  "releaseDate": "2026-06-03",
-  "previousVersion": "3.9.1",
-  "engineeredBy": "Abdullah x Claude Opus 4.6 / Opus 4.7",
+  "version": "3.10.0",
+  "codename": "Integrity",
+  "releaseDate": "2026-06-10",
+  "previousVersion": "3.9.2",
+  "engineeredBy": "Abdullah x Claude Opus 4.6 / 4.7 / 4.8",
   "license": "MIT",
   "repository": "https://github.com/AribSudia/claude-code-methodology",
   "stats": {
-    "totalFiles": 146,
-    "totalDirectories": 38,
+    "totalFiles": 238,
+    "totalDirectories": 58,
     "agents": 15,
     "skills": 26,
     "skillPrefix": "arib",
     "skillCategories": 6,
     "rules": 9,
     "hookScripts": 8,
-    "memoryFiles": 6,
+    "memoryFiles": 8,
     "ioTemplates": 9,
     "architectureFiles": 11,
     "implementationFiles": 9,
     "operationsFiles": 8,
     "complianceFrameworks": 5,
-    "scripts": 15,
+    "scripts": 14,
     "bootstrapMethods": 5,
     "trainingManuals": 11,
     "githubWorkflows": 5,
@@ -34,8 +34,17 @@
     "minClaudeCodeVersion": "1.0.0",
     "minNodeVersion": "18.0.0",
     "minGitVersion": "2.30.0",
-    "requiredTools": ["git", "node", "jq"],
-    "optionalTools": ["gh", "docker", "bun", "curl"]
+    "requiredTools": [
+      "git",
+      "node",
+      "jq"
+    ],
+    "optionalTools": [
+      "gh",
+      "docker",
+      "bun",
+      "curl"
+    ]
   },
   "useCases": [
     "new-project",
@@ -44,8 +53,19 @@
     "legacy-system-migration",
     "wave-delivery"
   ],
-  "complianceFrameworks": ["owasp", "gdpr", "iso27001", "soc2", "pdpl"],
-  "optionalMcpServers": ["github", "claude-mem", "cowork", "testsprite"],
+  "complianceFrameworks": [
+    "owasp",
+    "gdpr",
+    "iso27001",
+    "soc2",
+    "pdpl"
+  ],
+  "optionalMcpServers": [
+    "github",
+    "claude-mem",
+    "cowork",
+    "testsprite"
+  ],
   "changelog": "CHANGELOG.md",
   "upgradeGuide": "bootstrap/UPGRADE_PROTOCOL.md",
   "skillReference": "reference/COMMAND_PREFIX.md",
