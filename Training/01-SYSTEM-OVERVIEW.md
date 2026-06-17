@@ -138,7 +138,7 @@ CCM operates on **4 numbered layers (L1–L4)** plus a cross-cutting I/O Channel
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
-║  L2 — SKILLS                  26 auto-invoked skills        ║
+║  L2 — SKILLS                  27 auto-invoked skills        ║
 ║  (Frontend, Testing, Security, Git, Database, CI/CD, etc.)          ║
 ║                                                                      ║
 ║  Files: .claude/skills/*/SKILL.md                                    ║
@@ -187,7 +187,7 @@ CCM operates on **4 numbered layers (L1–L4)** plus a cross-cutting I/O Channel
 **What it does:** Provides reusable knowledge and best practices.
 
 **Contains:**
-- 26 auto-invoked skill guides
+- 27 auto-invoked skill guides
 - Step-by-step walkthroughs
 - Checklists and patterns
 - Code examples
@@ -1052,7 +1052,7 @@ claude-code-methodology/
 │   │   ├── api-docs.md                    (API documentation)
 │   │   └── accessibility.md               (WCAG 2.1 AA compliance)
 │   │
-│   ├── skills/                            (26 skills)
+│   ├── skills/                            (27 skills)
 │   │   ├── frontend-optimization/SKILL.md
 │   │   ├── tdd-typescript/SKILL.md
 │   │   ├── security-hardening/SKILL.md

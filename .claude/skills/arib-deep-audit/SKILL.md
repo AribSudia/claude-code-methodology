@@ -111,6 +111,30 @@ Batch B (this skill runs directly, sequential):
   Sections 8, 12, 13, 14, 16, 18, 19, 21
 ```
 
+### Step 2.5 — Refute before you record (adversarial filter, ADR-026)
+
+Batch A is multi-*perspective* concurrency (different lenses run at once) — it
+is NOT adversarial refutation, so it produces false positives. Before a finding
+enters Step 3, put it through `find → refute → confirm`:
+
+1. **Refute.** For each candidate finding, run an independent skeptic that
+   **defaults to "not a bug"** and tries to disprove it on a distinct lens —
+   *is it real? is it reachable? is it intentional/by-design?* Keep the finding
+   only if it survives. (Use diverse lenses, not N identical skeptics —
+   same-model agreement is correlated, not independent corroboration.)
+2. **Confirm by ground-truth read.** Re-read the cited code yourself and prove
+   the finding before it becomes a BLOCK/WARN. A finding that can't be grounded
+   is downgraded to INFO or dropped, with the reason recorded (per CONSTRAINTS
+   #14: rejecting a false positive is a real result).
+3. **Loop until dry.** If a section keeps surfacing new real findings, sweep it
+   again; stop when consecutive rounds add nothing.
+
+**Safety-critical exception.** For sections 1/11/15/17 (security, authz,
+tenant-isolation) and any money/tax finding, do NOT let the reject-biased filter
+suppress a plausible issue — a false negative there is catastrophic. A single
+credible finding in these classes goes straight to the ground-truth read and, if
+real, to escalation; it is never dropped by a skeptic vote.
+
 ### Step 3 — Merge findings
 
 For each section, record:

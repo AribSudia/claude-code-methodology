@@ -21,8 +21,8 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.10.0                                                   |
-| **Codename**         | "Integrity"                                          |
+| **Version**          | 3.11.0                                                   |
+| **Codename**         | "Engine"                                             |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
 | **Last Updated**     | 2026-06-10                                               |
@@ -117,7 +117,7 @@ The system is built on five engineering principles:
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
-║  L2 — SKILLS                    26 auto-invoked skills      ║
+║  L2 — SKILLS                    27 auto-invoked skills      ║
 ║  6 categories: Session · Dev · Wave · Check · CI · Docs             ║
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
@@ -175,7 +175,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 ├── .claude/                     ← CLAUDE CODE CONFIG (28 files)
 │   ├── settings.json            ← Permissions, hooks, context
 │   ├── agents/ (15)             ← Specialist agent definitions
-│   ├── skills/ (26)             ← Branded /arib-* skills (canonical)
+│   ├── skills/ (27)             ← Branded /arib-* skills (canonical)
 │   ├── hooks/                   ← Hook scripts
 │   └── commands/                ← Legacy commands (deprecated)
 │
