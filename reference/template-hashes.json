@@ -1,6 +1,6 @@
 {
   "version": "3.11.0",
-  "generated_from_git": "0f8eb63",
+  "generated_from_git": "e891496",
   "_note": "sha256 of shipped framework files. Project-state files are intentionally absent. Regenerate with scripts/gen-template-hashes.sh on each release.",
   "files": {
     ".claude/agents/accessibility.md": "6db83f097bcc0d6ca02d44f47fd452720b26eff4c47b4cfaa2c5bb0730b0e2ce",
@@ -82,7 +82,7 @@
     "CLAUDE.md": "8eb7743f46b3983dc13ed19e87af102686885f01c1256edfc3c834271b3b0479",
     "CODE_OF_CONDUCT.md": "2f1b94fb897338de2f8673ca303da8ea0fcf19f02e57e0f2a7b950d1c2310b60",
     "CONTRIBUTING.md": "814ee05cea9bffe715464e988d5ebdb572542091b37076cd4960f3f9e78a291d",
-    "README.md": "2c63fb32e644ac5b18c0567fddb3962d5ffb3c78028842d298e2660cd3105b70",
+    "README.md": "51765f5bff3b8254785ec626354af8964b4a0c2c1e0484e5c7c25395040bab1d",
     "SECURITY.md": "972bfc1e929baf5f45733d72d447d97ebced9eedcf28a1675811c9c02273644e",
     "SYSTEM.md": "0ae1605915b2af16253189c0d1eb58f234353e32071fcca4d903d025f10ba61f",
     "Training/01-SYSTEM-OVERVIEW.md": "905e428b389beb27784b45c1290650339e19b803f766e53b65cfaf420ec9e235",

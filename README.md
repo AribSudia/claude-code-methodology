@@ -337,6 +337,55 @@ Each skill guides Claude Code through a complete protocol — reading context, c
 
 ---
 
+## Autonomous Campaigns — `/arib-engine`
+
+Most skills do **one** thing. `/arib-engine` runs a **campaign**: hand it ownership and
+it discovers its own backlog, then loops `discover → ship → verify → integrate → record`
+across many small, reversible PRs — and **decides when it's done on the evidence**, not
+when you tell it to. It's the continuous-campaign cousin of the wave overlay: a wave
+executes a *known* PLAN to completion; the engine *finds* the work and runs until a
+closure test passes. Adopted from the AEPG methodology in v3.11.0 (ADR-026); full
+reference in [`reference/AUTONOMOUS_ENGINEERING_METHODOLOGY.md`](reference/AUTONOMOUS_ENGINEERING_METHODOLOGY.md).
+
+### Use cases — how to invoke it
+
+| You want… | Invoke | What happens |
+|-----------|--------|--------------|
+| **One focused pass** (scoped) | `/arib-engine harden auth + payments` | One `discover→ship→verify` cycle on that goal, then it **stops** |
+| **A continuous campaign** | `/loop /arib-engine <goal>` | `/loop` paces it (event-gated + heartbeat); the engine runs tick after tick until the closure test passes |
+| **"Make it all"** (no scope) | `/arib-engine` | Autonomous mode — finds & ships every verified improvement, descending by severity, until done |
+| **Orchestrate the whole toolkit** | `/arib-engine --with-arib-family <goal>` | Becomes the conductor: drives the `arib-check-*`, `arib-dev-*`, `arib-docs-*` skills per phase (degrades to inline for any absent) |
+| **Auto-merge green PRs** (advanced) | `/arib-engine --auto-merge <goal>` | Opt-in only, and only with branch protection enforcing the checks — never for money/auth/compliance PRs |
+
+> **Standalone by default.** With no `--with-arib-family`, the engine is fully
+> self-contained and portable — it runs every phase inline and never reaches for sibling
+> skills, even when they're installed. Family orchestration is strictly opt-in.
+
+### How it stays safe
+
+The engine is autonomous about *what to do next* and *when it's done* — but it is **not**
+autonomous about the dangerous boundaries:
+
+- **Merge-to-main stays a human gate.** It opens PRs and reports them green-and-ready;
+  merge goes through PR review + branch protection (CONSTRAINTS #17). It never self-merges
+  by default — CI-green is an advisory signal, not release authority.
+- **Discovery is adversarial, not credulous.** Every finding runs `find → refute → confirm`
+  (skeptics that default to "not a bug", then a ground-truth code read) — but
+  security/authz/tenant-isolation/money/secrets findings are **exempt** from that
+  reject-biased filter, because there a false negative is catastrophic.
+- **It escalates the calls it shouldn't make.** Compliance/tax/pricing/policy decisions,
+  secrets, and breaking migrations are handed back as a structured **decision list**
+  (question + options + recommendation + what's de-risked), not decided unilaterally.
+
+### When to reach for it (and when not)
+
+- **Use `/arib-engine`** for a sustained "harden / audit / sweep / keep shipping value"
+  effort across many concerns.
+- **Use a wave** (`/arib-wave-start → run → end`) when you already know the plan.
+- **Just do the fix** for a single quick change — a campaign engine is overkill.
+
+---
+
 ## The 15 Specialist Agents
 
 Agents activate automatically based on keywords in your instructions. Each operates with a specific checklist and delivers a structured output.
