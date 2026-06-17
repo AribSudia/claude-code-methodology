@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.10.0 "Integrity"                   |
+| Version           | 3.11.0 "Engine"                      |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |
@@ -90,7 +90,7 @@ your-project/
 |   |-- settings.json                  <- Permissions, hooks (committed)
 |   |-- settings.local.json            <- Personal overrides (gitignored)
 |   |-- rules/                         <- Path-scoped modular rules
-|   |-- skills/                        <- Branded skills (/arib-*) — 26 total
+|   |-- skills/                        <- Branded skills (/arib-*) — 27 total
 |   |   |-- arib-session-start/SKILL.md
 |   |   |-- arib-dev-feature/SKILL.md
 |   |   +-- (24 more skills)
@@ -142,6 +142,7 @@ your-project/
 | /arib-docs-api              | Docs       | API documentation + OpenAPI                          |
 | /arib-docs-generate         | Docs       | Generate documentation                               |
 | /arib-docs-language         | Docs       | i18n/RTL/LTR compliance (generic)                    |
+| /arib-engine                | Engine     | Autonomous campaign engine — discover→ship→verify→close (standalone; opt-in family orchestration; merge stays a human gate) |
 
 ---
 

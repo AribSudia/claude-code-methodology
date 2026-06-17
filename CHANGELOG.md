@@ -7,6 +7,49 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.11.0] "Engine" — 2026-06-17
+
+Adopts the externally-developed "Autonomous Engineering & Product-Led Growth"
+(AEPG) methodology into CCM — after a four-lens review (standalone, CCM
+comparison, adversarial red-team, adoptability) found it strong and
+complementary (AEPG = the runtime loop; CCM = the substrate). Shipped as a
+skill **plus** folded rules — with AEPG's two load-bearing risks deliberately
+neutralized. ADR-026.
+
+### Added — `/arib-engine` (27th skill)
+- `.claude/skills/arib-engine/SKILL.md` — autonomous-campaign engine:
+  discover→ship→verify→integrate→record→close. STANDALONE by default;
+  orchestrates the arib-* family only on explicit opt-in (`--with-arib-family`).
+  Scheduling delegated to Anthropic's `/loop` (`/loop /arib-engine <goal>` for a
+  continuous campaign; bare invocation = one bounded pass). New "Engine"
+  category. `skills` 26→27, `skillCategories` →8.
+- `reference/AUTONOMOUS_ENGINEERING_METHODOLOGY.md` — the full methodology +
+  CCM-integration notes + an honest provenance/risk appendix (n=1, survivors-only).
+
+### Added — folded into CCM proper (the three high-value adoptions)
+- **Adversarial `find→refute→confirm`** in `/arib-deep-audit` (new Step 2.5):
+  a refute pass (skeptics default to "not a bug", diverse lenses, ground-truth
+  read, loop-until-dry) before findings are recorded — CCM's fan-out was
+  multi-perspective concurrency, not adversarial refutation.
+- **CONSTRAINTS #14–#17:** verify-the-claim-before-fixing; environment-stability
+  gate (`TZ=UTC`, fail-loud); prove backward-compat on data-touching change;
+  **merge-to-main is never autonomous**.
+- **Closure primitive** in `/arib-wave-end` (new Step 8): evidence-based
+  closure test + structured decision-list hand-off (decisions vs deploy-time
+  actions), with the honest "diminishing-returns ≠ clean codebase" caveat.
+
+### Risk adaptations (NOT imported as-authored)
+- **No auto-merge-on-green default.** The source method self-merges on green;
+  CCM keeps merge behind PR review + branch protection (constraint #17). An
+  auto-merge poller is opt-in + enforced-branch-protection only, never for
+  money/auth/compliance.
+- **Security exempt from the reject-biased majority filter.** For
+  authz/IDOR/tenant-isolation/money/secrets a false negative is catastrophic —
+  a single credible finding escalates to a ground-truth read, never dropped by
+  a skeptic vote. Same-model agreement ≠ independence (documented).
+
+---
+
 ## [3.10.0] "Integrity" — 2026-06-10
 
 A six-agent full audit (hooks, skills, docs-vs-disk, bootstrap, scripts,

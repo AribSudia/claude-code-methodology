@@ -311,6 +311,39 @@ when modifying the methodology repo or shipping a new release.
     marked PASS. `/arib-wave-end` remains an explicit gate — it is the
     finish line, not a between-steps prompt.
 
+14. **Verify the claim before fixing.** Every finding — a lint hit, a
+    scanner result, even an agent that "confirmed" a bug — is a CLAIM
+    until re-derived against the code: prove it's real, reachable, and
+    not intentional, THEN act. Rejecting a false positive (with reason
+    recorded) is as valuable as a fix; acting on an unverified finding is
+    a defect. Agent verification cuts noise but never replaces the final
+    ground-truth read (itself fallible — for money/auth/security, pair it
+    with an independent re-derivation).
+
+15. **Environment-stability is a gate.** Run timezone-, locale-, and
+    arch-sensitive logic under the CI environment (e.g. `TZ=UTC`) BEFORE
+    pushing — date bucketing, collation, number/currency formatting, and
+    case-folding pass locally yet fail in CI. Fail loud, not silent:
+    prefer an obvious error (or conspicuous all-zeros) over a
+    plausible-but-wrong value.
+
+16. **Prove backward-compatibility on data-touching change.** Before a
+    library/format/schema change affecting stored data (password-hash
+    upgrade, serialization, migration), capture a real artifact from the
+    OLD version, prove the NEW version still reads it, and lock that into
+    a regression test. Schema stays additive/back-compatible absent a
+    migration plan.
+
+17. **Merge-to-main is never autonomous.** No skill, agent, or engine
+    (incl. `/arib-engine`) merges to `main` on its own authority —
+    CI-green is advisory, not release authority (only as strong as the
+    weakest gate). Merge goes through PR review + branch protection
+    (constraint #10). An auto-merge-on-green poller is allowed ONLY behind
+    explicit opt-in AND enforced branch protection, NEVER for
+    money/auth/compliance PRs.
+
+> Constraints #14–#17 codify the AEPG adoption — see ADR-026.
+
 ---
 
 ## Review Schedule

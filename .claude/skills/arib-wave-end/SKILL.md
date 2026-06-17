@@ -101,6 +101,40 @@ Announce:
 If `gh` is available and the project uses PR workflow, offer to open the PR
 with REPORT.md as the body.
 
+### Step 8 — Closure test + decision-list hand-off (campaign-level, ADR-026)
+
+A single wave closing is not the same as the *whole effort* being done. When
+this wave is the last planned one — or when running under `/arib-engine` — apply
+the **evidence-based closure test** before declaring the campaign complete. "Done"
+is justified ONLY when all three hold:
+
+1. **Backlog exhausted on evidence** — the most recent discovery sweeps return
+   only false-positives / already-handled / by-design items (diminishing returns
+   is the signal), not "I'm out of time."
+2. **Remainder is operator-owned** — everything left genuinely needs a human
+   decision or an external action (the escalation classes), not more engineering.
+3. **Composed-trunk green** — a final full gate run on the integrated `main`
+   (not just per-PR green) passes.
+
+> **Honest caveat to state in the hand-off:** diminishing returns measures *the
+> agent's search distribution* running dry, not the absence of bugs — classes
+> outside the lens catalog never lower the signal. Report closure as "this
+> campaign's lenses are exhausted," not "the codebase is clean."
+
+If the test passes, **own the call** and emit a **decision list** (not a vague
+"blocked"). For each item: the specific question, the options with trade-offs,
+your recommendation, and what you've already de-risked. Separate:
+
+- **Decisions** (need a human choice): compliance/tax interpretation, framework
+  majors, pricing/policy, risk acceptance.
+- **Deploy-time actions** (code is ready; a human executes): inject secrets, run
+  migrations, run a staging validation.
+
+Then stand down — re-engagement must be frictionless (operator says "do X", you
+resume cold from `memory/` + `io/ledger/`). If the test does NOT pass, say so and
+name what remains; do not declare done. (Merge-to-main still goes through PR +
+branch protection — CONSTRAINTS #10/#17 — never an autonomous merge.)
+
 ## Failure modes
 
 - **Not on a wave/* branch:** abort with clear instruction to check out the

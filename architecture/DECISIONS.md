@@ -550,6 +550,64 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-026: Adopt the AEPG Engine — `/arib-engine` Skill + Folded Constraints (v3.11.0)
+
+**Status:** Accepted   **Date:** 2026-06-17
+
+**Context.** An external "Autonomous Engineering & Product-Led Growth" (AEPG)
+methodology — reverse-engineered from a real autonomous campaign — was
+reviewed (four-lens: standalone critique, CCM comparison, adversarial
+red-team, adoptability). Verdict: genuinely strong and *complementary* to
+CCM. AEPG is the runtime *behavioral loop* (discover→ship→verify→integrate→
+record, self-pacing, adversarial discovery, evidence-based closure); CCM is
+the static *substrate* (skills, agents, fail-closed hooks, memory, the wave
+overlay). The review found three real gaps in CCM that AEPG fills, and two
+load-bearing **risks** in AEPG that must NOT be imported as-is.
+
+**Decision.** Adopt AEPG into CCM in two forms:
+1. **`/arib-engine`** — the 27th branded skill: an autonomous-campaign engine,
+   STANDALONE by default, orchestrating the arib-* family only on explicit
+   opt-in (`--with-arib-family`). Scheduling is delegated to Anthropic's
+   `/loop` (the skill owns WHAT each tick does, not the cadence). Full
+   rationale in `reference/AUTONOMOUS_ENGINEERING_METHODOLOGY.md`.
+2. **Folded into CCM proper:** the adversarial `find→refute→confirm` filter
+   added to `/arib-deep-audit` (Step 2.5); constraints **#14** (verify the
+   claim before fixing), **#15** (environment-stability gate / `TZ=UTC` /
+   fail-loud), **#16** (prove backward-compat on data-touching change), and
+   **#17** (merge-to-main is never autonomous); and an evidence-based
+   **closure test + decision-list hand-off** in `/arib-wave-end` (Step 8).
+
+**Risk adaptations (the two things we deliberately did NOT import).**
+- **No auto-merge-on-green default.** AEPG arms a poller that self-merges on
+  green; that converts CI (a fallible advisory signal) into release authority
+  and collides with CCM governance. Constraint #17 + the skill keep merge
+  behind PR review + branch protection; an auto-merge poller is opt-in only,
+  enforced-branch-protection only, and never for money/auth/compliance PRs.
+- **Security findings are exempt from the reject-biased majority filter.**
+  AEPG's "default to not-a-bug, keep on majority" is the wrong loss function
+  for authz/IDOR/tenant-isolation/money/secrets (a false negative is
+  catastrophic). The skill and deep-audit Step 2.5 escalate a single credible
+  safety-critical finding to a mandatory ground-truth read, never dropping it
+  on a vote. Also documented: same-model skeptics have correlated errors
+  (agreement ≠ independence), and "diminishing returns" measures the agent's
+  search running dry, not a clean codebase.
+
+**Consequences.** CCM gains a continuous-campaign primitive (the cousin of the
+wave overlay) and three hard-won quality rules, without taking on AEPG's
+unsafe defaults. Skills 26→27, skillCategories 7→8 (+Engine). The reference
+doc carries an honest provenance/risk appendix so the methodology isn't
+trusted past its n=1 evidence base.
+
+**Alternatives rejected.**
+- *Paste the skill as-authored* — it imports auto-merge + the security
+  majority-vote; adapted instead.
+- *Fold the sections without shipping the skill* — loses the headline
+  capability (the autonomous loop) the operator asked for.
+- *A bespoke scheduler inside the skill* — `/loop` already owns cadence;
+  reinventing it is the ceremony AEPG §3.3 itself warns against.
+
+---
+
 # ADR-025: The Integrity Audit — Fail Closed, Validate Dynamically, Docs Match Disk (v3.10.0)
 
 **Status:** Accepted   **Date:** 2026-06-10
@@ -1363,6 +1421,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-023 | Invocation telemetry + upgrade re-verification (v3.8.4) | Accepted | 2026-06-03 |
 | ADR-024 | Fetch CCM directly from GitHub (`ccm-fetch.sh`) (v3.9.0) | Accepted | 2026-06-03 |
 | ADR-025 | The Integrity audit — fail closed, dynamic validation, docs match disk (v3.10.0) | Accepted | 2026-06-10 |
+| ADR-026 | Adopt the AEPG engine — `/arib-engine` skill + folded constraints (v3.11.0) | Accepted | 2026-06-17 |
 
 ---
 

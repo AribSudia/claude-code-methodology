@@ -2,14 +2,14 @@
 
 ### An opinionated methodology and skill pack for Claude Code
 
-A convention layer for serious work in Claude Code: 26 branded `/arib-*` skills,
+A convention layer for serious work in Claude Code: 27 branded `/arib-*` skills,
 15 specialist agents, kernel-level enforcement hooks, path-scoped rules, persistent
 memory files, a 5-mode bootstrap, a wave delivery overlay with auto-advancing
 execution, a compliance layer, and full CI/PR governance. It is **not** a runtime,
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.10.0 "Integrity"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.11.0 "Engine"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -135,7 +135,7 @@ This methodology solves all of that:
 | Every session starts from scratch| **Session Protocol** — read → work → write    |
 | Architecture decisions are lost  | **Decision Records** — permanent, searchable  |
 | "It works on my machine"         | **Implementation Layer** — docker, runbook, env|
-| Skills are shallow checklists    | **Deep Skills** — 26 comprehensive reference skills |
+| Skills are shallow checklists    | **Deep Skills** — 27 comprehensive reference skills |
 
 ---
 
@@ -151,8 +151,8 @@ This methodology solves all of that:
 ║  L3 — HOOKS           Safety gates & automation             ║
 ║  PreToolUse · PostToolUse · PreCommit · Notification        ║
 ╠══════════════════════════════════════════════════════════════╣
-║  L2 — SKILLS          26 branded /arib-* deep reference     ║
-║  Session·Dev·Check·Wave·Audit·Docs (26 skills)           ║
+║  L2 — SKILLS          27 branded /arib-* deep reference     ║
+║  Session·Dev·Check·Wave·Audit·Docs·Engine (27 skills)    ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  I/O — CHANNEL        Inter-agent nervous system            ║
 ║  Requests · Results · Signals · Pipelines · Threads         ║
@@ -273,7 +273,7 @@ protocol can use the explicit prompts in `bootstrap/RUN.md`.)
 
 ---
 
-## The 26 /arib-* Skills
+## The 27 /arib-* Skills
 
 All skills are deep reference documents (250-800 lines each) with decision trees, examples, templates, edge cases, and common mistakes. They live in `.claude/skills/arib-*/SKILL.md`.
 
@@ -313,7 +313,13 @@ All skills are deep reference documents (250-800 lines each) with decision trees
 | **Doc Generator** | `/arib-docs-generate <target>` | Generate or update documentation — JSDoc, README, architecture docs | 575 |
 | **Language/i18n** | `/arib-docs-language <component>` | Universal i18n audit — RTL, LTR, CJK, Indic, fonts, formatting | 766 |
 
-**Total**: 26 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
+### Engine Skill
+
+| Skill | Command | What It Does | Lines |
+|-------|---------|-------------|-------|
+| **Engine** | `/arib-engine [goal] [--with-arib-family]` | Autonomous campaign engine — discover→ship→verify→close across many reversible PRs; adversarial find→refute→confirm sweeps; evidence-based closure + decision-list hand-off. Standalone by default; pace it with `/loop`. Merge-to-main stays a human/branch-protection gate (never auto-merges). | 250 |
+
+**Total**: 27 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
 
 ### How to Use a Skill
 
@@ -500,7 +506,7 @@ claude-code-methodology/                  ← v3.10 "Integrity" — counts live 
 │   ├── settings.json                     ← Permissions + hook wiring (committed)
 │   ├── settings.local.json               ← Personal overrides (gitignored)
 │   ├── rules/                            ← 9 path-scoped rule files (load on matching paths)
-│   ├── skills/                           ← 26 branded skills (/arib-*) — see the table above
+│   ├── skills/                           ← 27 branded skills (/arib-*) — see the table above
 │   ├── agents/                           ← 15 specialist agent definitions — see the table above
 │   ├── hooks/                            ← 7 hook scripts + lib/common.sh (exit-2 blocking gates)
 │   ├── commands/                         ← legacy commands (deprecated; kept for back-compat)
@@ -636,7 +642,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.9.0 | Live Update | Fetch CCM directly from GitHub — `scripts/ccm-fetch.sh` + curl one-liner; no manual re-download (ADR-024) |
 | v3.9.1 | Live Update | Doc fix: curl one-liner is the universal entry — old versions without a local `ccm-fetch.sh` upgrade with the same line |
 | v3.9.2 | Live Update | `ccm-fetch.sh` UX: explicit 2-step output (source vs. project root), reads the deployed version, install-vs-upgrade-aware hand-off |
-| **v3.10.0** | **Integrity** | **Six-agent full audit + fix wave: hooks fail CLOSED (jq, rm bypasses, MultiEdit, wave gate), validate-system.sh rewritten dynamic, docs-match-disk sweep, ccm-fetch hardening, dead infra deleted (ADR-025)** |
+| v3.10.0 | Integrity | Six-agent full audit + fix wave: hooks fail CLOSED, validate-system.sh rewritten dynamic, docs-match-disk sweep, ccm-fetch hardening, dead infra deleted (ADR-025) |
+| **v3.11.0** | **Engine** | **`/arib-engine` autonomous-campaign skill (standalone-first, opt-in family orchestration, `/loop`-paced, merge stays a human gate) + folded AEPG into CCM: adversarial find→refute→confirm in deep-audit, verify-before-fix/`TZ=UTC`/backward-compat + no-autonomous-merge constraints (#14–#17), wave-end closure test + decision-list (ADR-026)** |
 
 ---
 

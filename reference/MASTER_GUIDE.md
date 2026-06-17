@@ -14,7 +14,7 @@ CLAUDE.md (Master Brain)
     ├── memory/          → WHAT happened (status, notes, logs, decisions)
     ├── operations/      → HOW work flows (git, deploy, ops log)
     ├── .claude/agents/  → WHO does the work (15 specialist agents)
-    ├── .claude/skills/  → KNOWLEDGE packs (26 auto-invoked skills)
+    ├── .claude/skills/  → KNOWLEDGE packs (27 auto-invoked skills)
     ├── .claude/hooks/   → SAFETY gates (pre/post action checks)
     ├── .claude/commands/ → SHORTCUTS (8 slash commands)
     ├── hooks/           → PROTOCOL docs for safety system

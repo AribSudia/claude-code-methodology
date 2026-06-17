@@ -8,7 +8,7 @@
 
 **v3.8.0 "Lean Core"** — always-on session-start context cut from ~45.9K to
 ~8K tokens (82%) by moving reference docs to on-demand loading. CCM is the
-methodology repo itself (self-hosted): 26 skills, 15 agents, 9 rules, 7 hook
+methodology repo itself (self-hosted): 27 skills, 15 agents, 9 rules, 7 hook
 scripts, real CI/PR governance on `main`.
 
 ## Active Milestone
