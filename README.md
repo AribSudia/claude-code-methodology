@@ -379,6 +379,13 @@ human checkpoint:
   (skeptics that default to "not a bug", then a ground-truth code read) — but
   security/authz/tenant-isolation/money/secrets findings are **exempt** from that
   reject-biased filter, because there a false negative is catastrophic.
+- **It drills deeper when a finding is uncertain — the fetcher.** Sweeps find breadth;
+  when one finding is unclear (root cause unknown, skeptics split, reachability uncertain,
+  or a high-stakes class), the engine fans out an on-demand **single-finding deep-dive** —
+  trace to source, map blast radius, reproduce, pull `git`/incident history, inspect real
+  data — and only then decides. Drilling is *mandatory* for high-stakes findings and
+  *bounded* (it stops at REAL / false-positive / escalate, never rabbit-holes). It feeds
+  both the decision (§ship/escalate/decline) and the `verification-agent`.
 - **It escalates the calls it shouldn't make.** Compliance/tax/pricing/policy decisions,
   secrets, and breaking migrations are handed back as a structured **decision list**
   (question + options + recommendation + what's de-risked), not decided unilaterally.

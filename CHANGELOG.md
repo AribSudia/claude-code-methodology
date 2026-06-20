@@ -26,6 +26,12 @@ to **auto-merge by default**, gated on that reconciliation rather than on CI alo
   fires only on blocking-green AND a `verification-agent` RECONCILED verdict. New
   `--hold-merge` flag holds every PR for a human (replaces the old opt-in `--auto-merge`).
   A new **RECONCILE** beat sits between VERIFY and INTEGRATE in the loop.
+- **`/arib-engine` drill-deeper fetcher** (Step 3) — an on-demand, single-finding
+  deep-dive (trace to source · map blast radius · reproduce · pull git/incident history ·
+  inspect real data) for findings that are unclear after `confirm` (unknown root cause,
+  split refute, uncertain reachability) or high-stakes (where drilling is *mandatory*).
+  Bounded (REAL / false-positive / escalate — no rabbit-holing); feeds DECIDE + the
+  `verification-agent`. Mirrored in `reference/AUTONOMOUS_ENGINEERING_METHODOLOGY.md` §3.3.
 - **Waves** become a **reference-based dynamic loop**: `/arib-wave-run` gains per-step
   reconciliation + a wave-level validate→re-engineer loop (PLAN.md = the success
   contract); `/arib-wave-end` auto-merges by default after deep-audit PASS + wave-scope

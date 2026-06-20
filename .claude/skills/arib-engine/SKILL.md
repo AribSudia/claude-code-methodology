@@ -162,8 +162,8 @@ Per dimension, **find → refute → confirm**:
    - **Safety-critical exception (CCM rule):** for security/authz, tenant-isolation,
      money/tax, and secrets, a false negative is catastrophic and a false positive is
      cheap — so the reject-biased majority filter does **not** apply. A single *credible*
-     finding in these classes is escalated to a mandatory ground-truth read (Step 3.3)
-     and, if real, to §6.1 escalation. Never let a majority-vote suppress a plausible
+     finding in these classes triggers a **mandatory drill-deeper** (the fetcher, below)
+     and, if real, §6.1 escalation. Never let a majority-vote suppress a plausible
      authz/tenant leak.
 3. **Confirm** — dedup, rank by severity, and **verify each survivor against the actual
    code yourself** before acting. Adversarial agents cut noise; they don't replace your
@@ -172,6 +172,50 @@ Per dimension, **find → refute → confirm**:
 4. **Loop until dry** — keep sweeping a dimension until consecutive rounds find nothing
    new. (Honest limit: empty sweeps mean *your lenses* ran dry, not that the code is
    clean — see the closure test's caveat, Step 8.)
+
+### Drill deeper on a finding — the fetcher (on demand)
+
+Sweeps surface breadth; some findings need **depth** before you can decide. The
+**fetcher** is an on-demand, single-finding deep-dive: when one finding is still unclear
+after `confirm`, *fetch more* — trace it to ground truth, then decide. It is the
+deliberate "go deeper here" move, the depth counterpart to the breadth sweep.
+
+**Drill when** (any of):
+- **root cause is unclear** — you're looking at a symptom and don't yet know the cause;
+- **the refute pass split** — skeptics disagreed (some confirm, some reject);
+- **reachability/exploitability is uncertain** — is this path actually reachable with
+  attacker-controlled / real input?
+- **high-stakes class** (security/authz, tenant isolation, money/tax, secrets) — drilling
+  is **mandatory** here (this is the "mandatory ground-truth read" the safety exception
+  calls for), never decided on a vote;
+- **the verification-agent will need evidence** you don't have yet (repro, blast radius).
+
+**Don't drill** a trivial or compiler-provable finding — that's the ceremony §3.3 / "go
+solo" warns against. Depth is for the genuinely uncertain or high-stakes, not everything.
+
+**How the fetcher fetches** (scope it to the ONE finding; use the **Workflow** tool when
+the dive is multi-angle):
+1. **Trace to source** — follow the call graph from the symptom to the definition; read
+   the real implementation, not the summary.
+2. **Map blast radius** — enumerate call sites / consumers / contracts the finding (and
+   its fix) would touch.
+3. **Reproduce** — write the failing test or run the actual path; prove the finding is
+   real and observable, not theorized.
+4. **Pull history** — `git blame` / `git log` the lines, and check `memory/bugs_and_fixes.md`
+   + `io/ledger/` for prior incidents or a deliberate decision (it may be intentional).
+5. **Inspect real data/schema** — for data/money/migration findings, look at the actual
+   shape, not the assumed one.
+
+**Bounded — don't rabbit-hole.** Drill until the finding is *firmly classified*: REAL
+(root cause + repro + blast radius known → DECIDE/ship), FALSE-POSITIVE (reject loudly,
+record why), or UNRESOLVABLE-BY-DRILLING (→ escalate / HOLD; needs an operator or external
+input). If a dive isn't converging on one of those, stop and escalate — more drilling
+won't manufacture certainty.
+
+**Output** — a focused evidence bundle (root cause, repro, blast radius, history) that
+feeds DECIDE (§6) and arms the `verification-agent` (Step 5) with what it needs to reconcile.
+
+---
 
 Go **solo** (no fan-out) for a single-file fact, a precise mechanical edit, or an
 empirical task whose verification *is* the build (e.g. a dependency bump proven by
@@ -245,7 +289,8 @@ Keep the trunk deployable at every merge.
      boundaries.
 2. **Verify before fixing** — every finding (even an agent-"confirmed" one) is a claim
    until checked against code. Rejecting false positives is as valuable as fixing bugs.
-   (CONSTRAINTS rule.)
+   If a check can't classify it confidently, **drill deeper (the Step 3 fetcher)** before
+   deciding — never Ship/Escalate/Decline on a hunch. (CONSTRAINTS rule.)
 3. **No unverifiable churn** — if you can't prove it's safe, find the clean verifiable
    path or escalate with specifics. (E.g. prefer a clean upstream upgrade that *removes* a
    vulnerable transitive over a forced override you can't validate.)

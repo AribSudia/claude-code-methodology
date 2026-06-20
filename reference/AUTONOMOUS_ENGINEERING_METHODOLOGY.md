@@ -131,6 +131,15 @@ mechanical edit, or an empirical task whose *verification is the build itself* (
 dependency bump proven by type-check + tests — spawning agents to "assess" what the
 compiler proves is ceremony).
 
+**Drill deeper (the fetcher) — depth on demand.** Sweeps give breadth; some findings need
+depth before a decision. When one finding is still unclear after `confirm` — root cause
+unknown, skeptics split, reachability uncertain, or a high-stakes class (where drilling is
+*mandatory*) — run a focused single-finding deep-dive: trace to source, map blast radius,
+reproduce, pull `git`/incident history, inspect real data. Bound it: stop at REAL /
+false-positive / escalate; don't rabbit-hole, and don't drill trivial or compiler-provable
+findings (that's the ceremony above). The output is an evidence bundle that feeds the
+decision and the pre-merge reconciliation.
+
 ---
 
 ## 4. Verification Gates — The Quality Bar
