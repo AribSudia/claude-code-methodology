@@ -34,6 +34,22 @@ See `waves/README.md` for the full wave concept and lifecycle.
 
 ## Protocol
 
+### Step 0 — Requirement lock (auto-chained, idempotent — v3.17.0/ADR-032)
+
+Before scaffolding, run the pre-wave requirement lock:
+
+```text
+- waves/<wave-name>/PLAN.md already exists? → SKIP (operator locked it manually). Proceed.
+- else → auto-invoke /arib-wave-plan <goal>:
+    Act 1 (grill): derive requirements from codebase + memory, record decisions+evidence.
+                   Unattended mode → assume-and-record; escalate only unknowable-from-code.
+    Act 2 (Codex): independent adversarial review until sign-off → PLAN-REVIEW-LOG.md.
+                   Codex absent → log honestly + flag the wave `merge-hold: human-review`.
+```
+
+This is the one auto-chained pre-flight; the rest of the wave is unchanged. See
+`.claude/skills/arib-wave-plan/SKILL.md`.
+
 ### Step 1 — Pre-flight
 
 ```text
