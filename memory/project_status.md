@@ -6,25 +6,18 @@
 
 ## Current Phase
 
-**v3.14.0 "Engineering Manager"** — CCM gains a conductor: the `engineer-manager`
-agent (ADR-029) commands the 16 specialists via `/arib-build` (decompose →
-dispatch → integrate → reconcile). Extracted from the developer "Synthesis"
-plan; external-tool absorptions staged/deferred (honesty principle). Self-hosted:
-28 skills, 17 agents, 9 rules, 8 hook scripts, CI/PR governance on `main`.
+**v3.15.0 "Unattended"** (first `/loop` "Synthesis"-backlog batch): unattended
+autonomy mode (rule-17 re-cast — intervention only on explicit command, floor
+kept; ADR-030) + native `/arib-nestjs` & `/arib-postgres` Stack skills.
+Self-hosted: 30 skills, 17 agents, 9 rules, 8 hook scripts, CI/PR on `main`.
 
-## Current State (summary — see CHANGELOG for history)
+## Current State
 
-- Team: 17 agents, now *commanded* — `engineer-manager` is the only `Task`-holder; merge authority unchanged (CONSTRAINTS #17/#18).
-- Enforcement: hooks `exit 2` (49/49 + jq fail-closed); memory freshness gated (ADR-028).
-- Self-policing: `validate-coherence.sh` + `drift-detect.sh` + 5 CI checks.
-- Engine + Waves + Build: auto-merge gated on reconciliation; high-stakes always human.
-
-## Blockers
-
-- None. (Token target: 8K; current ~7.9K, under budget.)
+- Team of 17 *commanded* by `engineer-manager` (only `Task`-holder); merge authority
+  unchanged (#17/#18). Enforcement real (hooks exit 2, 49/49); memory freshness gated.
+  Engine/Waves/Build auto-merge gated on reconciliation, high-stakes always human.
 
 ## Next Tasks
 
-- STAGE tier when tools arrive (rtk hook, native code-graph, Ponytail); DEFER ECC
-  cherry-picks (need repo+license). Optional: `/arib-wave-plan` requirement-lock,
-  health KPIs from `invocations.jsonl`, `memory/INDEX.md`.
+- `/loop` STAGE: rtk hook, native code-graph (`/arib-graph`), Ponytail; `/arib-wave-plan`.
+  DEFER: ECC repo cherry-picks (need repo+license). No blockers.

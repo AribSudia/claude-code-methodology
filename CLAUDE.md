@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.14.0 "Engineering Manager"         |
+| Version           | 3.15.0 "Unattended"                  |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |
@@ -90,7 +90,7 @@ your-project/
 |   |-- settings.json                  <- Permissions, hooks (committed)
 |   |-- settings.local.json            <- Personal overrides (gitignored)
 |   |-- rules/                         <- Path-scoped modular rules
-|   |-- skills/                        <- Branded skills (/arib-*) — 28 total
+|   |-- skills/                        <- Branded skills (/arib-*) — 30 total
 |   |   |-- arib-session-start/SKILL.md
 |   |   |-- arib-dev-feature/SKILL.md
 |   |   +-- (26 more skills)
@@ -144,6 +144,8 @@ your-project/
 | /arib-docs-language         | Docs       | i18n/RTL/LTR compliance (generic)                    |
 | /arib-engine                | Engine     | Autonomous campaign — discovers its own backlog; auto-merge gated on reconciliation, high-stakes human |
 | /arib-build                 | Engine     | Command the team for a KNOWN goal — dispatches engineer-manager (decompose→dispatch→integrate→reconcile) |
+| /arib-nestjs                | Stack      | NestJS patterns + review (DI, DTO/validation, guards, N+1, security) |
+| /arib-postgres              | Stack      | PostgreSQL optimization & safety (indexes, plans, online migrations, RLS) |
 
 ---
 

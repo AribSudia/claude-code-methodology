@@ -550,6 +550,51 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-030: Unattended Autonomy Mode + Native NestJS/Postgres Skills (v3.15.0)
+
+**Status:** Accepted   **Date:** 2026-06-20
+
+**Context.** Two owner directives. (1) Re-cast the developer plan's §3.7 "single human
+trigger / maximize auto-fire" doctrine — which the v3.14 review had *rejected* as
+written — into an explicit **mode of autonomous operation without intervention**, where
+the agent only pauses for a human on an *explicit* operator command, and record the
+decision in the ledger. (2) For the deferred ECC cherry-pick `/arib-nestjs` (and its
+sibling `/arib-postgres`): rather than leave them blocked on an unsourceable repo, **build
+them natively** ("it's a published concept") or graft.
+
+**Decision.**
+1. **Unattended mode** (`operations/AUTONOMY_MODE.md` §9). When `CCM_UNATTENDED=1` (atop
+   `CCM_AUTONOMY=1`): no solicited pauses; where the decisive protocol would "ask one
+   question on genuine ambiguity," the agent instead **assumes-and-records** (rationale to
+   the run log / `PLAN.md`) and proceeds. The pause-for-human path fires ONLY on an
+   explicit operator command (`intervene`/`pause`/`hold` or `CCM_INTERVENE=1`). The
+   **structural floor is unchanged and is NOT "intervention"**: branch protection +
+   CONSTRAINTS #17 (high-stakes human merge), the autonomy guard caps, and the fail-closed
+   hooks all remain — the owner can lift only the high-stakes merge floor, only by an
+   explicit per-run override. This honors "no babysitting" without removing the controls
+   that protect `main`. The decision is logged in `io/ledger/`.
+2. **Native `/arib-nestjs` + `/arib-postgres`** (Stack category; skills 28→30). The ECC
+   assets aren't on disk and the v3.14 review correctly refused to fabricate them — so
+   these are **authored from first principles** (NestJS/Postgres are published, well-known
+   patterns), MIT, self-contained, composing with `security-auditor` / `database-guardian`
+   / `performance`. An optional, attributed "intelligent graft" path lets a verified ECC
+   asset later *enrich* (not replace) them, with no runtime dependency on ECC.
+
+**Consequences.** CCM gains a genuine hands-off mode for long autonomous runs that is still
+auditable (every assumption recorded) and still safe (the floor holds). The ECC gap closes
+honestly — real authored capability instead of a deferred copy or a faked one. `skillCategories`
+8→9 ("Stack"). This is the first batch of the `/loop`-driven backlog execution; rtk,
+code-graph, ponytail, and `/arib-wave-plan` follow in later iterations.
+
+**Alternatives rejected.**
+- *Adopt §3.7 verbatim (auto-fire everything incl. merge).* Removes the high-stakes gate;
+  unattended mode keeps it as infrastructure, not a prompt.
+- *Keep `/arib-nestjs` deferred.* The owner is right that it's a published concept —
+  authoring it natively is honest and unblocks it without the ECC repo.
+- *Fake-copy ECC content.* Honesty principle forbids; we author or we graft-with-attribution.
+
+---
+
 # ADR-029: The Engineer-Manager — a Conductor Agent for the Specialist Team (v3.14.0)
 
 **Status:** Accepted   **Date:** 2026-06-20
@@ -1578,6 +1623,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-027 | Reconciliation-gated auto-merge + `verification-agent` (v3.12.0) | Accepted | 2026-06-20 |
 | ADR-028 | Memory freshness is CI-enforced (v3.13.0) | Accepted | 2026-06-20 |
 | ADR-029 | Engineer-manager conductor agent + `/arib-build` (v3.14.0) | Accepted | 2026-06-20 |
+| ADR-030 | Unattended autonomy mode + native `/arib-nestjs` & `/arib-postgres` (v3.15.0) | Accepted | 2026-06-20 |
 
 ---
 
