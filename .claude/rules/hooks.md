@@ -17,6 +17,7 @@ Unlike CLAUDE.md rules (which are guidance), hooks ALWAYS run - guaranteed.
 | `SessionStart`     | Session begins                   | Context load, CLAUDE.md drift check    |
 | `UserPromptSubmit` | User submits a prompt            | Invocation telemetry (`/arib-*`). stdout is INJECTED into context — telemetry hooks must stay silent |
 | `PreToolUse`       | Before a tool executes           | Block secrets / dangerous bash / OWASP / path scoping / wave gate; autonomy guard |
+| `PostToolUse`      | After a tool completes           | **Advisory only (v3.18.0)** — `compress-output.sh` (rtk-eligible Bash) + `ponytail-lite.sh` (over-engineering tripwire on edits). Exit 0 always; NEVER blocks (the blocking gate is `PreToolUse`) |
 | `Stop`             | Claude finishes responding       | Session-end bookkeeping                |
 | `Notification`     | Claude Code notifications        | Webhook fan-out                        |
 

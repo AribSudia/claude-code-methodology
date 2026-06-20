@@ -21,8 +21,8 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.17.0                                                   |
-| **Codename**         | "Requirement Lock"                                   |
+| **Version**          | 3.18.0                                                   |
+| **Codename**         | "Compression & Lean"                                |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
 | **Last Updated**     | 2026-06-20                                               |
@@ -117,7 +117,7 @@ The system is built on five engineering principles:
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
-║  L2 — SKILLS                    31 auto-invoked skills      ║
+║  L2 — SKILLS                    32 auto-invoked skills      ║
 ║  6 categories: Session · Dev · Wave · Check · CI · Docs             ║
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
@@ -172,10 +172,10 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 │   ├── archive/                 ← Completed pairs
 │   └── .templates/ (9)          ← Pre-built templates
 │
-├── .claude/                     ← CLAUDE CODE CONFIG (28 files)
+├── .claude/                     ← CLAUDE CODE CONFIG
 │   ├── settings.json            ← Permissions, hooks, context
-│   ├── agents/ (16)             ← Specialist agent definitions
-│   ├── skills/ (27)             ← Branded /arib-* skills (canonical)
+│   ├── agents/ (17)             ← Specialist agent definitions
+│   ├── skills/ (32)             ← Branded /arib-* skills (canonical)
 │   ├── hooks/                   ← Hook scripts
 │   └── commands/                ← Legacy commands (deprecated)
 │
@@ -225,7 +225,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 │
 ├── reference/                   ← READ-ONLY REFERENCE (2 files)
 │   ├── MASTER_GUIDE.md          ← Quick reference card
-│   └── SKILLS_REGISTRY.md       ← 21 skills catalog
+│   └── SKILLS_REGISTRY.md       ← 32 skills catalog
 │
 ├── scripts/                     ← AUTOMATION (5 files)
 │   ├── git-setup.sh             ← One-time repo setup
@@ -588,7 +588,7 @@ old system never had.
 
 | #  | Feature                          | Component                  | Description                                                |
 |----|----------------------------------|----------------------------|------------------------------------------------------------|
-| 75 | **Skills Registry**              | reference/SKILLS_REGISTRY.md | 21 skills cataloged with install commands                |
+| 75 | **Skills Registry**              | reference/SKILLS_REGISTRY.md | 32 skills cataloged with install commands                |
 | 76 | **15 Category A Skills**         | Coding excellence          | Frontend, debugging, TDD, security, architecture, review   |
 | 77 | **6 Category B Skills**          | Design & automation        | Research, marketing, UI/UX, persistent memory              |
 | 78 | **Auto-Activation System**       | SKILL.md description field | Skills activate on keyword match — no explicit invocation  |

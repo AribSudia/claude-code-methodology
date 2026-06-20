@@ -153,6 +153,35 @@ else
 fi
 
 echo ""
+echo "5c. PostToolUse advisory hooks (v3.18.0 — must exit 0, never block)"
+# compress-output: no-op/advisory, always exit 0.
+COMP_TMP="$(mktemp)"
+printf '{"tool_name":"Bash","tool_input":{"command":"pnpm test"}}' > "$COMP_TMP"
+run_test "compress-output: noisy bash (exit 0)" "$HOOKS/compress-output.sh" "$COMP_TMP" 0
+printf '{"tool_name":"Bash","tool_input":{"command":"ls"}}' > "$COMP_TMP"
+run_test "compress-output: non-noisy bash (exit 0)" "$HOOKS/compress-output.sh" "$COMP_TMP" 0
+rm -f "$COMP_TMP"
+# ponytail-lite: advisory, always exit 0 (warns to stderr on a smell; never blocks).
+PONY_TMP="$(mktemp)"
+jq -nc '{tool_name:"Write",tool_input:{file_path:"src/x.ts",content:"interface G {}\nclass GFactory { m(){return 1} }"}}' > "$PONY_TMP"
+run_test "ponytail-lite: over-abstraction smell (exit 0)" "$HOOKS/ponytail-lite.sh" "$PONY_TMP" 0
+jq -nc '{tool_name:"Write",tool_input:{file_path:"src/n.ts",content:"export const add=(a,b)=>a+b;"}}' > "$PONY_TMP"
+run_test "ponytail-lite: clean code (exit 0)" "$HOOKS/ponytail-lite.sh" "$PONY_TMP" 0
+jq -nc '{tool_name:"Write",tool_input:{file_path:"src/x.module.ts",content:"interface X {}\nclass XFactory {}"}}' > "$PONY_TMP"
+run_test "ponytail-lite: NestJS ceremony exempt (exit 0)" "$HOOKS/ponytail-lite.sh" "$PONY_TMP" 0
+rm -f "$PONY_TMP"
+# The ponytail-lite smell case MUST emit a warning to stderr (advisory works).
+PONY_TMP="$(mktemp)"
+jq -nc '{tool_name:"Write",tool_input:{file_path:"src/x.ts",content:"interface G {}\nclass GFactory { m(){return 1} }"}}' > "$PONY_TMP"
+PONY_ERR="$(cat "$PONY_TMP" | "$HOOKS/ponytail-lite.sh" 2>&1 1>/dev/null)"
+if printf '%s' "$PONY_ERR" | grep -q 'ponytail-lite'; then
+  PASS=$((PASS+1)); printf '  [PASS] %-50s warns on smell\n' "ponytail-lite: advisory fires"
+else
+  FAIL=$((FAIL+1)); FAIL_LIST+=("ponytail-lite advisory did not fire"); printf '  [FAIL] %-50s no warning\n' "ponytail-lite: advisory fires"
+fi
+rm -f "$PONY_TMP"
+
+echo ""
 echo "6. Autonomy guard"
 # Run against an ISOLATED CCM_ROOT (temp dir) so "fresh state" is genuinely
 # fresh. Otherwise the guard's BLOCK-rate check counts the BLOCK events the

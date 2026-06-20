@@ -550,6 +550,45 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-033: Output Compression + Lean Guard — CCM's First PostToolUse Hooks (v3.18.0)
+
+**Status:** Accepted   **Date:** 2026-06-21
+
+**Context.** `/loop` backlog iteration 3 absorbs rtk (output compression) and Ponytail
+(over-engineering guard). Neither tool is installed here, so the honesty principle forbids
+shipping them as live capability — but the *graceful shells* and the *native* equivalents
+are buildable, and these become **CCM's first PostToolUse hooks** (advisory, wired via
+`.claude/settings.json`).
+
+**Decision.**
+1. **`compress-output.sh`** (PostToolUse · Bash) — recognizes rtk-eligible noisy commands
+   (build/test/install). **Pure no-op when rtk is absent** (the default) and makes **no
+   token-savings claim** (`implementation/RTK_PROFILES.md` documents the run-through-rtk
+   pattern + why there are no numbers). Always exit 0.
+2. **`ponytail-lite.sh`** (PostToolUse · Write/Edit/MultiEdit) — a **native, conservative,
+   high-precision** over-engineering tripwire (NOT the Ponytail tool): warns (stderr) only
+   on a small edit that adds a single-use interface/abstract + Factory/Wrapper, exempting
+   `*.module/*.controller/*.service/*.guard/*.dto`, test/generated paths, and
+   `// ccm-ceremony:`. Always exit 0; near-silent by design.
+3. **`/arib-dev-lean`** (32nd skill) — the on-demand bloat review (YAGNI ladder →
+   delete-list + watch-list), advisory, never auto-deletes, never strips legitimate
+   framework structure.
+4. **security-auditor hardened natively** — absorbed authz-in-guard, tenant RLS,
+   DTO/whitelist, lock-aware migration concepts (the ECC `security-review` graft was
+   unsourceable; authored, not copied).
+
+**Both hooks are ADVISORY (exit 0) and do not touch the fail-closed `pre-tool-use.sh`
+gate.** `hookScripts` 8→10; `skills` 31→32. Hook regression suite 50→57.
+
+**Alternatives rejected.**
+- *Ship rtk/Ponytail as live features.* Absent here → would violate the honesty principle.
+- *Wrap the Ponytail tool.* Not installed; a native conservative heuristic + the
+  `/arib-dev-lean` review is honest and dependency-free.
+- *Make the new hooks blocking.* They are quality/advisory, not safety — exit 0 only; the
+  one fail-closed gate stays `pre-tool-use.sh`.
+
+---
+
 # ADR-032: Pre-Wave Requirement Lock — `/arib-wave-plan` (v3.17.0)
 
 **Status:** Accepted   **Date:** 2026-06-21
@@ -1703,6 +1742,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-030 | Unattended autonomy mode + native `/arib-nestjs` & `/arib-postgres` (v3.15.0) | Accepted | 2026-06-20 |
 | ADR-031 | `/arib-build` scales its reach — Workflow + `/loop` escalation (v3.16.0) | Accepted | 2026-06-21 |
 | ADR-032 | Pre-wave requirement lock — `/arib-wave-plan` (v3.17.0) | Accepted | 2026-06-21 |
+| ADR-033 | Output compression + lean guard — first PostToolUse hooks (v3.18.0) | Accepted | 2026-06-21 |
 
 ---
 

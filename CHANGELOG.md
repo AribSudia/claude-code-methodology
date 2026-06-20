@@ -7,6 +7,33 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.18.0] "Compression & Lean" — 2026-06-21
+
+`/loop` backlog iteration 3 — rtk + Ponytail absorbed honestly as CCM's **first PostToolUse
+hooks** (advisory, exit-0). ADR-033.
+
+### Added — PostToolUse advisory hooks (`hookScripts` 8→10)
+- `.claude/hooks/compress-output.sh` (Bash) — flags rtk-eligible noisy build/test commands;
+  **pure no-op when rtk is absent (default), no token-savings claim**. See
+  `implementation/RTK_PROFILES.md` (run-through-rtk pattern; no unmeasured numbers).
+- `.claude/hooks/ponytail-lite.sh` (Write/Edit/MultiEdit) — **native, conservative**
+  over-engineering tripwire (NOT the Ponytail tool): warns only on a small single-use
+  interface/abstract + Factory/Wrapper, exempts `*.module/*.service/*.guard/*.dto`,
+  tests, and `// ccm-ceremony:`. Near-silent by design.
+- Both ADVISORY (always exit 0); they do NOT touch the fail-closed `pre-tool-use.sh` gate.
+  Wired via `.claude/settings.json`. Hook suite 50→57.
+
+### Added — `/arib-dev-lean` (32nd skill)
+- On-demand over-engineering review (YAGNI ladder → delete-list + watch-list); advisory,
+  never auto-deletes, never strips legitimate framework structure. The companion to the
+  `ponytail-lite` tripwire.
+
+### Changed — security-auditor hardened natively
+- Absorbed authz-in-guard, tenant RLS, DTO/validation-whitelist, lock-aware migration
+  concepts (ECC `security-review` was unsourceable — authored, not copied).
+
+---
+
 ## [3.17.0] "Requirement Lock" — 2026-06-21
 
 `/loop` backlog iteration 2: the pre-wave adversarial requirement lock (grill-me-codex

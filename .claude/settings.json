@@ -98,6 +98,28 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/compress-output.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/ponytail-lite.sh",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "_context_note": "v3.8.0 Lean Core (ADR-019): always-on context is the minimum Claude must see BEFORE acting — master brain, hard rules, current state, last handoff. Everything else (TECH_STACK, CONTEXT_MAP, ERROR_PATTERNS, DECISIONS, SECURITY, API_ENDPOINTS, EVENT_SCHEMA, MIGRATION_ORDER, WORKFLOW) is read ON DEMAND by the skill/agent/hook that needs it — see CLAUDE.md section 6. This cut always-on cost ~45.9K -> ~8.3K (82%).",

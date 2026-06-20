@@ -2,14 +2,14 @@
 
 ### An opinionated methodology and skill pack for Claude Code
 
-A convention layer for serious work in Claude Code: 31 branded `/arib-*` skills,
+A convention layer for serious work in Claude Code: 32 branded `/arib-*` skills,
 17 specialist agents (incl. a project engineering manager), kernel-level enforcement hooks, path-scoped rules, persistent
 memory files, a 5-mode bootstrap, a wave delivery overlay with auto-advancing
 execution, a compliance layer, and full CI/PR governance. It is **not** a runtime,
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.17.0 "Requirement Lock"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.18.0 "Compression & Lean"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -151,8 +151,8 @@ This methodology solves all of that:
 ║  L3 — HOOKS           Safety gates & automation             ║
 ║  PreToolUse · PostToolUse · PreCommit · Notification        ║
 ╠══════════════════════════════════════════════════════════════╣
-║  L2 — SKILLS          31 branded /arib-* deep reference     ║
-║  Session·Dev·Check·Wave·Audit·CI·Docs·Engine·Stack (31) ║
+║  L2 — SKILLS          32 branded /arib-* deep reference     ║
+║  Session·Dev·Check·Wave·Audit·CI·Docs·Engine·Stack (32) ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  I/O — CHANNEL        Inter-agent nervous system            ║
 ║  Requests · Results · Signals · Pipelines · Threads         ║
@@ -273,7 +273,7 @@ protocol can use the explicit prompts in `bootstrap/RUN.md`.)
 
 ---
 
-## The 31 /arib-* Skills
+## The 32 /arib-* Skills
 
 All skills are deep reference documents (250-800 lines each) with decision trees, examples, templates, edge cases, and common mistakes. They live in `.claude/skills/arib-*/SKILL.md`.
 
@@ -327,7 +327,7 @@ All skills are deep reference documents (250-800 lines each) with decision trees
 | **NestJS** | `/arib-nestjs [module\|feature\|review <path>]` | NestJS architecture/patterns + review — modules/DI, DTO+validation, guards/interceptors/pipes/filters, config/lifecycle, data-access at scale, testing, security pitfalls. Authored natively (MIT). | 90 |
 | **Postgres** | `/arib-postgres [review\|index\|tune]` | PostgreSQL optimization & safety — indexing, `EXPLAIN` plans, N+1, safe online (lock-aware) migrations, pooling, JSONB, RLS multi-tenancy. Authored natively (MIT). | 85 |
 
-**Total**: 31 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
+**Total**: 32 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
 
 ### How to Use a Skill
 
@@ -578,9 +578,9 @@ claude-code-methodology/                  ← v3.10 "Integrity" — counts live 
 │   ├── settings.json                     ← Permissions + hook wiring (committed)
 │   ├── settings.local.json               ← Personal overrides (gitignored)
 │   ├── rules/                            ← 9 path-scoped rule files (load on matching paths)
-│   ├── skills/                           ← 31 branded skills (/arib-*) — see the table above
+│   ├── skills/                           ← 32 branded skills (/arib-*) — see the table above
 │   ├── agents/                           ← 17 specialist agent definitions — see the table above
-│   ├── hooks/                            ← 7 hook scripts + lib/common.sh (exit-2 blocking gates)
+│   ├── hooks/                            ← 9 hook scripts + lib/common.sh (exit-2 blocking gates)
 │   ├── commands/                         ← legacy commands (deprecated; kept for back-compat)
 │   └── output-styles/                    ← Custom output styles
 │
@@ -721,7 +721,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.14.0 | Engineering Manager | `engineer-manager` (17th agent) — the conductor that commands the team: decompose→dispatch→integrate→reconcile; first agent with `Task`. New `/arib-build` skill. Extracted from the "Synthesis" plan; external-tool absorptions staged/deferred. CONSTRAINTS #18, ADR-029 |
 | v3.15.0 | Unattended | Unattended autonomy mode (rule-17 re-cast: no solicited pauses; intervention only on explicit command; structural floor kept) + native `/arib-nestjs` & `/arib-postgres` Stack skills (ECC cherry-picks authored, not faked). ADR-030 |
 | v3.16.0 | Reach | `/arib-build` scales its own execution — inline → parallel **Workflow** → **`/loop`** campaign, "runs if it needs." Reach scales, authority doesn't (same #17 gate). ADR-031 |
-| **v3.17.0** | **Requirement Lock** | **`/arib-wave-plan` (31st skill) — pre-wave adversarial requirement lock: grill (derive from code) + Codex independent review; auto-chained from `/arib-wave-start`; merge-hold if no Codex (no faked review). ADR-032** |
+| v3.17.0 | Requirement Lock | `/arib-wave-plan` (31st skill) — pre-wave adversarial requirement lock: grill (derive from code) + Codex independent review; auto-chained from `/arib-wave-start`; merge-hold if no Codex. ADR-032 |
+| **v3.18.0** | **Compression & Lean** | **CCM's first PostToolUse hooks (advisory, exit-0): `compress-output.sh` (rtk graceful, no-op without it) + native `ponytail-lite.sh` over-engineering tripwire; `/arib-dev-lean` review (32nd skill); security-auditor hardened natively. Honest: absent tools never claimed live. ADR-033** |
 
 ---
 

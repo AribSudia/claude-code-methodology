@@ -6,10 +6,10 @@
 
 ## Current Phase
 
-**v3.17.0 "Requirement Lock"** (`/loop` backlog iter 2): `/arib-wave-plan` —
-pre-wave grill (derive requirements from code) + Codex adversarial review,
-auto-chained from `/arib-wave-start`, merge-hold if no Codex. ADR-032.
-Self-hosted: 31 skills, 17 agents, 9 rules, 8 hook scripts, CI/PR on `main`.
+**v3.18.0 "Compression & Lean"** (`/loop` iter 3, ADR-033): CCM's first PostToolUse
+hooks (advisory exit-0) — `compress-output.sh` (rtk graceful) + native
+`ponytail-lite.sh`; `/arib-dev-lean` review; security-auditor hardened natively.
+Self-hosted: 32 skills, 17 agents, 9 rules, 10 hook scripts, CI/PR on `main`.
 
 ## Current State
 
