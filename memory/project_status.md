@@ -6,10 +6,10 @@
 
 ## Current Phase
 
-**v3.16.0 "Reach"**: `/arib-build` scales its execution — inline → **Workflow**
-(broad) → **`/loop`** (campaign), "runs if it needs"; reach scales, authority
-doesn't (same #17 gate). ADR-031. Self-hosted: 30 skills, 17 agents, 9 rules,
-8 hook scripts, CI/PR on `main`.
+**v3.17.0 "Requirement Lock"** (`/loop` backlog iter 2): `/arib-wave-plan` —
+pre-wave grill (derive requirements from code) + Codex adversarial review,
+auto-chained from `/arib-wave-start`, merge-hold if no Codex. ADR-032.
+Self-hosted: 31 skills, 17 agents, 9 rules, 8 hook scripts, CI/PR on `main`.
 
 ## Current State
 

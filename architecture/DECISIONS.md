@@ -550,6 +550,44 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-032: Pre-Wave Requirement Lock — `/arib-wave-plan` (v3.17.0)
+
+**Status:** Accepted   **Date:** 2026-06-21
+
+**Context.** The wave lifecycle (`wave-start → run → end`) scaffolds a plan but never
+**adversarially locks the requirements** before code is written — the gap the developer
+plan attributed to grill-me-codex. Codex CLI is present in this environment (verified), so
+the independent-second-model review is actually runnable.
+
+**Decision.** New `/arib-wave-plan` skill (31st), auto-chained idempotently from
+`/arib-wave-start` (Step 0):
+- **Act 1 — Grill (native):** derive each requirement/design decision from ground truth
+  (codebase, `/arib-graph` when present, `memory/`, DECISIONS) with evidence recorded in
+  `PLAN.md`. Attended → confirm the *what*; unattended (ADR-030) → assume-and-record and
+  proceed, escalating only genuinely-unknowable business/compliance calls. Rejects the
+  developer plan's "auto-answer everything, never pause even on the unknowable."
+- **Act 2 — Adversarial review:** hand the locked plan to **Codex** (`codex exec
+  --sandbox read-only`) across rounds until sign-off → `PLAN-REVIEW-LOG.md`. **Codex
+  absent → no faked review:** log the skip, optionally run a *labeled-non-independent*
+  CCM-internal pass, and flag the wave **`merge-hold: human-review`**.
+- **Merge-hold via the existing gate, not a new authority:** the flag is honored by
+  CONSTRAINTS #17 + the wave-end gate; high-stakes always holds regardless of Act 2. No
+  new always-on constraint was added (budget discipline) — the rule lives in the skill +
+  wave-start + this ADR.
+
+**Consequences.** Every wave now passes an adversarial requirement lock before execution;
+an un-independently-reviewed plan never auto-merges to `main`. `skills` 30→31. Honest when
+the second model is down (merge-hold, never a fake sign-off).
+
+**Alternatives rejected.**
+- *The plan's "Act 1 auto-answers everything, never pauses."* A grill that never grills is
+  theater; unattended mode's assume-and-record + escalate-the-unknowable is the safe form.
+- *A new always-on CONSTRAINT #19 for the merge-hold.* Costs always-on budget; #17 + the
+  wave-end gate already enforce it. Documented in the skill instead.
+- *Fake Act 2 when Codex is absent.* Honesty principle forbids; merge-hold is the default.
+
+---
+
 # ADR-031: /arib-build Scales Its Own Reach — Workflow + /loop Escalation (v3.16.0)
 
 **Status:** Accepted   **Date:** 2026-06-21
@@ -1664,6 +1702,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-029 | Engineer-manager conductor agent + `/arib-build` (v3.14.0) | Accepted | 2026-06-20 |
 | ADR-030 | Unattended autonomy mode + native `/arib-nestjs` & `/arib-postgres` (v3.15.0) | Accepted | 2026-06-20 |
 | ADR-031 | `/arib-build` scales its reach — Workflow + `/loop` escalation (v3.16.0) | Accepted | 2026-06-21 |
+| ADR-032 | Pre-wave requirement lock — `/arib-wave-plan` (v3.17.0) | Accepted | 2026-06-21 |
 
 ---
 

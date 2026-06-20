@@ -7,6 +7,26 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.17.0] "Requirement Lock" — 2026-06-21
+
+`/loop` backlog iteration 2: the pre-wave adversarial requirement lock (grill-me-codex
+absorption). ADR-032.
+
+### Added — `/arib-wave-plan` (31st skill)
+- **Act 1 — Grill (native):** derives each requirement from ground truth (codebase,
+  `/arib-graph` when present, `memory/`, DECISIONS) with evidence recorded in `PLAN.md`.
+  Attended → confirm the *what*; unattended (ADR-030) → assume-and-record + escalate only
+  genuinely-unknowable business/compliance calls. (Rejects the plan's "auto-answer
+  everything, never pause.")
+- **Act 2 — Adversarial review:** hands the locked plan to **Codex** (`codex exec
+  --sandbox read-only`, present) across rounds until sign-off → `PLAN-REVIEW-LOG.md`.
+  **Codex absent → no fake review:** log the skip, flag the wave `merge-hold: human-review`.
+- **Auto-chained from `/arib-wave-start`** as an idempotent Step 0 (skips if `PLAN.md`
+  exists). Merge-hold is honored by the existing CONSTRAINTS #17 + wave-end gate — no new
+  always-on constraint (budget discipline). `skills` 30→31.
+
+---
+
 ## [3.16.0] "Reach" — 2026-06-21
 
 `/arib-build` now scales its own execution. ADR-031.
