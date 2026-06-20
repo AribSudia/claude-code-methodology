@@ -780,3 +780,24 @@ Date: 2026-04-15
 - **Internal utilities** — Functions with no external input or data access
 - **Documentation** — README updates, code comments
 - **Testing infrastructure** — Test harness improvements (unless test data at risk)
+
+## Absorbed hardening concepts (native — v3.18.0, ADR-033)
+
+CCM's own deepening of the OWASP gate (the developer plan proposed grafting ECC's
+`security-review`/AgentShield; that asset is unsourceable, so these are authored natively,
+no external dependency). Add these to the checklist where the stack matches:
+
+- **Authorization at the boundary, not in the service.** For NestJS, enforce authz in a
+  **Guard** (and the query layer), never as an afterthought inside business logic — the
+  usual source of IDOR / inconsistent enforcement. (See `/arib-nestjs` §3, §5.)
+- **Tenant isolation is defense-in-depth.** App-layer tenant check **and** Postgres
+  **Row-Level Security** on `tenant_id` — an app bug must not leak across tenants. (See
+  `/arib-postgres` §6.) Tenant isolation is a high-stakes class — its changes hold merge.
+- **Input boundary = a typed DTO + global validation whitelist** (mass-assignment defense),
+  never an entity as a request type; never return the raw entity (field leakage).
+- **No secrets in code or logs**; validated config at boot (fail fast on a missing env var).
+- **Lock-aware, reversible migrations** on data-touching change (route through
+  `database-guardian`; see `/arib-postgres` §3).
+
+These compose with the existing OWASP Top-10 checklist above — they sharpen it for
+NestJS/Postgres stacks; they do not replace it.

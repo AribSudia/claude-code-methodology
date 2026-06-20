@@ -21,8 +21,8 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.17.0                                                   |
-| **Codename**         | "Requirement Lock"                                   |
+| **Version**          | 3.18.0                                                   |
+| **Codename**         | "Compression & Lean"                                |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
 | **Last Updated**     | 2026-06-20                                               |
@@ -117,7 +117,7 @@ The system is built on five engineering principles:
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
-║  L2 — SKILLS                    31 auto-invoked skills      ║
+║  L2 — SKILLS                    32 auto-invoked skills      ║
 ║  6 categories: Session · Dev · Wave · Check · CI · Docs             ║
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣

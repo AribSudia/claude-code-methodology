@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.17.0 "Requirement Lock"            |
+| Version           | 3.18.0 "Compression & Lean"          |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |
@@ -90,7 +90,7 @@ your-project/
 |   |-- settings.json                  <- Permissions, hooks (committed)
 |   |-- settings.local.json            <- Personal overrides (gitignored)
 |   |-- rules/                         <- Path-scoped modular rules
-|   |-- skills/                        <- Branded skills (/arib-*) — 31 total
+|   |-- skills/                        <- Branded skills (/arib-*) — 32 total
 |   |   |-- arib-session-start/SKILL.md
 |   |   |-- arib-dev-feature/SKILL.md
 |   |   +-- (26 more skills)
@@ -123,6 +123,7 @@ your-project/
 | /arib-dev-feature           | Dev        | New feature with branch + TDD                        |
 | /arib-dev-debug             | Dev        | Scientific debugging (3 hypotheses)                  |
 | /arib-dev-review            | Dev        | Code review with parallel agent fan-out              |
+| /arib-dev-lean              | Dev        | Over-engineering review — delete-list of bloat (advisory) |
 | /arib-wave-plan             | Wave       | Pre-wave requirement lock — grill + Codex adversarial review; merge-hold if no Codex |
 | /arib-wave-start            | Wave       | Start a wave (auto-chains wave-plan; architect + planner) |
 | /arib-wave-run              | Wave       | Execute wave steps with auto-advance (pauses only on issue/checkpoint) |
