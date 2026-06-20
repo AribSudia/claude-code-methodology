@@ -580,7 +580,7 @@ claude-code-methodology/                  ← v3.10 "Integrity" — counts live 
 │   ├── rules/                            ← 9 path-scoped rule files (load on matching paths)
 │   ├── skills/                           ← 32 branded skills (/arib-*) — see the table above
 │   ├── agents/                           ← 17 specialist agent definitions — see the table above
-│   ├── hooks/                            ← 7 hook scripts + lib/common.sh (exit-2 blocking gates)
+│   ├── hooks/                            ← 9 hook scripts + lib/common.sh (exit-2 blocking gates)
 │   ├── commands/                         ← legacy commands (deprecated; kept for back-compat)
 │   └── output-styles/                    ← Custom output styles
 │

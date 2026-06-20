@@ -1,6 +1,6 @@
 {
   "version": "3.18.0",
-  "generated_from_git": "7d44da1",
+  "generated_from_git": "24dc921",
   "_note": "sha256 of shipped framework files. Project-state files are intentionally absent. Regenerate with scripts/gen-template-hashes.sh on each release.",
   "files": {
     ".claude/agents/accessibility.md": "6db83f097bcc0d6ca02d44f47fd452720b26eff4c47b4cfaa2c5bb0730b0e2ce",
@@ -91,9 +91,9 @@
     "CLAUDE.md": "dbfdb30df9ccfcde265d995896b21ab04ecbff8dab32b1907826bf670fd81eba",
     "CODE_OF_CONDUCT.md": "2f1b94fb897338de2f8673ca303da8ea0fcf19f02e57e0f2a7b950d1c2310b60",
     "CONTRIBUTING.md": "814ee05cea9bffe715464e988d5ebdb572542091b37076cd4960f3f9e78a291d",
-    "README.md": "3a04e139e98af13d8c82350c4f3532a1e7ac61ac1cfbe84b1d54af96104f7848",
+    "README.md": "07c0460b4b693491db4a4f47319907e555ba58c0227f2e8688023603c89110f7",
     "SECURITY.md": "972bfc1e929baf5f45733d72d447d97ebced9eedcf28a1675811c9c02273644e",
-    "SYSTEM.md": "bf17e83766a98d9d3c02346a2e49558829929ff842aa9a0599a44e8345a7e190",
+    "SYSTEM.md": "0b0437e459d0e8eaf4f4a964cae940a78025148c69d7d8ced98ae1e660d1bdfb",
     "Training/01-SYSTEM-OVERVIEW.md": "905e428b389beb27784b45c1290650339e19b803f766e53b65cfaf420ec9e235",
     "Training/02-AGENTS-MANUAL.md": "a6c25fe78cbdc736cb8d290c9258042197dd620eaee1acd7cc21e30160736681",
     "Training/03-SKILLS-MANUAL.md": "45c550f0db3558762cb53cb5f435f4736e97aacc6b69e2837f115277c3628b90",
