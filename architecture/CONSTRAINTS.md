@@ -308,8 +308,8 @@ when modifying the methodology repo or shipping a new release.
     `on_failure`), a `checkpoint: true` step, genuine ambiguity, a
     blocker, an autonomy-guard trip, or a user interrupt. An
     unverifiable step is treated as ambiguity (pause), never falsely
-    marked PASS. `/arib-wave-end` remains an explicit gate — it is the
-    finish line, not a between-steps prompt.
+    marked PASS. `/arib-wave-end` is the close gate — per #17 it
+    auto-merges on reconciliation, holding for high-stakes/`--hold-merge`.
 
 14. **Verify the claim before fixing.** Every finding — a lint hit, a
     scanner result, even an agent that "confirmed" a bug — is a CLAIM
@@ -334,15 +334,17 @@ when modifying the methodology repo or shipping a new release.
     a regression test. Schema stays additive/back-compatible absent a
     migration plan.
 
-17. **Merge-to-main is never autonomous.** No skill, agent, or engine
-    (incl. `/arib-engine`) merges to `main` on its own authority —
-    CI-green is advisory, not release authority (only as strong as the
-    weakest gate). Merge goes through PR review + branch protection
-    (constraint #10). An auto-merge-on-green poller is allowed ONLY behind
-    explicit opt-in AND enforced branch protection, NEVER for
-    money/auth/compliance PRs.
+17. **Auto-merge is gated on reconciliation, never on CI alone.** Auto-merge
+    is the default for `/arib-engine` and Waves (v3.12.0) but fires ONLY when
+    all hold: (a) blocking CI green; (b) `verification-agent` = **RECONCILED**
+    (CI-green alone is not release authority); (c) NOT a high-stakes class.
+    **High-stakes — money/tax, auth, tenant isolation, compliance, secrets,
+    breaking migrations — ALWAYS hold for a human.** `GAP` re-engineers;
+    `HOLD` → human. `--hold-merge` / Waves opt-out holds every PR. Branch
+    protection (#10) still governs and is never bypassed.
 
-> Constraints #14–#17 codify the AEPG adoption — see ADR-026.
+> Constraints #14–#17 = AEPG adoption (ADR-026); #17's reconciliation-gated
+> auto-merge + `verification-agent` = ADR-027.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: arib-engine
-argument-hint: "[<goal/scope>] [--with-arib-family] [--auto-merge]"
+argument-hint: "[<goal/scope>] [--with-arib-family] [--hold-merge]"
 description: >-
   Engine | Autonomous engineering & product-led-growth campaign engine. Use when the
   operator hands over ownership and wants continuous, self-running improvement of a
@@ -14,8 +14,10 @@ description: >-
   evidence-based closure test (handing the operator a decision list). STANDALONE by
   default (runs the whole methodology self-contained); orchestrates the broader arib-*
   family ONLY on explicit opt-in (`--with-arib-family`, or "leverage the arib family").
-  Self-pacing is delegated to Anthropic's `/loop`; merge-to-main stays a human/branch-
-  protection gate per CCM governance (never auto-merges by default). Prefer for sustained
+  Self-pacing is delegated to Anthropic's `/loop`. Merge is AUTO by default — gated on
+  all-green blocking checks AND a `verification-agent` RECONCILED verdict (intent ↔ actual
+  change), with high-stakes classes (money/auth/compliance/secrets/breaking-migration)
+  always held for a human; `--hold-merge` holds every PR for review. Prefer for sustained
   campaigns; for a single quick fix, just do the fix. Full reference:
   reference/AUTONOMOUS_ENGINEERING_METHODOLOGY.md.
 ---
@@ -36,8 +38,10 @@ reviewable PRs, and **decides when it's done on the evidence** — never deferri
 > autonomous campaign (a multi-tenant SaaS) — an n=1 of the *survivors*. Treat the
 > structure as reusable and the specifics as illustrative; it is strongest in the
 > regime it came from (small-to-mid SaaS, fast comprehensive CI, single agent). The
-> safety carve-outs below (merge stays a human gate; security exempt from the reject
-> filter) exist because the source method's defaults were not safe to import wholesale.
+> safety carve-outs below (merge is reconciliation-gated with high-stakes always held for
+> a human; security exempt from the reject filter) exist because the source method's
+> defaults — auto-merge on CI-green alone, a reject-biased majority for security — were
+> not safe to import wholesale.
 
 > **CCM citizen.** This skill is the *continuous-campaign* cousin of the wave overlay
 > (`/arib-wave-start → /arib-wave-run → /arib-wave-end`). A wave executes a *known*
@@ -50,7 +54,7 @@ reviewable PRs, and **decides when it's done on the evidence** — never deferri
 
 ## Step 0 — Parse the mandate
 
-`/arib-engine [goal/scope] [--with-arib-family] [--auto-merge]`
+`/arib-engine [goal/scope] [--with-arib-family] [--hold-merge]`
 
 - **With a goal** (e.g. `/arib-engine harden auth + payments`) → focus the loop on it.
 - **No goal / "make it all"** → autonomous mode: find and ship every genuinely valuable,
@@ -106,13 +110,23 @@ A loop without gates ships regressions confidently. Before the first change, con
 Each iteration = one coherent unit:
 
 ```
-ORIENT → DISCOVER → DECIDE → ACT → VERIFY → INTEGRATE → RECORD → (self-pace)
+ORIENT → DISCOVER → DECIDE → ACT → VERIFY → RECONCILE → INTEGRATE → RECORD → (self-pace)
+                                              │
+                                   verification-agent: intent ↔ actual change
+                                   RECONCILED → merge · GAP → back to ACT · HOLD → human
 ```
+
+**RECONCILE is the closing check before every merge.** After the gates pass (VERIFY),
+the gates have only proven the change is *internally correct* — not that it actually
+resolved the thing DISCOVER found. Dispatch `verification-agent` (unit scope) to reconcile
+the discovered finding against the shipped diff (see Step 5). Its verdict — not CI-green
+alone — authorizes the merge.
 
 **Self-pacing is delegated to `/loop`** (Step 0) — do NOT re-implement `ScheduleWakeup`
 cadence here. Within a tick, gate progress on *observable events*, never idle-poll:
 - After a PR is **merged** (Step 5 gate), the merge event — not a timer — drives the next
-  iteration. Ship → (human/branch-protection merges, or `--auto-merge` if opted in) →
+  iteration. Ship → RECONCILE (verification-agent) → auto-merge on RECONCILED (or hold
+  for a human under `--hold-merge` / high-stakes) →
   the next tick orients on the new trunk.
 - *Only when invoked standalone under `CCM_AUTONOMY`* (not under `/loop`): fall back to a
   long heartbeat (~1200–1800s — the same wake-up mechanism `/loop` uses) behind the
@@ -195,17 +209,26 @@ Top-down by severity. Never bundle unrelated concerns (split a compliance fix fr
 dependency bump). Honest description: what / why / risk / how-verified / any called-out
 inference or limitation. Conventional commit + required trailers; never commit secrets.
 
-**Merge is a gate, not an autonomous step (CCM governance).** Open the PR and report it
-green-and-ready. Then:
-- **Default:** merge to `main` is performed by **PR review + branch protection**
-  (CONSTRAINTS #10) — the engine does **not** self-merge. This is the deliberate
-  human-in-the-loop boundary; pause here, like the wave-end gate.
-- **`--auto-merge` opt-in:** only if the operator explicitly opted in *and* branch
-  protection enforces the required checks, may you arm a `run_in_background` poller that
-  merges (`gh pr merge --squash`) **when the BLOCKING checks are green** and **refuses on
-  any blocking failure** (leaving the PR open). Distinguish blocking from known-flaky
-  non-blocking checks. Never merge red; never merge a PR touching money/auth/compliance
-  without a human, even under `--auto-merge`.
+**The merge gate — AUTO by default, gated on reconciliation (not on CI alone).** Open the
+PR, then run the gate. Merge fires automatically when **all three** hold:
+
+1. **Blocking checks green** — every *blocking* CI check passes (distinguish blocking from
+   known-flaky/non-blocking; never merge red).
+2. **`verification-agent` returns RECONCILED** (Step 2 RECONCILE; unit scope) — the diff
+   actually resolves the discovered finding, fully and only. A **GAP** verdict loops back
+   to ACT with the listed gaps and re-runs the gate; **HOLD** routes to a human.
+3. **Not a high-stakes class** — a change touching **money/tax, auth/authz, tenant
+   isolation, compliance, secrets, or a breaking migration ALWAYS holds for human review**,
+   regardless of mode. This carve-out is non-negotiable (CONSTRAINTS #17).
+
+When all three hold, arm a `run_in_background` poller that `gh pr merge --squash` once the
+blocking set is green and **refuses on any blocking failure** (leaving the PR open for
+inspection). Branch protection still governs: if the project requires a human review, that
+wins — auto-merge never bypasses it.
+
+- **`--hold-merge`** flips every PR back to a human gate (open green-and-ready, do not
+  self-merge) — use it when you want to eyeball each one. The high-stakes carve-out (#3)
+  holds with or without the flag.
 
 Keep the trunk deployable at every merge.
 
@@ -301,10 +324,12 @@ hands it directs within it.
 
 ## Anti-patterns (this engine refuses to)
 
-Merge on red or without gates · **auto-merge to main by default / treat CI-green as
-release authority** · ship unverifiable change on faith · bundle unrelated concerns · act
-on a finding without verifying it's real · **let a reject-biased majority suppress a
-plausible security/authz finding** · unilaterally change compliance/tax/pricing/security ·
+Merge on red or without gates · **treat CI-green ALONE as merge authority** (auto-merge
+without a `verification-agent` RECONCILED verdict) · **auto-merge a high-stakes class**
+(money/auth/compliance/secrets/migration) without a human · ship unverifiable change on
+faith · bundle unrelated concerns · act on a finding without verifying it's real · **let a
+reject-biased majority suppress a plausible security/authz finding** · unilaterally change
+compliance/tax/pricing/security ·
 gold-plate or manufacture low-value churn · defer the "is it done?" judgment to the human
 when the evidence decides it · idle-poll and burn cost instead of event-gating · lose
 hard-won knowledge by not recording it.

@@ -1,7 +1,7 @@
 ---
 name: arib-wave-end
 argument-hint: ""
-description: "Wave | Close a wave — deep-audit gate, stakeholder report, audit-hash tag"
+description: "Wave | Close a wave — deep-audit gate + wave-level reconciliation (verification-agent: objective ↔ achieved), stakeholder report, audit-hash tag, then AUTO-MERGE by default (held for a human on --hold-merge / high-stakes / GAP / BLOCK)"
 ---
 
 # Wave End — /arib-wave-end
@@ -75,9 +75,19 @@ Append one line to `waves/WAVE_HISTORY.md`:
 2026-05-08 | <wave-name> | PASS | abc1234 | <one-line summary>
 ```
 
-### Step 5 — Tag the audit hash
+### Step 5 — Tag the audit hash (only after RECONCILED)
+
+> **Fail-closed ordering (v3.12.0).** The audit hash is the *merge lock* — the
+> `pre-tool-use.sh` wave-merge gate releases on its **presence** in `io/ledger/`,
+> with no knowledge of the reconciliation verdict. So the hash must NOT be tagged
+> until the wave-level **`verification-agent` returns RECONCILED** (Step 7 /
+> `/arib-wave-run` Step N+1). Run that reconciliation FIRST; on **GAP** re-engineer
+> (no hash yet), on **HOLD** escalate (no hash yet). Writing the hash is what
+> authorizes auto-merge, so the hook enforces reconciliation transitively — the gate
+> stays fail-closed, not prose-only.
 
 ```bash
+# Pre-req: wave-level reconciliation = RECONCILED (else do NOT run this step).
 AUDIT_HASH="$(grep -oE 'audit-hash: [a-f0-9]+' io/ledger/audit-*.md | tail -1 | awk '{print $2}')"
 git tag "wave/<name>/end-${AUDIT_HASH:0:8}"
 ```
@@ -94,12 +104,36 @@ Announce:
 - Audit verdict: PASS.
 - Tag: `wave/<name>/end-<hash>`.
 - REPORT.md ready for stakeholder distribution.
-- Next: open PR to main (or merge directly per project policy).
+- Next: Step 7 (merge — auto by default).
 
-### Step 7 — (Optional) Open PR
+### Step 7 — Merge (AUTO by default, v3.12.0)
 
-If `gh` is available and the project uses PR workflow, offer to open the PR
-with REPORT.md as the body.
+The deep audit (Step 2) proved quality; the wave-level **reconciliation**
+(`verification-agent`, wave scope — run in `/arib-wave-run` Step N+1, or run it
+here if wave-end was invoked directly) proved the wave's **objective was actually
+achieved**. With both green, merging is the evidence-driven default:
+
+```text
+Open the PR (gh, REPORT.md as body), then AUTO-MERGE when ALL hold:
+  - deep-audit verdict PASS (audit hash tagged — satisfies the wave-merge hook)
+  - verification-agent (wave scope) = RECONCILED (objective ↔ achieved)
+  - composed-trunk gate green
+  - blocking CI checks green
+  - NOT a high-stakes class (money/auth/compliance/secrets/breaking-migration)
+→ gh pr merge --squash   (branch protection still governs; if it requires a
+  human review, that wins — auto-merge never bypasses it)
+```
+
+**Hold for a human instead when ANY of:**
+- `--hold-merge` was passed (or `hold_merge: true` in PLAN.md) — open the PR,
+  report "ready to merge," stop.
+- the change is a **high-stakes class** — always a human gate (CONSTRAINTS #17).
+- deep-audit is BLOCK, or reconciliation is GAP/HOLD — do not merge; re-engineer
+  (GAP) or escalate (HOLD/BLOCK).
+
+> The wave-merge hook (`pre-tool-use.sh`) blocks `gh pr merge` from a `wave/*`
+> branch until the audit hash is in `io/ledger/`. Step 5 wrote it, so the
+> auto-merge passes the gate — the gate and auto-merge compose, they don't fight.
 
 ### Step 8 — Closure test + decision-list hand-off (campaign-level, ADR-026)
 
@@ -132,8 +166,10 @@ your recommendation, and what you've already de-risked. Separate:
 
 Then stand down — re-engagement must be frictionless (operator says "do X", you
 resume cold from `memory/` + `io/ledger/`). If the test does NOT pass, say so and
-name what remains; do not declare done. (Merge-to-main still goes through PR +
-branch protection — CONSTRAINTS #10/#17 — never an autonomous merge.)
+name what remains; do not declare done. (Merge follows Step 7: auto by default
+once reconciliation + audit + composed-trunk are green, held for a human only on
+`--hold-merge` / high-stakes / GAP / BLOCK — CONSTRAINTS #17. Branch protection
+still governs the actual merge.)
 
 ## Failure modes
 
@@ -291,10 +327,18 @@ Tag commit as wave/<name>/end-<short-hash>
 Commit + announce
     |
     v
-[Project uses PR workflow?]
+verification-agent (wave scope): objective ↔ achieved?
     |
-    +-- yes --> offer to gh pr create with REPORT body
-    +-- no  --> done; user merges per their workflow
+    +-- GAP   --> re-engineer the gap, re-validate (loop)
+    +-- HOLD  --> human (high-stakes / non-convergence)
+    +-- RECONCILED
+            |
+            v
+        [--hold-merge OR high-stakes class?]
+            |
+            +-- yes --> open PR (REPORT body); hold for a human
+            +-- no  --> open PR + AUTO-MERGE (--squash) on blocking-green
+                        (branch protection still governs)
 ```
 
 ## Edge cases

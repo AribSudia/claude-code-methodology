@@ -1,7 +1,7 @@
 ---
 name: arib-wave-run
 argument-hint: "[<wave-name> | --from <step-number>]"
-description: "Wave | Execute wave steps with auto-advance — runs the plan, pausing only on issues or checkpoints"
+description: "Wave | Execute wave steps as a reference-based dynamic loop — auto-advance, per-step + wave-level reconciliation (verification-agent: objective ↔ achieved), re-engineer on GAP, AUTO-MERGE on RECONCILED by default (--hold-merge / high-stakes hold for a human)"
 ---
 
 # Wave Run — /arib-wave-run
@@ -46,7 +46,39 @@ between steps; act and report.
 /arib-wave-run                    # execute current wave from step 1
 /arib-wave-run payment-integration # execute a named wave
 /arib-wave-run --from 3           # resume from step 3 (skip 1-2)
+/arib-wave-run --hold-merge       # validate + re-engineer, but hold merge for a human
 ```
+
+## The wave as a reference-based dynamic loop (v3.12.0)
+
+A wave is the **reference-based** cousin of the `/arib-engine` loop. Where the
+engine *discovers* its own backlog, a wave's `PLAN.md` **is** the reference —
+the success contract. The execution is a self-correcting loop, not a one-shot
+pass:
+
+```
+        ┌──────────────────────────────────────────────────────┐
+        ▼                                                        │
+  build step → gates (done_when) → RECONCILE (verification-agent) │
+        │                              │                          │
+        │                       GAP → re-engineer ────────────────┘
+        │                              │
+        │                       RECONCILED → next step
+        ▼
+  all steps done → WAVE-LEVEL reconcile (objective ↔ achieved, composed-trunk)
+        │                              │
+        │                       GAP → re-engineer the gap ──┐
+        │                                                    │ (re-validate)
+        │                       RECONCILED → wave-end + AUTO-MERGE (default)
+        ▼                       HOLD → human (high-stakes / opt-out)
+```
+
+The loop is **dynamic and adaptive**: each GAP verdict lists the specific unmet
+criteria, so the next pass targets them rather than blindly retrying — and it's
+bounded (2 non-converging rounds → escalate). `PLAN.md` stays the single source
+of truth throughout; the loop runs until the plan's exit-criteria are evidenced,
+then merges. (Contrast `/arib-engine`, whose loop runs until a *discovered*
+backlog is exhausted.)
 
 ## The auto-advance contract
 
@@ -78,8 +110,13 @@ sees progress; the human is not a gate between every step.
    (wall-clock cap, calls-since-commit cap, BLOCK-rate cap), the wave
    pauses per the guard's message.
 6. **User interrupt.** The user says stop.
+7. **Reconciliation HOLD.** `verification-agent` (Step c2 / Step N+1) returns
+   HOLD — a high-stakes class (money/auth/compliance/secrets/migration) or
+   non-convergence after 2 GAP rounds. Pause for the human.
 
-Anything else → keep advancing.
+A reconciliation **GAP** is NOT a pause — it loops back to re-engineer the
+step/build against the listed gaps, then re-validates. Anything else → keep
+advancing.
 
 ## Protocol
 
@@ -116,8 +153,15 @@ b. Execute the work to achieve S.goal. Use the right specialist agent
      - schema/migration → database-guardian
 c. Verify S.done_when:
      - run the named command / test / file check
-     - if it passes → step PASS
+     - if it passes → gates PASS (internal correctness proven)
      - if it fails → honor S.on_failure (halt | retry-once | skip-and-flag)
+c2. RECONCILE the step (reference-based): dispatch `verification-agent` (wave
+    scope, this step) to check S.goal ↔ what was actually built —
+    `done_when` green proves the gate ran, not that the step's GOAL was met.
+     - RECONCILED → step PASS, advance
+     - GAP → re-engineer THIS step against the listed gaps, re-run (c), re-run
+       (c2). Bounded: after 2 non-converging GAPs, escalate (treat as halt).
+     - HOLD (high-stakes / ambiguous) → pause for the human
 d. Commit the step's work:
      git commit -m "feat(wave/<name>): step <i> — <title>"
      (one commit per step keeps the autonomy guard's calls-since-commit
@@ -130,22 +174,42 @@ f. Is S a checkpoint, or is S+1 a checkpoint?
 g. Repeat.
 ```
 
-### Step N+1 — Hand off to wave-end
+### Step N+1 — Wave-level reconciliation, then close (auto-merge by default)
 
-When the last step completes (or all remaining steps are SKIPPED/done):
+When the last step completes (or all remaining steps are SKIPPED/done), run the
+**wave-level reconciliation** — the dynamic validate → re-engineer loop:
 
 ```text
-- Report: "All N steps complete (PASS: x, SKIPPED: y). Wave ready to close."
-- AUTO-RUN /arib-wave-end? NO — wave-end is itself a checkpoint-class
-  action (it gates the merge to main). Pause here and recommend
-  /arib-wave-end. This is the one mandatory human-visible gate at the
-  end of the flow.
+1. Dispatch verification-agent (WAVE scope): reconcile the wave's OBJECTIVE +
+   every step's done_when/exit-criteria (PLAN.md is the reference) against what
+   the composed wave branch actually achieved. Re-run the COMPOSED-trunk gate
+   (not just per-step green).
+2. On the verdict:
+   - RECONCILED → the wave met its objective. AUTO-RUN /arib-wave-end, which
+     writes the deep-audit hash and AUTO-MERGES (default — see below).
+   - GAP → re-engineer the build against the listed gaps (loop back into the
+     relevant step), then re-run this wave-level reconciliation. Adaptive:
+     each pass targets the specific unmet criteria, not a blind retry.
+   - HOLD → pause for the human (high-stakes class, or non-convergence after
+     2 wave-level GAP rounds).
 ```
 
-Rationale: auto-advance flows *within* a wave's build steps. Closing
-the wave (audit + merge to main) is the deliberate end gate — it stays
-explicit. The user asked not to be asked *between steps*; the wave-end
-gate is not a between-steps prompt, it's the finish line.
+**Merge mode — AUTO by default (v3.12.0).** The wave is reference-based: its
+PLAN *is* the success contract, so when `verification-agent` confirms the
+objective is met and the composed trunk is green, closing+merging is the
+evidence-driven default — wave-end runs automatically and auto-merges.
+
+- **Client opt-out** — `/arib-wave-run --hold-merge` (or a `hold_merge: true`
+  PLAN flag) keeps wave-end as an explicit human gate: validate, report
+  "ready to merge," and stop.
+- **High-stakes carve-out (always)** — if the wave touches money/auth/
+  compliance/secrets/breaking-migration, wave-end holds for a human regardless
+  of mode (CONSTRAINTS #17). Branch protection still governs the actual merge.
+
+Rationale (updated v3.12.0): auto-advance flows *within* the build steps; the
+*close* is no longer a blind human gate but an **intelligent** one — the
+wave-validator decides merge-vs-re-engineer on evidence, and only genuine
+human-class decisions (high-stakes / opt-out) stop the flow.
 
 ## Running progress report format
 
@@ -202,7 +266,7 @@ User: (fixes env) /arib-wave-run --from 2
 
 ▶ 2/4 → PASS (commit ...) → advancing
 ▶ 3/4 → PASS → advancing
-▶ 4/4 → PASS → all steps complete. Run /arib-wave-end to close.
+▶ 4/4 → PASS → reconcile (objective met) → /arib-wave-end auto-merges (RECONCILED)
 ```
 
 ### Example 3 — skip-and-flag for an optional step
@@ -254,12 +318,15 @@ For each step S (from N):
    Execute S.goal
     |
     v
-   Verify S.done_when
+   Verify S.done_when (gates)
     |
-    +-- pass → commit; log PASS
+    +-- pass → RECONCILE step (verification-agent, wave scope): S.goal ↔ built
     |          |
-    |          +-- next step is checkpoint? → finish S, PAUSE before next
-    |          +-- else → AUTO-ADVANCE
+    |          +-- RECONCILED → commit; log PASS
+    |          |        +-- next step is checkpoint? → finish S, PAUSE before next
+    |          |        +-- else → AUTO-ADVANCE
+    |          +-- GAP  → re-engineer this step (bounded: 2 non-converging → halt)
+    |          +-- HOLD → PAUSE (high-stakes / ambiguous)
     |
     +-- fail → honor on_failure:
                halt          → PAUSE, report, await
@@ -267,7 +334,13 @@ For each step S (from N):
                skip-and-flag → log SKIPPED, AUTO-ADVANCE
     |
     v
-All steps done → report; recommend /arib-wave-end (the end gate)
+All steps done → WAVE-LEVEL reconcile (verification-agent: objective ↔ achieved,
+                 composed-trunk green)
+    |
+    +-- RECONCILED → /arib-wave-end → AUTO-MERGE (default)
+    |               (held for a human if --hold-merge OR high-stakes class)
+    +-- GAP        → re-engineer the gap, re-validate (bounded: 2 rounds → HOLD)
+    +-- HOLD       → human
 ```
 
 ## Edge cases
@@ -315,7 +388,7 @@ All steps done → report; recommend /arib-wave-end (the end gate)
 - **Auditable:** one commit per step; the running report is preserved;
   `/arib-wave-end` audits the whole wave.
 - **Safe:** checkpoints gate irreversible actions; the autonomy guard's
-  caps still apply; the wave-merge gate still blocks main.
+  caps still apply; merge is reconciliation-gated — auto on RECONCILED, held for high-stakes/--hold-merge.
 
 ## Related
 

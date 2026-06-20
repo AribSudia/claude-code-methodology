@@ -56,8 +56,9 @@ whether it is safe to dispatch alongside others.
 | `deploy-guardian` | `operations/DEPLOYMENT.md`, CI config, env files | deploy gate verdict | Yes | Read-only review of deploy readiness. |
 | `planner` | architect output, `architecture/DECISIONS.md`, memory | sequence + dependencies + risks + blockers (returned to parent) | Yes | Read-only. Pairs with `architect` during `/arib-wave-start`. |
 | `ci-pr-engineer` | `.github/**`, `CONTRIBUTING.md`, `SECURITY.md`, ADR-012, optional `gh api` | CI/PR audit report (returned to parent); proposes init scaffolding | Conditional | Read-only by default (audit/review/branch-protection modes). Sequential in `init` mode while parent applies writes. |
+| `verification-agent` | the diff/PR (unit) or `waves/<name>/PLAN.md` + composed branch (wave), gate evidence | RECONCILED / GAP / HOLD verdict (returned to parent) | Yes | Read-only pre-merge reconciler (intent ↔ actual change). The closing gate for auto-merge in `/arib-engine` (unit scope) and Waves (wave scope). Runs AFTER `code-reviewer`/`security-auditor` — they judge quality, it judges fulfillment. ADR-027. |
 
-**Total:** 15 agents (matches `.claude/agents/` count, excluding `README.txt`).
+**Total:** 16 agents (matches `.claude/agents/` count, excluding `README.txt`).
 
 ---
 

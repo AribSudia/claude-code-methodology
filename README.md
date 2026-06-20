@@ -3,13 +3,13 @@
 ### An opinionated methodology and skill pack for Claude Code
 
 A convention layer for serious work in Claude Code: 27 branded `/arib-*` skills,
-15 specialist agents, kernel-level enforcement hooks, path-scoped rules, persistent
+16 specialist agents, kernel-level enforcement hooks, path-scoped rules, persistent
 memory files, a 5-mode bootstrap, a wave delivery overlay with auto-advancing
 execution, a compliance layer, and full CI/PR governance. It is **not** a runtime,
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.11.0 "Engine"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.12.0 "Reconcile"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -130,7 +130,7 @@ This methodology solves all of that:
 | Problem                          | Solution                                     |
 |----------------------------------|----------------------------------------------|
 | Claude forgets between sessions  | **Persistent Memory** — 6 file types, auto-updated |
-| No consistent code quality       | **15 Specialist Agents** — each with checklists |
+| No consistent code quality       | **16 Specialist Agents** — each with checklists |
 | Dangerous operations slip through| **Safety Hooks** — block before damage happens |
 | Every session starts from scratch| **Session Protocol** — read → work → write    |
 | Architecture decisions are lost  | **Decision Records** — permanent, searchable  |
@@ -143,7 +143,7 @@ This methodology solves all of that:
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  L4 — AGENTS          15 specialists with scoped context    ║
+║  L4 — AGENTS          16 specialists with scoped context    ║
 ║  Architect · Security · Reviewer · Tester · Debugger        ║
 ║  Refactor · Language · Deploy Guardian · Reality Auditor     ║
 ║  Database Guardian · Performance · API Docs · Accessibility  ║
@@ -187,7 +187,7 @@ curl -fsSL https://raw.githubusercontent.com/AribSudia/claude-code-methodology/m
 #    Claude reads everything, knows your project, and begins
 ```
 
-**What you get**: Every file populated — CONSTRAINTS.md with your rules, TECH_STACK.md with your libraries, API_ENDPOINTS.md with your routes, CONTEXT_MAP.md with your folders, and all 15 agents configured for your stack.
+**What you get**: Every file populated — CONSTRAINTS.md with your rules, TECH_STACK.md with your libraries, API_ENDPOINTS.md with your routes, CONTEXT_MAP.md with your folders, and all 16 agents configured for your stack.
 
 ### Use Case 2: Existing Project (Reverse Bootstrap)
 
@@ -317,7 +317,7 @@ All skills are deep reference documents (250-800 lines each) with decision trees
 
 | Skill | Command | What It Does | Lines |
 |-------|---------|-------------|-------|
-| **Engine** | `/arib-engine [goal] [--with-arib-family]` | Autonomous campaign engine — discover→ship→verify→close across many reversible PRs; adversarial find→refute→confirm sweeps; evidence-based closure + decision-list hand-off. Standalone by default; pace it with `/loop`. Merge-to-main stays a human/branch-protection gate (never auto-merges). | 250 |
+| **Engine** | `/arib-engine [goal] [--with-arib-family] [--hold-merge]` | Autonomous campaign engine — discover→ship→verify→**reconcile**→close across many reversible PRs; adversarial find→refute→confirm sweeps; evidence-based closure + decision-list hand-off. Standalone by default; pace it with `/loop`. Auto-merges by default, gated on a `verification-agent` RECONCILED verdict (not CI alone); high-stakes always holds for a human; `--hold-merge` holds every PR. | 300 |
 
 **Total**: 27 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
 
@@ -355,7 +355,7 @@ reference in [`reference/AUTONOMOUS_ENGINEERING_METHODOLOGY.md`](reference/AUTON
 | **A continuous campaign** | `/loop /arib-engine <goal>` | `/loop` paces it (event-gated + heartbeat); the engine runs tick after tick until the closure test passes |
 | **"Make it all"** (no scope) | `/arib-engine` | Autonomous mode — finds & ships every verified improvement, descending by severity, until done |
 | **Orchestrate the whole toolkit** | `/arib-engine --with-arib-family <goal>` | Becomes the conductor: drives the `arib-check-*`, `arib-dev-*`, `arib-docs-*` skills per phase (degrades to inline for any absent) |
-| **Auto-merge green PRs** (advanced) | `/arib-engine --auto-merge <goal>` | Opt-in only, and only with branch protection enforcing the checks — never for money/auth/compliance PRs |
+| **Review each merge yourself** | `/arib-engine --hold-merge <goal>` | Holds *every* PR at a human gate (otherwise merge is automatic — see below) |
 
 > **Standalone by default.** With no `--with-arib-family`, the engine is fully
 > self-contained and portable — it runs every phase inline and never reaches for sibling
@@ -363,12 +363,18 @@ reference in [`reference/AUTONOMOUS_ENGINEERING_METHODOLOGY.md`](reference/AUTON
 
 ### How it stays safe
 
-The engine is autonomous about *what to do next* and *when it's done* — but it is **not**
-autonomous about the dangerous boundaries:
+The engine is autonomous about *what to do next*, *when it's done*, and — as of v3.12.0
+— *whether a PR is safe to merge*. The safety lives in an intelligent gate, not a blanket
+human checkpoint:
 
-- **Merge-to-main stays a human gate.** It opens PRs and reports them green-and-ready;
-  merge goes through PR review + branch protection (CONSTRAINTS #17). It never self-merges
-  by default — CI-green is an advisory signal, not release authority.
+- **Merge is auto by default, but gated on *reconciliation* — not CI alone.** Before any
+  merge, the **`verification-agent`** reconciles what was *discovered* against what was
+  *actually changed* (intent ↔ implementation). Merge fires only on a **RECONCILED**
+  verdict + green blocking checks; a **GAP** loops back to re-engineer; **HOLD** routes to
+  a human. CI-green alone is never merge authority.
+- **High-stakes always holds for a human.** Money/auth/compliance/secrets/breaking-migration
+  PRs never auto-merge regardless of mode (CONSTRAINTS #17), and `--hold-merge` holds
+  *everything*. Branch protection still governs — auto-merge never bypasses a required review.
 - **Discovery is adversarial, not credulous.** Every finding runs `find → refute → confirm`
   (skeptics that default to "not a bug", then a ground-truth code read) — but
   security/authz/tenant-isolation/money/secrets findings are **exempt** from that
@@ -386,7 +392,7 @@ autonomous about the dangerous boundaries:
 
 ---
 
-## The 15 Specialist Agents
+## The 16 Specialist Agents
 
 Agents activate automatically based on keywords in your instructions. Each operates with a specific checklist and delivers a structured output.
 
@@ -407,6 +413,7 @@ Agents activate automatically based on keywords in your instructions. Each opera
 | **Deploy Guardian**   | "deploy", "ship", "release"     | CLEARED or BLOCKED with reasons         |
 | **Planner**           | wave-start, "sequence", "plan steps" | Step sequence + dependency map + risk register |
 | **CI/PR Engineer**    | "/arib-ci-audit", workflows, CODEOWNERS | CI/PR posture report (audit/init/review/BP) |
+| **Verification Agent**| pre-merge in `/arib-engine` + Waves     | RECONCILED / GAP / HOLD — reconciles discovered↔fixed before merge |
 
 Agent definitions live in `.claude/agents/`.
 
@@ -692,7 +699,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.9.1 | Live Update | Doc fix: curl one-liner is the universal entry — old versions without a local `ccm-fetch.sh` upgrade with the same line |
 | v3.9.2 | Live Update | `ccm-fetch.sh` UX: explicit 2-step output (source vs. project root), reads the deployed version, install-vs-upgrade-aware hand-off |
 | v3.10.0 | Integrity | Six-agent full audit + fix wave: hooks fail CLOSED, validate-system.sh rewritten dynamic, docs-match-disk sweep, ccm-fetch hardening, dead infra deleted (ADR-025) |
-| **v3.11.0** | **Engine** | **`/arib-engine` autonomous-campaign skill (standalone-first, opt-in family orchestration, `/loop`-paced, merge stays a human gate) + folded AEPG into CCM: adversarial find→refute→confirm in deep-audit, verify-before-fix/`TZ=UTC`/backward-compat + no-autonomous-merge constraints (#14–#17), wave-end closure test + decision-list (ADR-026)** |
+| v3.11.0 | Engine | `/arib-engine` autonomous-campaign skill (standalone-first, opt-in family orchestration, `/loop`-paced) + folded AEPG into CCM: adversarial find→refute→confirm in deep-audit, verify-before-fix/`TZ=UTC`/backward-compat constraints (#14–#17), wave-end closure test (ADR-026) |
+| **v3.12.0** | **Reconcile** | **`verification-agent` (16th) reconciles discovered↔fixed before merge; `/arib-engine` + Waves flip to AUTO-MERGE by default gated on reconciliation (not CI alone), `--hold-merge` opt-out, high-stakes always human; Waves become a reference-based validate→re-engineer loop (ADR-027)** |
 
 ---
 

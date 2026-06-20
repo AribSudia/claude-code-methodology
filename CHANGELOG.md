@@ -7,6 +7,45 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.12.0] "Reconcile" — 2026-06-20
+
+Adds the missing **reconciliation** beat — an agent that checks what was *discovered*
+against what was *actually fixed* before merge — and flips both `/arib-engine` and Waves
+to **auto-merge by default**, gated on that reconciliation rather than on CI alone. ADR-027.
+
+### Added — `verification-agent` (16th agent)
+- `.claude/agents/verification-agent.md` — read-only pre-merge reconciler of *intent ↔
+  implementation*. Two scopes: **unit** (one PR in `/arib-engine`) and **wave** (a wave's
+  objective vs. the composed result). Verdict **RECONCILED** (merge) / **GAP**
+  (re-engineer against the listed gaps; bounded to 2 non-converging rounds) / **HOLD**
+  (human). Runs AFTER `code-reviewer`/`security-auditor` — they judge quality, it judges
+  fulfillment. `agents` 15→16.
+
+### Changed — auto-merge is now the default, gated on reconciliation
+- **`/arib-engine`**: merge flips from human-gate-by-default to **AUTO by default** —
+  fires only on blocking-green AND a `verification-agent` RECONCILED verdict. New
+  `--hold-merge` flag holds every PR for a human (replaces the old opt-in `--auto-merge`).
+  A new **RECONCILE** beat sits between VERIFY and INTEGRATE in the loop.
+- **Waves** become a **reference-based dynamic loop**: `/arib-wave-run` gains per-step
+  reconciliation + a wave-level validate→re-engineer loop (PLAN.md = the success
+  contract); `/arib-wave-end` auto-merges by default after deep-audit PASS + wave-scope
+  RECONCILED + composed-trunk green. `--hold-merge` / `hold_merge: true` opts out.
+- **CONSTRAINTS #17** rewritten: merge gated on (blocking-green + RECONCILED + not
+  high-stakes). **High-stakes classes (money/auth/compliance/secrets/breaking-migration)
+  ALWAYS hold for a human**; branch protection (#10) never bypassed.
+
+### Composition with the wave-merge hook
+- The `pre-tool-use.sh` wave-merge gate (blocks `gh pr merge` from `wave/*` without an
+  audit hash) composes cleanly: wave-end writes the hash in Step 5, so the Step 7
+  auto-merge passes the gate — the gate and auto-merge don't fight.
+
+### Docs / registration
+- `AGENT_ARCHITECTURE.md` (16 agents + verification-agent row), CLAUDE.md §5, README
+  (16 agents, `/arib-engine` use-case table + safety section updated, version history),
+  SYSTEM.md, reference/AUTONOMOUS_ENGINEERING_METHODOLOGY.md CCM-override notes. ADR-027.
+
+---
+
 ## [3.11.0] "Engine" — 2026-06-17
 
 Adopts the externally-developed "Autonomous Engineering & Product-Led Growth"

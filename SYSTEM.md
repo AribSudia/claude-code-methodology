@@ -21,8 +21,8 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.11.0                                                   |
-| **Codename**         | "Engine"                                             |
+| **Version**          | 3.12.0                                                   |
+| **Codename**         | "Reconcile"                                          |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
 | **Last Updated**     | 2026-06-10                                               |
@@ -58,7 +58,7 @@ Without CCM, every Claude Code session:
 With CCM, every Claude Code session:
 - Starts with full context — reads the lean core (4 always-on files), pulls references on demand
 - Follows architectural governance — constraints, approved stack, decision records
-- Maintains quality — 15 specialist agents enforce standards automatically
+- Maintains quality — 16 specialist agents enforce standards automatically
 - Communicates through I/O — structured requests, results, signals, pipelines
 - Eliminates rework — every decision documented, every pattern recorded
 - Is fully auditable — operations log, change log, session notes, testing log
@@ -96,7 +96,7 @@ The system is built on five engineering principles:
 ```
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                                                                      ║
-║  L4 — AGENTS                   15 autonomous specialists             ║
+║  L4 — AGENTS                   16 autonomous specialists             ║
 ║  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐               ║
 ║  │Architect │ │ Security │ │ Reviewer │ │  Tester  │               ║
 ║  └──────────┘ └──────────┘ └──────────┘ └──────────┘               ║
@@ -174,7 +174,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 │
 ├── .claude/                     ← CLAUDE CODE CONFIG (28 files)
 │   ├── settings.json            ← Permissions, hooks, context
-│   ├── agents/ (15)             ← Specialist agent definitions
+│   ├── agents/ (16)             ← Specialist agent definitions
 │   ├── skills/ (27)             ← Branded /arib-* skills (canonical)
 │   ├── hooks/                   ← Hook scripts
 │   └── commands/                ← Legacy commands (deprecated)

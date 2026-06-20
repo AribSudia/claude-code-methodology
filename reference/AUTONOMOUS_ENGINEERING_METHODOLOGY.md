@@ -176,9 +176,13 @@ One PR = one coherent fix or feature. Top-down by severity.
   non-blocking* checks; refuse on a blocking failure (leave the PR open, never merge red).
 - **Keep the trunk deployable at every merge.**
 
-> **CCM governance overrides the "automate the merge" default.** In CCM, merge-to-main is
-> a human/branch-protection gate (CONSTRAINTS #10); `/arib-engine` does not auto-merge by
-> default. See §A.
+> **CCM refines the "automate the merge" default (v3.12.0).** CCM auto-merges by default,
+> but gates it on the **`verification-agent`** (intent ↔ implementation reconciliation),
+> not on CI alone: merge fires only on a RECONCILED verdict + green blocking checks. A GAP
+> re-engineers; HOLD goes to a human. High-stakes classes
+> (money/auth/compliance/secrets/breaking-migration) ALWAYS hold for a human, and
+> `--hold-merge` holds everything. Branch protection (CONSTRAINTS #10/#17) still governs.
+> See §A.
 
 ---
 
@@ -280,7 +284,8 @@ discipline:
    performance, a11y, i18n, growth, deps.
 5. **Run the loop** (§1) — discover → triage → one focused verified PR → merge → record →
    repeat, self-paced. *(In CCM: open the PR; merge-to-main stays a human/branch-protection
-   gate — never auto-merge by default. CONSTRAINTS #17.)*
+   gate unless reconciliation + checks are green and it's not a high-stakes class.
+   CONSTRAINTS #17.)*
 6. **Escalate cleanly** (§8) at every business/compliance/infra boundary.
 7. **Apply the closure test** (§6.5) — stop on evidence, hand off the decision list.
 
@@ -316,11 +321,15 @@ agent, low concurrency.
 
 Three claims in the source method are load-bearing risks; CCM neutralizes them:
 
-1. **Auto-merge-on-green is not a safe default.** It converts CI (a fallible advisory
-   signal) into release authority; it is only as safe as the weakest gate. CCM keeps
-   merge-to-main behind PR review + branch protection (CONSTRAINTS #10); `/arib-engine`
-   never auto-merges by default (opt-in `--auto-merge` only, and never for
-   money/auth/compliance PRs).
+1. **Auto-merge on CI-green *alone* is not a safe default.** Raw CI-green converts a
+   fallible advisory signal into release authority — only as safe as the weakest gate.
+   CCM's fix (v3.12.0) is not to ban auto-merge but to **gate it on reconciliation**: the
+   `verification-agent` must return RECONCILED (the change actually fulfilled its intent)
+   on top of green blocking checks before merge fires; a GAP re-engineers, HOLD escalates.
+   High-stakes classes (money/auth/compliance/secrets/breaking-migration) ALWAYS hold for a
+   human, `--hold-merge` holds everything, and branch protection (CONSTRAINTS #10/#17) is
+   never bypassed. The lesson stands — CI-green is not release authority — but the remedy
+   is an intelligent gate, not a blanket human checkpoint. (ADR-027.)
 2. **A reject-biased majority filter is the wrong loss function for security.** For
    authz/IDOR/tenant-isolation/money/secrets a false negative is catastrophic; CCM exempts
    these classes from the majority filter (single credible finding → mandatory
