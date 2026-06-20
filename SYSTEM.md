@@ -21,11 +21,11 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.12.0                                                   |
-| **Codename**         | "Reconcile"                                          |
+| **Version**          | 3.13.0                                                   |
+| **Codename**         | "Honest Memory"                                      |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
-| **Last Updated**     | 2026-06-10                                               |
+| **Last Updated**     | 2026-06-20                                               |
 | **Engineered By**    | Abdullah × Claude Opus 4.6                               |
 | **License**          | MIT                                                      |
 | **Status**           | Production-Ready                                         |

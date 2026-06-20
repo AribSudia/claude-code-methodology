@@ -157,6 +157,49 @@ else
 fi
 
 echo ""
+echo "8. Memory freshness + integrity (v3.13.0, ADR-028)"
+# The memory system preaches "a session without memory updates never happened"
+# but nothing enforced it — the always-on handoff files silently froze at the
+# v1.0 bootstrap. This gate makes freshness a CI invariant, like docs-match-disk.
+#
+# a. project_status.md must name the current version (it is the "current state"
+#    file). Fixed-string match so the version dots aren't treated as wildcards.
+if grep -qF "$VER" memory/project_status.md 2>/dev/null; then
+  note_ok "project_status.md names current v$VER"
+else
+  note_fail "project_status.md does not name current v$VER (stale — it loads every session)"
+fi
+# b. session_notes.md must not have reverted to the v1.0 bootstrap handoff.
+if grep -Eq 'Bootstrap Session|Methodology v1\.0' memory/session_notes.md 2>/dev/null; then
+  note_fail "session_notes.md still carries the v1.0 bootstrap handoff — backfill it (it is always-on)"
+else
+  note_ok "session_notes.md is past the bootstrap handoff"
+fi
+# c. The newest handoff ENTRY must be current — not just the version appearing
+#    somewhere (the freshness-header boilerplate would self-satisfy that). Anchor
+#    to a `## Session:` heading carrying the current major.minor (dots escaped).
+VER_MM="$(printf '%s' "$VER" | cut -d. -f1-2)"
+VER_MM_RE="$(printf '%s' "$VER_MM" | sed 's/\./\\./g')"
+if grep -Eq "^## Session:.*${VER_MM_RE}" memory/session_notes.md 2>/dev/null; then
+  note_ok "session_notes.md has a current-line session heading (v$VER_MM)"
+else
+  note_fail "session_notes.md has no '## Session: … v$VER_MM' heading — update the handoff at session end (it is always-on)"
+fi
+# d. no unresolved git conflict markers in any memory file (bare divider too).
+if grep -rEn '^(<<<<<<< |={7}$|>{7} )' memory/*.md >/dev/null 2>&1; then
+  note_fail "memory/*.md contains git conflict markers — resolve before committing"
+else
+  note_ok "no conflict markers in memory/*.md"
+fi
+# e. no duplicate ADR numbers in the decision record (append-only must not collide).
+DUP_ADR="$(grep -hoE '^# ADR-[0-9]+' architecture/DECISIONS.md 2>/dev/null | sort | uniq -d)"
+if [ -n "$DUP_ADR" ]; then
+  note_fail "duplicate ADR heading(s) in DECISIONS.md: $(echo "$DUP_ADR" | tr '\n' ' ')"
+else
+  note_ok "no duplicate ADR numbers"
+fi
+
+echo ""
 echo "=== Result ==="
 if [ "$FAIL" = "0" ]; then
   echo "COHERENT — all invariants hold."

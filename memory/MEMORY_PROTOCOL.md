@@ -97,8 +97,8 @@ to know exactly where the last one ended.
 [previous session...]
 ```
 
-**Update Rule**: Written at every session end. Previous entries remain
-(up to 10 sessions). Older entries archived to `memory/archive/`.
+**Update Rule**: Written at every session end. Keep the last few sessions;
+condense older detail into `CHANGELOG.md` (no `memory/archive/` — see §4).
 
 ---
 
@@ -224,6 +224,20 @@ across sessions. Catch coverage decay early.
 
 **Update Rule**: Updated after every significant test run.
 
+### 2.7 — semantic_export.md
+
+**Purpose**: Snapshot of the **opt-in** claude-mem semantic layer (Layer 1),
+exported by `scripts/memory-export.sh` at session end *only if* claude-mem is
+configured. On a stock install there is no export — the file self-labels as a
+no-op seed, and `grep` over the other six files is the entire recall surface.
+
+**Update Rule**: Written at session end when `CLAUDE_MEM_API_KEY` is set; a
+no-op (last-known-good preserved) otherwise.
+
+> **Canonical count: 7 data files** (§2.1–§2.7) **+ this `MEMORY_PROTOCOL.md`**
+> = 8 markdown files in `memory/`. `project_status.md` + `session_notes.md` are
+> always-on (lean core); the rest load on demand.
+
 ---
 
 ## 3. Memory Lifecycle
@@ -256,10 +270,13 @@ SESSION END
 
 ## 4. Memory Maintenance Rules
 
-### Size Limits
-- Each file: max 200 lines of active content
-- When a file exceeds 200 lines: move oldest entries to `memory/archive/[filename]-[date].md`
-- Archive files are read-only; never modified after creation
+### Size Limits (guideline, not automated — v3.13.0/ADR-028)
+- Soft target ~200 lines of active content per file. There is **no auto-rotation
+  script** and **no `memory/archive/` directory** — when a file grows past the
+  target, condense old detail into `CHANGELOG.md` / `architecture/DECISIONS.md`
+  rather than letting the always-on files bloat.
+- Freshness is the enforced part: `validate-coherence.sh` §8 fails CI if
+  `project_status.md` / `session_notes.md` go stale (see §3).
 
 ### Consistency Checks
 At every session start, verify:
@@ -296,24 +313,30 @@ git log --all --oneline -- path/to/file
 
 ## Hybrid Memory (v3.2 — Item #3)
 
-The six markdown files described above remain the **audit layer**. They are
-human-readable, git-versioned, and authoritative. v3.2 adds an **optional
+The seven markdown data files described above remain the **audit layer**. They
+are human-readable, git-versioned, and authoritative. v3.2 adds an **opt-in
 semantic layer** for retrieval at scale.
 
-### Layer 1 — semantic (optional)
+> **Default install = grep only.** There is **no vector recall** out of the box —
+> a stock CCM has no `claude-mem` on PATH and no `CLAUDE_MEM_API_KEY`, so Layer 2
+> (grep) is the entire surface. Layer 1 is **opt-in**; don't claim "semantic
+> memory" is active unless the MCP actually responds.
+
+### Layer 1 — semantic (opt-in)
 
 The `claude-mem` MCP server (configured in `.mcp.json`) provides vector search
 across session memory. Activated by setting `CLAUDE_MEM_API_KEY`. When active,
-the `/arib-memory-search` skill queries it first. When inactive, the skill
-falls back to grep over `memory/*.md` and reports the same answer with no
-loss of correctness — only loss of recall on novel paraphrases.
+the `/arib-memory-search` skill queries it first. When inactive (the default),
+the skill falls back to grep over `memory/*.md` with no loss of correctness —
+only loss of recall on novel paraphrases. (claude-mem is exposed via three
+surfaces — MCP tool, CLI, npx server — pin the version and verify at setup.)
 
 ### Layer 2 — audit (always)
 
-The six markdown files. The semantic layer is exported into
-`memory/semantic_export.md` by `scripts/memory-export.sh`, run nightly via
-cron or on the Stop hook. This is the contract that keeps git the source of
-truth even when an external service holds the live index.
+The seven markdown data files. The semantic layer is exported into
+`memory/semantic_export.md` by `scripts/memory-export.sh` on the Stop hook
+(a no-op when claude-mem isn't configured). This keeps git the source of truth
+even when an external service holds the live index.
 
 ### Failure semantics
 

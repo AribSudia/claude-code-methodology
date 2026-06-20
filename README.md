@@ -9,7 +9,7 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.12.0 "Reconcile"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.13.0 "Honest Memory"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -129,7 +129,7 @@ This methodology solves all of that:
 
 | Problem                          | Solution                                     |
 |----------------------------------|----------------------------------------------|
-| Claude forgets between sessions  | **Persistent Memory** — 6 file types, auto-updated |
+| Claude forgets between sessions  | **Persistent Memory** — 7 data files, freshness CI-gated (v3.13.0) |
 | No consistent code quality       | **16 Specialist Agents** — each with checklists |
 | Dangerous operations slip through| **Safety Hooks** — block before damage happens |
 | Every session starts from scratch| **Session Protocol** — read → work → write    |
@@ -707,7 +707,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.9.2 | Live Update | `ccm-fetch.sh` UX: explicit 2-step output (source vs. project root), reads the deployed version, install-vs-upgrade-aware hand-off |
 | v3.10.0 | Integrity | Six-agent full audit + fix wave: hooks fail CLOSED, validate-system.sh rewritten dynamic, docs-match-disk sweep, ccm-fetch hardening, dead infra deleted (ADR-025) |
 | v3.11.0 | Engine | `/arib-engine` autonomous-campaign skill (standalone-first, opt-in family orchestration, `/loop`-paced) + folded AEPG into CCM: adversarial find→refute→confirm in deep-audit, verify-before-fix/`TZ=UTC`/backward-compat constraints (#14–#17), wave-end closure test (ADR-026) |
-| **v3.12.0** | **Reconcile** | **`verification-agent` (16th) reconciles discovered↔fixed before merge; `/arib-engine` + Waves flip to AUTO-MERGE by default gated on reconciliation (not CI alone), `--hold-merge` opt-out, high-stakes always human; Waves become a reference-based validate→re-engineer loop (ADR-027)** |
+| v3.12.0 | Reconcile | `verification-agent` (16th) reconciles discovered↔fixed before merge; `/arib-engine` + Waves flip to AUTO-MERGE by default gated on reconciliation (not CI alone), `--hold-merge` opt-out, high-stakes always human; Waves become a reference-based validate→re-engineer loop (ADR-027) |
+| **v3.13.0** | **Honest Memory** | **Memory-freshness CI gate (`validate-coherence.sh` §8) + non-blocking Stop-hook reminder; backfilled the always-on handoff files (the repo was dogfooding its own worst failure); semantic layer reframed honestly (grep default, claude-mem opt-in); §2.3/file-count contradictions reconciled (ADR-028)** |
 
 ---
 

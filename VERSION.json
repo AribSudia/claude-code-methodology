@@ -1,14 +1,14 @@
 {
   "name": "claude-code-methodology",
-  "version": "3.12.0",
-  "codename": "Reconcile",
+  "version": "3.13.0",
+  "codename": "Honest Memory",
   "releaseDate": "2026-06-20",
-  "previousVersion": "3.11.0",
+  "previousVersion": "3.12.0",
   "engineeredBy": "Abdullah x Claude Opus 4.6 / 4.7 / 4.8",
   "license": "MIT",
   "repository": "https://github.com/AribSudia/claude-code-methodology",
   "stats": {
-    "totalFiles": 255,
+    "totalFiles": 265,
     "totalDirectories": 58,
     "agents": 16,
     "skills": 27,
