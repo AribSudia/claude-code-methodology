@@ -217,10 +217,12 @@ All memory files live in `/project/memory/`. Each has a specific purpose, format
 - bugs_and_fixes.md: When bug found or fixed
 - testing_log.md: When tests run
 
-## Archive Rules
-- Any file > 200 lines: move old entries to memory/archive/{filename}
-- Keep recent 200 lines in main file
-- Archive is append-only (never delete)
+## Size guideline (NOT automated — v3.13.0/ADR-028)
+- Soft target ~200 lines/file; there is no auto-rotation and no memory/archive/
+  directory ships. When a file grows, condense old detail into CHANGELOG.md /
+  DECISIONS.md rather than letting the always-on files bloat.
+- The ENFORCED part is freshness: validate-coherence.sh §8 fails CI if the
+  always-on files (project_status.md, session_notes.md) go stale.
 ```
 
 **Example Update Scenario:** Your team decides all memory must be committed twice per day instead of once. Update MEMORY_PROTOCOL.md to codify this.

@@ -7,6 +7,41 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.13.0] "Honest Memory" — 2026-06-20
+
+A multi-agent audit graded CCM's memory subsystem **C+ — strong design, stale
+operation** — and verified the repo was dogfooding its worst failure: the
+always-on handoff files (`session_notes.md`, `change_log.md`) were frozen at the
+v1.0 bootstrap while HEAD was ~50 commits later, so every session loaded a false
+handoff. This release makes memory freshness a CI invariant. ADR-028.
+
+### Added — memory freshness is enforced
+- `scripts/validate-coherence.sh` §8 (CI-gated): fails if `project_status.md`
+  doesn't name the current version, if `session_notes.md` reverts to the v1.0
+  bootstrap or lacks a current-line entry, if `memory/*.md` carries git conflict
+  markers, or if `DECISIONS.md` has duplicate ADR numbers.
+- `.claude/hooks/stop.sh`: non-blocking reminder when commits land in a session
+  with no `memory/*.md` update (stderr only — stays fail-open).
+
+### Changed — truth + honesty
+- Backfilled `memory/session_notes.md` + `change_log.md` (real v3.9–v3.13
+  history); rewrote `project_status.md` to current state (v3.13.0, 16 agents).
+- `arib-memory-search` + `.claude/rules/memory.md`: the "two-layer hybrid" is now
+  described honestly — **default install is grep-only**; claude-mem (Layer 1,
+  vector recall) is **opt-in**, with a note to pin/verify its surface at setup.
+- Reconciled contradictions: CLAUDE.md §2.3 reworded (always-on + on-demand, not
+  "read memory/*.md"); one canonical count — **7 data files + MEMORY_PROTOCOL.md**;
+  `semantic_export.md` added to the rules table.
+- Downgraded the 200-line cap to a guideline; removed the dead
+  `memory/archive/*.tmp` gitignore entry (no archive dir, nothing rotated).
+
+### Deliberately not built (anti-gold-plating)
+- A generated `memory/INDEX.md` and parallel-session conflict aggregation — both
+  would add *unenforced* surfaces (the exact failure this release closes);
+  deferred until they can ship with their own gate.
+
+---
+
 ## [3.12.0] "Reconcile" — 2026-06-20
 
 Adds the missing **reconciliation** beat — an agent that checks what was *discovered*

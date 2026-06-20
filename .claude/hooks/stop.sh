@@ -87,6 +87,20 @@ fi
 # starts fresh. Safe to run unconditionally (rm -rf on a missing dir is a no-op).
 rm -rf "${CCM_ROOT}/io/.autonomy" 2>/dev/null || true
 
+# v3.13.0 (ADR-028) — non-blocking memory-freshness reminder. The markdown
+# memory layer is updated by the agent (via /arib-session-end), not by this
+# hook; if commits landed this session but no memory/*.md was touched, nudge
+# (stderr only — NEVER block; this hook stays fail-open per CCM's promise).
+if [[ "${COMMITS_THIS_SESSION}" -gt 0 ]] 2>/dev/null; then
+  MEM_TOUCHED=0
+  if [[ -n "$START_SHA" ]] && git -C "${CCM_ROOT}" cat-file -e "${START_SHA}" 2>/dev/null; then
+    MEM_TOUCHED="$(git -C "${CCM_ROOT}" diff --name-only "${START_SHA}..HEAD" 2>/dev/null | grep -c '^memory/.*\.md$' || true)"
+  fi
+  if [[ "${MEM_TOUCHED}" -eq 0 ]] 2>/dev/null; then
+    printf '[CCM/stop] %s commit(s) this session but no memory/*.md updated — run /arib-session-end so session_notes/change_log/project_status stay honest (the freshness gate is CI-enforced).\n' "${COMMITS_THIS_SESSION}" >&2
+  fi
+fi
+
 log INFO "ledger written: ${LEDGER_FILE}"
 notify_cowork "session-end" "commits=${COMMITS_THIS_SESSION} files=${FILES_CHANGED}"
 

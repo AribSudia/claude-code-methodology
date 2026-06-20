@@ -550,6 +550,60 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-028: Memory Freshness Is CI-Enforced (v3.13.0)
+
+**Status:** Accepted   **Date:** 2026-06-20
+
+**Context.** A multi-agent audit of CCM's own memory subsystem (4 lenses +
+synthesis) graded it **C+ — strong design, stale operation**, and the headline
+finding was verified on disk: `memory/session_notes.md` and `change_log.md` were
+frozen at the v1.0 *bootstrap* commit while HEAD was ~50 commits / 29 session
+ledgers later — and `session_notes.md` is **always-on** lean core, so every
+session loaded a flatly false v1.0 handoff as authoritative context. Root cause:
+the memory protocol ("a session without a memory update never happened") was
+*documented, never enforced* — no hook, script, or CI check referenced any
+memory file. CCM had applied its own "docs-match-disk / enforce-don't-ask"
+principle to docs (ADR-016/025) but never to memory. Secondary findings: the
+"two-layer semantic" recall is grep-only on a stock install (claude-mem is
+opt-in and exposed via three unreconciled surfaces); and contradictions —
+CLAUDE.md §2.3 "read memory/*.md" vs lean-core "read only 2"; file count
+variously 6/7/8; a documented 200-line cap + `memory/archive/` rotation that
+never existed.
+
+**Decision.**
+1. **Freshness becomes a CI gate** — `validate-coherence.sh` §8 fails if
+   `project_status.md` doesn't name the current version, if `session_notes.md`
+   reverts to the bootstrap handoff or lacks a current-line entry, if memory
+   files carry git conflict markers, or if `DECISIONS.md` has duplicate ADR
+   numbers. The maxim is now an invariant.
+2. **Backfill the truth** — `session_notes.md` + `change_log.md` rewritten to the
+   real v3.9–v3.13 history; `project_status.md` to current state.
+3. **Non-blocking Stop-hook reminder** — if commits landed this session but no
+   `memory/*.md` was touched, `stop.sh` nudges (stderr only; stays fail-open).
+4. **Honest semantic layer** — `arib-memory-search` + `rules/memory.md` state
+   plainly that the default install is grep-only and claude-mem (Layer 1) is
+   opt-in; pin/verify its surface at setup.
+5. **Reconcile contradictions** — CLAUDE.md §2.3 reworded to always-on + on-demand;
+   one canonical count (7 data files + `MEMORY_PROTOCOL.md`); `semantic_export.md`
+   added to the rules table; the 200-line cap downgraded to a guideline and the
+   dead `memory/archive/*.tmp` gitignore entry removed.
+
+**Consequences.** The memory system can no longer silently rot — the always-on
+handoff is provably current or CI is red. CCM stops dogfooding its own worst
+failure mode. Deliberately NOT built (anti-gold-plating): a generated `INDEX.md`
+or parallel-session conflict aggregation — both would add *unenforced* surfaces,
+the very thing this ADR closes; deferred until they can ship with their own gate.
+
+**Alternatives rejected.**
+- *Just fix the stale files.* They'd rot again the next session — enforcement is
+  the actual fix; the backfill only makes the gate pass honestly today.
+- *A blocking Stop hook that fails the session without a memory update.* Violates
+  CCM's fail-open hook promise; a CI gate + a non-blocking nudge is the right split.
+- *Ban grep-only / require claude-mem.* The grep floor is the honest, dependency-free
+  default; the fix is to describe it truthfully, not to force a vector DB.
+
+---
+
 # ADR-027: Reconciliation-Gated Auto-Merge + the verification-agent (v3.12.0)
 
 **Status:** Accepted   **Date:** 2026-06-20
@@ -1474,6 +1528,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-025 | The Integrity audit — fail closed, dynamic validation, docs match disk (v3.10.0) | Accepted | 2026-06-10 |
 | ADR-026 | Adopt the AEPG engine — `/arib-engine` skill + folded constraints (v3.11.0) | Accepted | 2026-06-17 |
 | ADR-027 | Reconciliation-gated auto-merge + `verification-agent` (v3.12.0) | Accepted | 2026-06-20 |
+| ADR-028 | Memory freshness is CI-enforced (v3.13.0) | Accepted | 2026-06-20 |
 
 ---
 

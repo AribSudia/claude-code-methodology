@@ -1,41 +1,26 @@
 # Session Notes
 
-## Session: 2026-04-15 — Bootstrap Session
+> Always-on handoff (lean core) — keep it SHORT. Newest session only; prior
+> detail lives in `CHANGELOG.md` + `io/ledger/`. CI-freshness-gated (v3.13.0):
+> must name the current line and never revert to the v1.0 bootstrap handoff.
+
+## Session: 2026-06-20 — v3.13.0 "Honest Memory"
 
 ### Completed
-- Established Claude Code Methodology v1.0
-- Created Master Brain (CLAUDE.md) with 4-layer architecture
-- Created persistent memory system with protocol and 6 file types
-- Created 8 specialized agents (Architect, Security, Code Reviewer, Test Engineer, Debugger, Refactor, Arabic-RTL, Deploy Guardian)
-- Created skills registry with 21 skills (Category A: Coding, Category B: Design/Marketing)
-- Created hooks protocol with 6 hook types and 7 production recipes
-- Created 6 architecture layer files (Constraints, Workflow, Context Map, Error Patterns, Decisions, Security)
-- Created 7 implementation layer templates (API, Docker, Events, Migrations, Runbook, Gateway)
-- Created 8 slash commands (session-start, session-end, new-feature, debug, review, deploy-check, arabic-audit, document)
-- Created bootstrap protocol with 25-question project questionnaire
-- Created operations layer (Workflow, Operations Log, Deployment Guide)
-- Created configuration files (settings.json, git-setup.sh, .env.example, .gitignore)
+- Multi-agent audit graded the memory system **C+** (strong design, stale
+  operation). Verified the always-on handoff files were frozen at the v1.0
+  bootstrap while HEAD was ~50 commits later — every session loaded a false
+  handoff. Root cause: the memory protocol was documented, never enforced.
+- Made freshness a **CI gate** (`validate-coherence.sh` §8) + a non-blocking
+  Stop-hook reminder; backfilled `session_notes`/`change_log`/`project_status`;
+  reframed the semantic layer honestly (grep default, claude-mem opt-in);
+  reconciled the §2.3 / file-count contradictions. ADR-028.
 
-### Files Created
-- 40+ files across the methodology system
+### Prior context
+- v3.9 "Live Update" → v3.10 "Integrity" → v3.11 "Engine" → v3.12 "Reconcile"
+  all merged to `main`. See `CHANGELOG.md` (full) and `architecture/DECISIONS.md`
+  (ADR-024…028).
 
-### Problems Encountered
-- None — clean bootstrap
-
-### Decisions Made
-- Universal/project-agnostic approach chosen over project-specific
-- Full arsenal of agents and skills (not minimal)
-- Both methodology AND system delivered (not just one)
-- Stack-agnostic templates with [PROJECT] placeholders
-
-### Next Session Starts With
-1. Select a project for first instantiation
-2. Provide project specification file
-3. Run bootstrap/BOOTSTRAP.md prompt in Claude Cowork
-4. Replace template placeholders with real project data
-5. Install skills from registry
-6. Run /session-start in Claude Code
-
----
-
-> Previous sessions will be logged above this line.
+### Next session starts with
+- Optional P2s: generated `memory/INDEX.md` + memory-lint; parallel-session
+  conflict aggregation; wire health KPIs from `io/ledger/invocations.jsonl`.

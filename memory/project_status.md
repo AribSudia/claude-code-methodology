@@ -2,35 +2,30 @@
 
 > Lean by design (v3.8.0): this file is **current state only** — it loads on
 > every session (always-on context), so it stays small. Full history lives in
-> `CHANGELOG.md`; decisions in `architecture/DECISIONS.md`.
+> `CHANGELOG.md`; decisions in `architecture/DECISIONS.md`. Freshness is
+> CI-enforced (v3.13.0): this file must name the current `VERSION.json` version.
 
 ## Current Phase
 
-**v3.8.0 "Lean Core"** — always-on session-start context cut from ~45.9K to
-~8K tokens (82%) by moving reference docs to on-demand loading. CCM is the
-methodology repo itself (self-hosted): 27 skills, 15 agents, 9 rules, 7 hook
+**v3.13.0 "Honest Memory"** — the memory subsystem now enforces its own
+freshness (ADR-028): a CI gate (`validate-coherence.sh` §8) + a non-blocking
+Stop-hook reminder, after an audit found the always-on handoff files frozen at
+the v1.0 bootstrap. CCM is self-hosted: 27 skills, 16 agents, 9 rules, 8 hook
 scripts, real CI/PR governance on `main`.
-
-## Active Milestone
-
-Lean Core token restructure (ADR-019). Next: address the v3.8 roadmap items
-in `proposals/CCM-v3.8-Roadmap.md` — `name:` frontmatter on all 26 skills,
-skill-lint fold-in to `validate-coherence.sh`, the defect-class sweep.
 
 ## Current State (summary — see CHANGELOG for history)
 
-- Enforcement: real (hooks `exit 2`, verified 37/37). 
+- Enforcement: real (hooks `exit 2`, 49/49 + jq fail-closed); memory freshness now gated too.
 - Self-policing: `validate-coherence.sh` + `drift-detect.sh` + 5 CI checks.
-- Compliance layer: alignment-only, honest (OWASP/GDPR/ISO/SOC2/PDPL).
-- Waves: start → run (auto-advance) → end (deep-audit gate).
+- Agents: 16, incl. `verification-agent` (pre-merge intent↔implementation reconciler).
+- Engine + Waves: auto-merge by default, gated on reconciliation; high-stakes always human.
 
 ## Blockers
 
-- None. (Token target: 8K; current ~8K after Lean Core.)
+- None. (Token target: 8K; current ~7.9K, under budget.)
 
 ## Next Tasks (priority order)
 
-1. v3.8.1 — add `name:` to 26 skills + skill-lint in validate-coherence.
-2. Sweep Axis-1 defect classes (step-numbering, duplicate sections, dead refs).
-3. Decide `.claude/agent-memory/`: wire minimally or delete (it is dead infra).
-4. Invocation telemetry hook → unlocks the telemetry-gated health KPIs.
+1. (Optional P2) generated `memory/INDEX.md` + memory-lint for required sections.
+2. (Optional P2) parallel-session conflict aggregation for the global memory files.
+3. Wire the health KPIs (agent coverage, per-skill usage) into a report from `invocations.jsonl`.

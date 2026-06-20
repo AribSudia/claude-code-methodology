@@ -10,12 +10,12 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.12.0 "Reconcile"                   |
+| Version           | 3.13.0 "Honest Memory"               |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |
 | Created           | 2026-04-15                               |
-| Last Updated      | 2026-06-10                               |
+| Last Updated      | 2026-06-20                               |
 | Language Support   | Universal (RTL, LTR, CJK, Indic, Bidi)  |
 | Methodology       | 4-Layer Architecture + I/O Channel + Memory |
 | Status            | Production-Ready                         |
@@ -62,9 +62,9 @@ Every decision, every rule, every reason - written in a file.
 - If Layer B is missing, ask for it. Do NOT infer.
 
 **2.3 - Memory Rule**: Claude Code has no built-in memory between sessions.
-- START: read `memory/*.md`
-- DURING: update `memory/change_log.md` after each task
-- END: update ALL memory files, commit, push
+- START: read the always-on memory (`project_status.md`, `session_notes.md`); read the rest on demand.
+- DURING: update `memory/change_log.md` after each task.
+- END: update the memory files, commit, push. Freshness is CI-enforced (ADR-028).
 
 **2.4 - Safety Rule**: Before modifying existing code, create a safety snapshot.
 Before destructive operations, create a safety branch.

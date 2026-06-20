@@ -11,16 +11,25 @@ description: "Memory | Semantic search across project memory — claude-mem MCP 
 This skill answers "what did we decide / discover / document about X?" across
 the project's persistent memory.
 
-It uses a **two-layer hybrid**:
+It uses a **two-layer hybrid** — but be honest about the default:
 
-- **Layer 1 (live, semantic):** the `claude-mem` MCP if configured. Vector
-  search across all session memory; returns the top semantically relevant
-  records regardless of which markdown file they live in.
-- **Layer 2 (audit, lexical):** `grep` across `memory/*.md`. Always available.
-  Finds exact strings and known phrases.
+> **By default there is NO vector recall.** A stock CCM install has no
+> `claude-mem` on PATH and no `CLAUDE_MEM_API_KEY`, so **Layer 2 (grep) is the
+> entire surface.** Layer 1 is **opt-in** — installing + configuring claude-mem
+> turns it on. Don't tell the user "semantic memory" is active unless Step 1
+> actually confirms the MCP responds.
 
-The skill prefers Layer 1 when available and falls back to Layer 2 otherwise.
-Both layers are queried for high-stakes lookups so the answer is cross-checked.
+- **Layer 1 (live, semantic) — opt-in:** the `claude-mem` MCP *if configured*.
+  Vector search across all session memory; returns the top semantically relevant
+  records regardless of which markdown file they live in. Note: claude-mem is
+  exposed three ways (MCP tool, `claude-mem` CLI, `npx claude-mem` server) — pin
+  the version and confirm the actual surface at setup, not at recall time.
+- **Layer 2 (audit, lexical) — always available:** `grep` across `memory/*.md`.
+  Finds exact strings and known phrases. This is the guaranteed floor.
+
+The skill prefers Layer 1 when available and falls back to Layer 2 otherwise
+(fail-open: grep always works). Both layers are queried for high-stakes lookups
+so the answer is cross-checked.
 
 ## When to Use
 
