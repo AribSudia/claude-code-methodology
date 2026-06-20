@@ -550,6 +550,55 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-027: Reconciliation-Gated Auto-Merge + the verification-agent (v3.12.0)
+
+**Status:** Accepted   **Date:** 2026-06-20
+
+**Context.** v3.11.0 adopted `/arib-engine` with merge held behind a human gate
+(CONSTRAINTS #17, "merge is never autonomous"). The owner directed two changes:
+(1) flip `/arib-engine` to **auto-merge by default** (add `--hold-merge` as the
+opt-out); (2) make Waves auto-merge by default too, driven by a new agent that
+reviews the wave's *objective* against what was *achieved* and re-engineers until
+met. Separately, the owner spotted a real gap: the loop
+`DISCOVER→SHIP→VERIFY→INTEGRATE→RECORD` has **no step that reconciles what was
+discovered against what was actually fixed** before merge — VERIFY proves internal
+correctness (gates green), `code-reviewer` proves diff quality, but nothing proves
+the change *fulfilled its purpose, fully and only*.
+
+**Decision.**
+1. **New agent `verification-agent`** (16th) — a read-only pre-merge reconciler of
+   *intent ↔ implementation*, two scopes: **unit** (one PR in `/arib-engine`) and
+   **wave** (a wave's objective vs. the composed result). Verdict: **RECONCILED**
+   (merge) / **GAP** (re-engineer against listed gaps; bounded to 2 non-converging
+   rounds) / **HOLD** (human). One agent, two scopes — identical task at both
+   altitudes, so a second agent would be duplication.
+2. **Auto-merge becomes the default, gated on reconciliation — not CI alone.**
+   CONSTRAINTS #17 rewritten: merge fires only on (a) blocking CI green, (b)
+   `verification-agent` RECONCILED, (c) NOT a high-stakes class. `--hold-merge`
+   (engine) / client opt-out (Waves) holds every PR; **high-stakes classes
+   (money/auth/compliance/secrets/breaking-migration) ALWAYS hold for a human**;
+   branch protection (#10) is never bypassed.
+3. **Waves become a reference-based dynamic loop.** `/arib-wave-run` gains per-step
+   reconciliation and a wave-level validate→re-engineer loop (PLAN = the reference /
+   success contract); `/arib-wave-end` auto-merges by default after deep-audit PASS +
+   wave-scope RECONCILED + composed-trunk green. The wave-merge hook composes: Step 5
+   writes the audit hash, so the auto-merge passes the `pre-tool-use.sh` gate.
+
+**Consequences.** Closes the discovered↔fixed gap; auto-merge is *intelligent*
+(gated on fulfillment) not blind (gated on CI). The safety floor — high-stakes always
+human, branch protection always governs, GAP re-engineers, non-convergence escalates —
+is preserved, so the throughput gain doesn't remove the brakes that matter. agents 15→16.
+
+**Alternatives rejected.**
+- *Two separate agents (engine + wave).* Same task at two scopes — one parameterized
+  agent is leaner and avoids drift.
+- *Keep merge fully human (v3.11 posture).* The owner's productivity goal is legitimate;
+  the safe synthesis is reconciliation-gated auto-merge with a high-stakes carve-out.
+- *Auto-merge on CI-green alone (the source AEPG default).* CI is advisory, not release
+  authority; the verification-agent verdict is the actual gate.
+
+---
+
 # ADR-026: Adopt the AEPG Engine — `/arib-engine` Skill + Folded Constraints (v3.11.0)
 
 **Status:** Accepted   **Date:** 2026-06-17
@@ -1144,9 +1193,11 @@ answer is determinable; pause only for genuinely-human decisions.
 - `checkpoint: true` is the explicit escape hatch for irreversible /
   high-stakes steps (prod deploy, data migration, external send) —
   those still get a human gate.
-- `/arib-wave-end` remains an explicit gate (it's the finish line and
-  the merge-to-main control, not a between-steps prompt). Auto-advance
-  flows *within* the build, not *through* the close.
+- `/arib-wave-end` remains the close gate (the finish line and the
+  merge-to-main control, not a between-steps prompt). Auto-advance flows
+  *within* the build, not *through* the close. *(Superseded re: merge by
+  ADR-027 — wave-end auto-merges on reconciliation; high-stakes/`--hold-merge`
+  still hold for a human.)*
 - An unverifiable step (`done_when` vague, no way to confirm) is treated
   as an ambiguity and pauses — it is never falsely marked PASS. Honesty
   principle preserved.
@@ -1422,6 +1473,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-024 | Fetch CCM directly from GitHub (`ccm-fetch.sh`) (v3.9.0) | Accepted | 2026-06-03 |
 | ADR-025 | The Integrity audit — fail closed, dynamic validation, docs match disk (v3.10.0) | Accepted | 2026-06-10 |
 | ADR-026 | Adopt the AEPG engine — `/arib-engine` skill + folded constraints (v3.11.0) | Accepted | 2026-06-17 |
+| ADR-027 | Reconciliation-gated auto-merge + `verification-agent` (v3.12.0) | Accepted | 2026-06-20 |
 
 ---
 

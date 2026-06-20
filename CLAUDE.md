@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.11.0 "Engine"                      |
+| Version           | 3.12.0 "Reconcile"                   |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |
@@ -94,7 +94,7 @@ your-project/
 |   |   |-- arib-session-start/SKILL.md
 |   |   |-- arib-dev-feature/SKILL.md
 |   |   +-- (24 more skills)
-|   |-- agents/                        <- 15 specialist subagents
+|   |-- agents/                        <- 16 specialist subagents
 |   +-- output-styles/                 <- Custom output styles
 |-- io/                                <- I/O Channel (inter-agent comms + ledger)
 |-- memory/                            <- Persistent memory (7 data files + protocol)
@@ -146,16 +146,17 @@ your-project/
 
 ---
 
-## 5. Agents (15 specialists)
+## 5. Agents (16 specialists)
 
 Agents auto-activate based on task type. Each has its own context file
 in `.claude/agents/`. See `architecture/AGENT_ARCHITECTURE.md` for the
 full read/write surface table and parallel-dispatch governance.
 
-The 15 agents: `architect`, `code-reviewer`, `security-auditor`,
+The 16 agents: `architect`, `code-reviewer`, `security-auditor`,
 `test-engineer`, `debugger`, `reality-auditor`, `database-guardian`,
 `performance`, `accessibility`, `api-docs`, `language`,
-`refactor-specialist`, `deploy-guardian`, `planner`, `ci-pr-engineer`.
+`refactor-specialist`, `deploy-guardian`, `planner`, `ci-pr-engineer`,
+`verification-agent` (pre-merge intent↔implementation reconciler — ADR-027).
 
 ---
 
