@@ -21,8 +21,8 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.13.0                                                   |
-| **Codename**         | "Honest Memory"                                      |
+| **Version**          | 3.14.0                                                   |
+| **Codename**         | "Engineering Manager"                                |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
 | **Last Updated**     | 2026-06-20                                               |
@@ -58,7 +58,7 @@ Without CCM, every Claude Code session:
 With CCM, every Claude Code session:
 - Starts with full context — reads the lean core (4 always-on files), pulls references on demand
 - Follows architectural governance — constraints, approved stack, decision records
-- Maintains quality — 16 specialist agents enforce standards automatically
+- Maintains quality — 17 specialist agents (incl. the engineer-manager conductor)
 - Communicates through I/O — structured requests, results, signals, pipelines
 - Eliminates rework — every decision documented, every pattern recorded
 - Is fully auditable — operations log, change log, session notes, testing log
@@ -96,7 +96,7 @@ The system is built on five engineering principles:
 ```
 ╔══════════════════════════════════════════════════════════════════════╗
 ║                                                                      ║
-║  L4 — AGENTS                   16 autonomous specialists             ║
+║  L4 — AGENTS                   17 autonomous specialists             ║
 ║  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐               ║
 ║  │Architect │ │ Security │ │ Reviewer │ │  Tester  │               ║
 ║  └──────────┘ └──────────┘ └──────────┘ └──────────┘               ║
@@ -117,7 +117,7 @@ The system is built on five engineering principles:
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
-║  L2 — SKILLS                    27 auto-invoked skills      ║
+║  L2 — SKILLS                    28 auto-invoked skills      ║
 ║  6 categories: Session · Dev · Wave · Check · CI · Docs             ║
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣

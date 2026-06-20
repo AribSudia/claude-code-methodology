@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.13.0 "Honest Memory"               |
+| Version           | 3.14.0 "Engineering Manager"         |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |
@@ -90,11 +90,11 @@ your-project/
 |   |-- settings.json                  <- Permissions, hooks (committed)
 |   |-- settings.local.json            <- Personal overrides (gitignored)
 |   |-- rules/                         <- Path-scoped modular rules
-|   |-- skills/                        <- Branded skills (/arib-*) — 27 total
+|   |-- skills/                        <- Branded skills (/arib-*) — 28 total
 |   |   |-- arib-session-start/SKILL.md
 |   |   |-- arib-dev-feature/SKILL.md
-|   |   +-- (24 more skills)
-|   |-- agents/                        <- 16 specialist subagents
+|   |   +-- (26 more skills)
+|   |-- agents/                        <- 17 specialist subagents (incl. engineer-manager)
 |   +-- output-styles/                 <- Custom output styles
 |-- io/                                <- I/O Channel (inter-agent comms + ledger)
 |-- memory/                            <- Persistent memory (7 data files + protocol)
@@ -142,21 +142,23 @@ your-project/
 | /arib-docs-api              | Docs       | API documentation + OpenAPI                          |
 | /arib-docs-generate         | Docs       | Generate documentation                               |
 | /arib-docs-language         | Docs       | i18n/RTL/LTR compliance (generic)                    |
-| /arib-engine                | Engine     | Autonomous campaign engine — discover→ship→verify→close (standalone; opt-in family orchestration; merge stays a human gate) |
+| /arib-engine                | Engine     | Autonomous campaign — discovers its own backlog; auto-merge gated on reconciliation, high-stakes human |
+| /arib-build                 | Engine     | Command the team for a KNOWN goal — dispatches engineer-manager (decompose→dispatch→integrate→reconcile) |
 
 ---
 
-## 5. Agents (16 specialists)
+## 5. Agents (17 specialists)
 
 Agents auto-activate based on task type. Each has its own context file
 in `.claude/agents/`. See `architecture/AGENT_ARCHITECTURE.md` for the
 full read/write surface table and parallel-dispatch governance.
 
-The 16 agents: `architect`, `code-reviewer`, `security-auditor`,
+The 17 agents: `architect`, `code-reviewer`, `security-auditor`,
 `test-engineer`, `debugger`, `reality-auditor`, `database-guardian`,
 `performance`, `accessibility`, `api-docs`, `language`,
 `refactor-specialist`, `deploy-guardian`, `planner`, `ci-pr-engineer`,
-`verification-agent` (pre-merge intent↔implementation reconciler — ADR-027).
+`verification-agent` (pre-merge reconciler — ADR-027), `engineer-manager`
+(the conductor — commands the team via `/arib-build`; only agent with `Task` — ADR-029).
 
 ---
 

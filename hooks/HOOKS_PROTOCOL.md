@@ -76,7 +76,12 @@ Hooks execute in the agent's security context and can access:
 
 ### 1. PreToolUse
 
-**When it fires:** Before any tool is executed (file write, bash command, git operation)
+**When it fires:** Before any tool is executed (file write, bash command, git operation).
+This includes tool calls issued by **Task-dispatched subagents** — the matcher is
+tool-name-scoped (see `.claude/settings.json`), not agent-scoped, so a subagent's
+`Write`/`Bash` re-fires `pre-tool-use.sh` exactly as the parent's would. Granting an agent
+the `Task` tool (e.g. `engineer-manager`, v3.14.0) therefore creates **no hook exemption**:
+every leaf agent's tool calls still hit the fail-closed gate.
 
 **What it receives:**
 ```json

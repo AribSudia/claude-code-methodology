@@ -7,6 +7,46 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.14.0] "Engineering Manager" — 2026-06-20
+
+Reviewed the developer's "Synthesis" upgrade plan (4-lens lead-engineer workflow) and
+extracted its highest-leverage, dependency-free piece: a **project engineering manager**
+that commands the specialist team. The plan as-written was mis-versioned (collided with the
+just-shipped v3.13.0 + ADR-028) and bundled external-tool absorptions that are absent here;
+those are staged/deferred rather than shipped inert (honesty principle). ADR-029.
+
+### Added — the conductor
+- `.claude/agents/engineer-manager.md` (17th agent) — the **first agent granted the `Task`
+  tool**, turning 16 keyword-activated specialists into a *commanded team*. Cycle:
+  **decompose** (architect+planner → task graph) → **dispatch** (specialist fan-out
+  obeying the no-write-conflict / no-read-after-write rules) → **integrate** (parent
+  converges writes) → **verify** (`verification-agent` last → RECONCILED/GAP/HOLD, ADR-027).
+  Writes zero new infrastructure; ~0 always-on tokens. `agents` 16→17.
+- `.claude/skills/arib-build/SKILL.md` (28th skill) — the human trigger that dispatches the
+  manager; scopes itself vs `/arib-engine` (engine *discovers* a backlog; `/arib-build`
+  *executes* a known goal). `skills` 27→28.
+- `memory/.obsidian-bridge.md` — optional read-only Obsidian view over CCM memory (no
+  writes; not always-on; degrades to nothing if absent). The plan's §3.4 bridge, shipped.
+
+### Added — governance
+- **CONSTRAINTS #18**: the engineer-manager dispatches autonomously but holds NO authority
+  beyond #17 — never merges high-stakes, never bypasses branch protection, re-checks
+  CONSTRAINTS before each dispatch wave, self-stops under the autonomy guard. References
+  #17, never weakens it.
+- `AGENT_ARCHITECTURE.md`: engineer-manager row (the only `Task`-holder) + Recipe 6
+  (managed delivery). ADR-029.
+
+### Reviewed but NOT shipped now (staged/deferred — see ADR-029)
+- **rtk** output-compression, **Graphify** code-graph, **Ponytail** bloat-guard — their
+  tools are ABSENT in this environment; shipping them as live features would violate the
+  honesty principle. Stage behind presence checks + measurement later.
+- **ECC** cherry-picks (`nestjs`/`postgres` skills) — source repo not on disk / license
+  unverified; cannot rebrand assets we don't have. Deferred until obtained.
+- The plan's "single human trigger / maximize auto-fire" doctrine — deferred; it erodes
+  v3.12's deliberate two-gate posture. The manager keeps both gates.
+
+---
+
 ## [3.13.0] "Honest Memory" — 2026-06-20
 
 A multi-agent audit graded CCM's memory subsystem **C+ — strong design, stale
