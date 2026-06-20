@@ -550,6 +550,45 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-031: /arib-build Scales Its Own Reach — Workflow + /loop Escalation (v3.16.0)
+
+**Status:** Accepted   **Date:** 2026-06-21
+
+**Context.** Owner directive: "for `/arib-build` add loop and workflow — it will run if it
+needs." The conductor (`engineer-manager`) dispatched only via `Task`, which is correctly
+capped at one level (the runaway brake from ADR-029). That cap also means a single inline
+run can't parallelize a broad task graph or span many turns — so big or long goals had no
+native path beyond a flat fan-out.
+
+**Decision.** Give `/arib-build` an explicit **execution-mode selection** that escalates
+*only when scope warrants*:
+- **Inline (default):** `Task(engineer-manager)` fan-out — bounded goals, one turn.
+- **Workflow:** for broad/parallel/verify-heavy goals, the **skill** (which runs in the
+  main session and holds the `Workflow` tool) launches a Workflow; the manager's decompose
+  output is the item list, run with `pipeline()`/`parallel()`, bounded concurrency, each
+  unit gated by `verification-agent`.
+- **`/loop`:** for multi-turn campaigns or event-gated work, run under `/loop`; one unit
+  per tick (inline or a Workflow), unattended (ADR-030).
+The decision lives at the **skill** level by design — the agent stays `Task`-capped
+(one-level dispatch); the skill owns parallelism + pacing. The manager *recommends*
+escalation in its decompose output; the skill executes it.
+
+**Consequences.** The conductor now scales from a single change to a wide parallel
+migration to a cross-many-turns campaign — "runs if it needs" — without the agent gaining
+the ability to spawn managers (the one-level cap holds). **Reach scales; authority does
+not:** all three modes hit the same CONSTRAINTS #17 merge gate, the same autonomy-guard
+caps, and the same fail-closed hooks. No new agent/skill/count; ~0 always-on cost (the
+mode table lives in the skill body, loaded on invoke).
+
+**Alternatives rejected.**
+- *Give the `engineer-manager` agent the `Workflow` tool.* Breaks the one-level dispatch
+  cap (ADR-029's runaway brake) and lets a subagent fan out unboundedly. The skill, not the
+  agent, owns Workflow/loop.
+- *Always run a Workflow.* Ceremony for bounded goals (anti-AEPG §6.4). Escalate up only.
+- *A separate `/arib-build-campaign` skill.* Needless surface; mode selection is one skill's job.
+
+---
+
 # ADR-030: Unattended Autonomy Mode + Native NestJS/Postgres Skills (v3.15.0)
 
 **Status:** Accepted   **Date:** 2026-06-20
@@ -1624,6 +1663,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-028 | Memory freshness is CI-enforced (v3.13.0) | Accepted | 2026-06-20 |
 | ADR-029 | Engineer-manager conductor agent + `/arib-build` (v3.14.0) | Accepted | 2026-06-20 |
 | ADR-030 | Unattended autonomy mode + native `/arib-nestjs` & `/arib-postgres` (v3.15.0) | Accepted | 2026-06-20 |
+| ADR-031 | `/arib-build` scales its reach — Workflow + `/loop` escalation (v3.16.0) | Accepted | 2026-06-21 |
 
 ---
 

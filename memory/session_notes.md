@@ -4,20 +4,21 @@
 > detail lives in `CHANGELOG.md` + `io/ledger/`. CI-freshness-gated (v3.13.0):
 > must name the current line and never revert to the v1.0 bootstrap handoff.
 
-## Session: 2026-06-20 — v3.15.0 "Unattended"
+## Session: 2026-06-21 — v3.16.0 "Reach"
 
-### Completed (first /loop backlog batch)
-- **Unattended autonomy mode** (AUTONOMY_MODE §9, ADR-030): rule-17 re-cast —
-  no solicited pauses (assume-and-record); intervention only on explicit command;
-  structural floor kept. Logged in `io/ledger/decision-2026-06-20-unattended-mode.md`.
-- **Native Stack skills** `/arib-nestjs` + `/arib-postgres` (authored, not faked ECC);
-  skills 28→30, +Stack category.
+### Completed
+- `/arib-build` gains **execution-mode selection** (ADR-031): inline (default) →
+  **Workflow** (broad/parallel) → **`/loop`** (multi-turn campaign), escalating only "if
+  it needs." Decision lives at the skill level (holds `Workflow`, can arm `/loop`); the
+  `engineer-manager` agent stays `Task`-capped at one level and recommends escalation.
+  Reach scales, authority doesn't (same #17 gate / autonomy-guard / fail-closed hooks).
 
 ### Next /loop iterations
 - rtk hook + RTK_PROFILES; native code-graph (`/arib-graph`); Ponytail + `/arib-dev-lean`;
-  `/arib-wave-plan` (Codex Act 2). Then close the loop.
+  `/arib-wave-plan` (Codex Act 2); §4-table→reference (always-on relief). Then close the loop.
 
 ### Prior
 - v3.9 Live Update → v3.10 Integrity → v3.11 Engine → v3.12 Reconcile → v3.13 Honest
-  Memory → **v3.14 Engineering Manager** (`engineer-manager` conductor + `/arib-build`,
-  ADR-029), all on `main`. Full detail in `CHANGELOG.md` + DECISIONS (ADR-024…030).
+  Memory → v3.14 Engineering Manager (`engineer-manager` + `/arib-build`) → **v3.15
+  Unattended** (autonomy mode ADR-030 + native `/arib-nestjs`/`-postgres`), all on `main`.
+  Full detail in `CHANGELOG.md` + DECISIONS (ADR-024…031).

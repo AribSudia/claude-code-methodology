@@ -9,7 +9,7 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.15.0 "Unattended"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.16.0 "Reach"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -719,7 +719,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.12.0 | Reconcile | `verification-agent` (16th) reconciles discovered↔fixed before merge; `/arib-engine` + Waves flip to AUTO-MERGE by default gated on reconciliation (not CI alone), `--hold-merge` opt-out, high-stakes always human; Waves become a reference-based validate→re-engineer loop (ADR-027) |
 | v3.13.0 | Honest Memory | Memory-freshness CI gate (`validate-coherence.sh` §8) + non-blocking Stop-hook reminder; backfilled the always-on handoff files; semantic layer reframed honestly (grep default, claude-mem opt-in); §2.3/file-count contradictions reconciled (ADR-028) |
 | v3.14.0 | Engineering Manager | `engineer-manager` (17th agent) — the conductor that commands the team: decompose→dispatch→integrate→reconcile; first agent with `Task`. New `/arib-build` skill. Extracted from the "Synthesis" plan; external-tool absorptions staged/deferred. CONSTRAINTS #18, ADR-029 |
-| **v3.15.0** | **Unattended** | **Unattended autonomy mode (rule-17 re-cast: no solicited pauses; intervention only on explicit command; structural floor kept) + native `/arib-nestjs` & `/arib-postgres` Stack skills (ECC cherry-picks authored, not faked). First `/loop` backlog batch. ADR-030** |
+| v3.15.0 | Unattended | Unattended autonomy mode (rule-17 re-cast: no solicited pauses; intervention only on explicit command; structural floor kept) + native `/arib-nestjs` & `/arib-postgres` Stack skills (ECC cherry-picks authored, not faked). ADR-030 |
+| **v3.16.0** | **Reach** | **`/arib-build` scales its own execution — inline by default, escalates to a parallel **Workflow** for a broad goal, paces under **`/loop`** for a multi-turn campaign, "runs if it needs." Reach scales, authority doesn't (same #17 gate). ADR-031** |
 
 ---
 
