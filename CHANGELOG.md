@@ -7,6 +7,27 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.16.0] "Reach" — 2026-06-21
+
+`/arib-build` now scales its own execution. ADR-031.
+
+### Changed — `/arib-build` execution-mode selection
+- The skill sizes the goal and runs the **smallest mechanism that fits**, escalating only
+  when scope warrants ("runs if it needs"):
+  - **Inline** (default) — `Task(engineer-manager)` fan-out for a bounded, one-turn goal.
+  - **Workflow** — for a broad/parallel/verify-heavy goal, the skill launches a parallel
+    Workflow (the manager's decompose output becomes the item list; bounded concurrency;
+    each unit gated by `verification-agent`).
+  - **`/loop`** — for a multi-turn campaign or event-gated work, run under `/loop`; one
+    unit per tick (inline or a Workflow), unattended (ADR-030).
+- Decision lives at the **skill** level (it runs in the main session, holds `Workflow`,
+  can arm `/loop`); the `engineer-manager` agent stays `Task`-capped at one level (the
+  ADR-029 runaway brake) and *recommends* escalation in its decompose output.
+- **Reach scales; authority does not** — all three modes hit the same CONSTRAINTS #17
+  merge gate, autonomy-guard caps, and fail-closed hooks. No new agent/skill; ~0 always-on.
+
+---
+
 ## [3.15.0] "Unattended" — 2026-06-20
 
 First batch of the `/loop`-driven execution of the remaining "Synthesis" backlog. ADR-030.

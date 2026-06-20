@@ -78,6 +78,24 @@ Task(verification-agent)   — reconcile what was BUILT against the goal (ADR-02
 Then commit per step and stop at the merge gate (below). Report a running log: which
 specialist did what, each verdict, what merged.
 
+### Scaling reach — recommend a Workflow or a /loop when the graph is big
+
+The manager dispatches via `Task`, which is **capped at one level** (it can't spawn
+managers or call the `Workflow` tool itself — that's the deliberate runaway brake). So
+when the decompose step reveals work that outgrows a single inline run, the manager
+**says so in its decompose output** and the `/arib-build` skill (which runs in the main
+session and holds `Workflow` + can arm `/loop`) escalates per its mode table:
+
+- **Broad task graph** (many independent units / a multi-stage pipeline / N findings to
+  verify) → recommend **Workflow**: the task graph becomes the workflow's item list,
+  `pipeline()`/`parallel()` run it with bounded concurrency, each unit gated by
+  `verification-agent`.
+- **Multi-turn campaign** (won't finish this turn, or each unit is gated on CI/deploy) →
+  recommend **`/loop`**: one unit per tick, inline or as a Workflow.
+
+The manager still owns the *decomposition and the per-unit verify*; the skill owns the
+*parallelism and the pacing*. Escalate only when scope warrants — never for a bounded goal.
+
 ---
 
 ## Guardrails it inherits (autonomous, never runaway)

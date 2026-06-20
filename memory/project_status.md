@@ -6,10 +6,10 @@
 
 ## Current Phase
 
-**v3.15.0 "Unattended"** (first `/loop` "Synthesis"-backlog batch): unattended
-autonomy mode (rule-17 re-cast — intervention only on explicit command, floor
-kept; ADR-030) + native `/arib-nestjs` & `/arib-postgres` Stack skills.
-Self-hosted: 30 skills, 17 agents, 9 rules, 8 hook scripts, CI/PR on `main`.
+**v3.16.0 "Reach"**: `/arib-build` scales its execution — inline → **Workflow**
+(broad) → **`/loop`** (campaign), "runs if it needs"; reach scales, authority
+doesn't (same #17 gate). ADR-031. Self-hosted: 30 skills, 17 agents, 9 rules,
+8 hook scripts, CI/PR on `main`.
 
 ## Current State
 
