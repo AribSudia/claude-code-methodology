@@ -7,6 +7,38 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.15.0] "Unattended" — 2026-06-20
+
+First batch of the `/loop`-driven execution of the remaining "Synthesis" backlog. ADR-030.
+
+### Added — unattended autonomy mode (the rule-17 re-cast)
+- `operations/AUTONOMY_MODE.md` §9 — the developer plan's "single human trigger / maximize
+  auto-fire" doctrine, re-cast per owner directive into a **mode of autonomous operation
+  without intervention**: no solicited pauses (assume-and-record instead of asking);
+  "request intervention" fires ONLY on an explicit operator command
+  (`intervene`/`pause`/`hold` or `CCM_INTERVENE=1`). The structural floor stays as
+  infrastructure (branch protection + CONSTRAINTS #17 high-stakes merge, autonomy-guard
+  caps, fail-closed hooks) — not "intervention," and not removed. Logged in
+  `io/ledger/decision-2026-06-20-unattended-mode.md`.
+
+### Added — native Stack skills (the ECC cherry-picks, developed not faked)
+- `.claude/skills/arib-nestjs/` — NestJS architecture & patterns reference + review
+  (modules/DI, DTO+validation, guards/interceptors/pipes/filters, config/lifecycle,
+  data-access at scale, testing, security pitfalls). Composes with `security-auditor` /
+  `database-guardian` / `performance`.
+- `.claude/skills/arib-postgres/` — PostgreSQL optimization & safety (indexing, query
+  plans, safe online migrations, pooling, JSONB, RLS multi-tenancy).
+- Both **authored natively** (MIT) — the ECC repo was unsourceable, so rather than fake a
+  copy or stay deferred, CCM ships its own honest version, with an optional attributed
+  "intelligent graft" path to later enrich (not replace) from a verified ECC asset.
+- `skills` 28→30, `skillCategories` 8→9 (new **Stack** category).
+
+### Still staged/deferred (later `/loop` iterations)
+- rtk compression hook + RTK_PROFILES; native code-graph (`/arib-graph`); Ponytail
+  bloat-guard; `/arib-wave-plan` requirement-lock. See `project_status.md` / the brief.
+
+---
+
 ## [3.14.0] "Engineering Manager" — 2026-06-20
 
 Reviewed the developer's "Synthesis" upgrade plan (4-lens lead-engineer workflow) and

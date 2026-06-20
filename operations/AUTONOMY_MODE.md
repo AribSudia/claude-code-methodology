@@ -128,7 +128,55 @@ The same logic applies to ML-classifier auto-approval at higher rates: it
 works in production once you've run thousands of sessions, and is reckless
 on session three. Autonomy mode is the same. Earn it before relying on it.
 
-## 9. Related
+## 9. Unattended mode — intervention on explicit command only (v3.15.0, ADR-030)
+
+This is the owner-adopted form of the "single human trigger / maximize auto-fire"
+doctrine (the developer plan's §3.7), strengthened: in **unattended mode** the agent
+runs to completion **without proactively requesting intervention**. It does not pause to
+ask "should I continue?", and it does not stop on *determinable* or merely *ambiguous*
+decisions — it **assumes-and-records** instead of asking, then keeps moving.
+
+**The rule (supersedes the "ask one question on genuine ambiguity" pause in unattended runs):**
+
+- **No solicited pauses.** The agent never emits an intervention request on its own.
+  Where the decisive protocol would "ask ONE question," unattended mode instead **records
+  the assumption + rationale** to the run log / `PLAN.md` (auditable after the fact) and
+  proceeds. Only a *hard blocker* (missing dependency, unrecoverable error, a tripped
+  safety gate) halts the run.
+- **"Request intervention" is opt-in, human-triggered.** The pause-for-human path fires
+  **only when the operator explicitly invokes it** — e.g. the user says
+  `intervene` / `pause` / `hold`, or sets `CCM_INTERVENE=1`. Until then, the agent owns
+  every determinable and ambiguous-but-recoverable decision.
+
+**What unattended mode does NOT remove (structural floor — infrastructure, not "intervention"):**
+
+These are repo/runtime controls, not pause-prompts, so they are out of scope of the
+"no intervention" rule and remain in force:
+
+1. **Branch protection + CONSTRAINTS #17** — high-stakes merges (money/tax, auth,
+   tenant-isolation, compliance, secrets, breaking migrations) still require a human
+   approver at the GitHub layer. The agent isn't "asking"; the repo simply won't let an
+   un-approved high-stakes PR land. Auto-merge of *non*-high-stakes work proceeds.
+2. **The autonomy guard** (`autonomy-guard.sh`) — wall-clock, calls-since-commit, and
+   BLOCK-rate caps still self-stop a runaway.
+3. **Fail-closed hooks** (`pre-tool-use.sh`) — secret/dangerous-bash/OWASP gates still
+   block (exit 2). Unattended ≠ unsafe.
+
+The owner may lift floor item (1) for a specific run only by an **explicit** per-run
+override; it is never lifted silently. Everything else stays.
+
+**Enter / exit / intervene:**
+
+```
+enter:     CCM_AUTONOMY=1 CCM_UNATTENDED=1   (preconditions in §3 still required)
+intervene: the operator says "intervene" / "pause" / "hold", or sets CCM_INTERVENE=1
+exit:      the closure test passes, a hard blocker halts, or the operator intervenes
+```
+
+The run report (§6) must list every assumption the agent made in lieu of asking, so an
+unattended run is fully auditable — the autonomy is *recorded*, never hidden.
+
+## 10. Related
 
 - `.claude/hooks/autonomy-guard.sh` — runtime enforcement.
 - `arib-wave-end` — required before merging to main from a wave/*.

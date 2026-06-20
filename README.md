@@ -2,14 +2,14 @@
 
 ### An opinionated methodology and skill pack for Claude Code
 
-A convention layer for serious work in Claude Code: 28 branded `/arib-*` skills,
+A convention layer for serious work in Claude Code: 30 branded `/arib-*` skills,
 17 specialist agents (incl. a project engineering manager), kernel-level enforcement hooks, path-scoped rules, persistent
 memory files, a 5-mode bootstrap, a wave delivery overlay with auto-advancing
 execution, a compliance layer, and full CI/PR governance. It is **not** a runtime,
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.14.0 "Engineering Manager"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.15.0 "Unattended"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -151,8 +151,8 @@ This methodology solves all of that:
 ║  L3 — HOOKS           Safety gates & automation             ║
 ║  PreToolUse · PostToolUse · PreCommit · Notification        ║
 ╠══════════════════════════════════════════════════════════════╣
-║  L2 — SKILLS          28 branded /arib-* deep reference     ║
-║  Session·Dev·Check·Wave·Audit·Docs·Engine (28 skills)   ║
+║  L2 — SKILLS          30 branded /arib-* deep reference     ║
+║  Session·Dev·Check·Wave·Audit·CI·Docs·Engine·Stack (30) ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  I/O — CHANNEL        Inter-agent nervous system            ║
 ║  Requests · Results · Signals · Pipelines · Threads         ║
@@ -273,7 +273,7 @@ protocol can use the explicit prompts in `bootstrap/RUN.md`.)
 
 ---
 
-## The 28 /arib-* Skills
+## The 30 /arib-* Skills
 
 All skills are deep reference documents (250-800 lines each) with decision trees, examples, templates, edge cases, and common mistakes. They live in `.claude/skills/arib-*/SKILL.md`.
 
@@ -320,7 +320,14 @@ All skills are deep reference documents (250-800 lines each) with decision trees
 | **Engine** | `/arib-engine [goal] [--with-arib-family] [--hold-merge]` | Autonomous campaign engine — discover→ship→verify→**reconcile**→close across many reversible PRs; adversarial find→refute→confirm sweeps; evidence-based closure + decision-list hand-off. Standalone by default; pace it with `/loop`. Auto-merges by default, gated on a `verification-agent` RECONCILED verdict (not CI alone); high-stakes always holds for a human; `--hold-merge` holds every PR. | 300 |
 | **Build** | `/arib-build <goal>` | Command the engineering **team** to deliver a KNOWN goal — dispatches the `engineer-manager` (decompose → dispatch specialists in parallel → integrate → reconcile → merge gate). Sibling of `/arib-engine`: the engine *discovers* its backlog, `/arib-build` *executes* the goal you name. | 70 |
 
-**Total**: 28 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
+### Stack Skills (opt-in, stack-specific patterns)
+
+| Skill | Command | What It Does | Lines |
+|-------|---------|-------------|-------|
+| **NestJS** | `/arib-nestjs [module\|feature\|review <path>]` | NestJS architecture/patterns + review — modules/DI, DTO+validation, guards/interceptors/pipes/filters, config/lifecycle, data-access at scale, testing, security pitfalls. Authored natively (MIT). | 90 |
+| **Postgres** | `/arib-postgres [review\|index\|tune]` | PostgreSQL optimization & safety — indexing, `EXPLAIN` plans, N+1, safe online (lock-aware) migrations, pooling, JSONB, RLS multi-tenancy. Authored natively (MIT). | 85 |
+
+**Total**: 30 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
 
 ### How to Use a Skill
 
@@ -571,7 +578,7 @@ claude-code-methodology/                  ← v3.10 "Integrity" — counts live 
 │   ├── settings.json                     ← Permissions + hook wiring (committed)
 │   ├── settings.local.json               ← Personal overrides (gitignored)
 │   ├── rules/                            ← 9 path-scoped rule files (load on matching paths)
-│   ├── skills/                           ← 28 branded skills (/arib-*) — see the table above
+│   ├── skills/                           ← 30 branded skills (/arib-*) — see the table above
 │   ├── agents/                           ← 17 specialist agent definitions — see the table above
 │   ├── hooks/                            ← 7 hook scripts + lib/common.sh (exit-2 blocking gates)
 │   ├── commands/                         ← legacy commands (deprecated; kept for back-compat)
@@ -711,7 +718,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.11.0 | Engine | `/arib-engine` autonomous-campaign skill (standalone-first, opt-in family orchestration, `/loop`-paced) + folded AEPG into CCM: adversarial find→refute→confirm in deep-audit, verify-before-fix/`TZ=UTC`/backward-compat constraints (#14–#17), wave-end closure test (ADR-026) |
 | v3.12.0 | Reconcile | `verification-agent` (16th) reconciles discovered↔fixed before merge; `/arib-engine` + Waves flip to AUTO-MERGE by default gated on reconciliation (not CI alone), `--hold-merge` opt-out, high-stakes always human; Waves become a reference-based validate→re-engineer loop (ADR-027) |
 | v3.13.0 | Honest Memory | Memory-freshness CI gate (`validate-coherence.sh` §8) + non-blocking Stop-hook reminder; backfilled the always-on handoff files; semantic layer reframed honestly (grep default, claude-mem opt-in); §2.3/file-count contradictions reconciled (ADR-028) |
-| **v3.14.0** | **Engineering Manager** | **`engineer-manager` (17th agent) — the conductor that commands the team: decompose→dispatch specialists→integrate→reconcile; the first agent with `Task`. New `/arib-build` skill triggers it. Reviewed + extracted from the developer "Synthesis" plan; external-tool absorptions (rtk/Graphify/Ponytail/ECC) staged/deferred — honesty principle. CONSTRAINTS #18, ADR-029** |
+| v3.14.0 | Engineering Manager | `engineer-manager` (17th agent) — the conductor that commands the team: decompose→dispatch→integrate→reconcile; first agent with `Task`. New `/arib-build` skill. Extracted from the "Synthesis" plan; external-tool absorptions staged/deferred. CONSTRAINTS #18, ADR-029 |
+| **v3.15.0** | **Unattended** | **Unattended autonomy mode (rule-17 re-cast: no solicited pauses; intervention only on explicit command; structural floor kept) + native `/arib-nestjs` & `/arib-postgres` Stack skills (ECC cherry-picks authored, not faked). First `/loop` backlog batch. ADR-030** |
 
 ---
 
