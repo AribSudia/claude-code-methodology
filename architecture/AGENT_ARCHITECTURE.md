@@ -57,8 +57,11 @@ whether it is safe to dispatch alongside others.
 | `planner` | architect output, `architecture/DECISIONS.md`, memory | sequence + dependencies + risks + blockers (returned to parent) | Yes | Read-only. Pairs with `architect` during `/arib-wave-start`. |
 | `ci-pr-engineer` | `.github/**`, `CONTRIBUTING.md`, `SECURITY.md`, ADR-012, optional `gh api` | CI/PR audit report (returned to parent); proposes init scaffolding | Conditional | Read-only by default (audit/review/branch-protection modes). Sequential in `init` mode while parent applies writes. |
 | `verification-agent` | the diff/PR (unit) or `waves/<name>/PLAN.md` + composed branch (wave), gate evidence | RECONCILED / GAP / HOLD verdict (returned to parent) | Yes | Read-only pre-merge reconciler (intent ↔ actual change). The closing gate for auto-merge in `/arib-engine` (unit scope) and Waves (wave scope). Runs AFTER `code-reviewer`/`security-auditor` — they judge quality, it judges fulfillment. ADR-027. |
+| `engineer-manager` | the goal/plan, the other agents' outputs, `CONSTRAINTS.md` | dispatch decisions + a running delivery log (writes converge in the parent) | N/A (it IS the dispatcher) | **The conductor** — the ONLY agent granted the `Task` tool. Commands the 16 specialists: decompose (architect+planner) → dispatch fan-out batches (obeys the no-write-conflict / no-read-after-write rules above) → integrate → `verification-agent` last. Holds NO merge authority beyond CONSTRAINTS #17/#18. Invoked by `/arib-build`. ADR-029. |
 
-**Total:** 16 agents (matches `.claude/agents/` count, excluding `README.txt`).
+**Total:** 17 agents (matches `.claude/agents/` count, excluding `README.txt`).
+**Dispatcher:** `engineer-manager` is the only agent with `Task`; the other 16 are leaf
+specialists it commands. Recipe 6 below is its managed-delivery cycle.
 
 ---
 
@@ -126,6 +129,25 @@ Task(ci-pr-engineer, mode=audit)
 Task(api-docs, mode=audit)
 Task(language)
 ```
+
+### Recipe 6 — Managed delivery (used by `/arib-build` → `engineer-manager`)
+
+The conductor's cycle. The `engineer-manager` agent dispatches the others; it is the only
+agent with `Task`. Decompose wave first, then specialist fan-out, then the reconciler last:
+
+```
+# decompose
+Task(architect)
+Task(planner)
+# → manager merges into a task graph, then dispatches specialist batches, e.g.:
+Task(database-guardian)              # serialize writers; fan out read-only reviewers
+Task(code-reviewer)  Task(security-auditor)  Task(test-engineer, mode=report-only)
+# verify last (ADR-027)
+Task(verification-agent)
+```
+
+The manager obeys every rule above (no write-conflict, no read-after-write) and holds no
+merge authority beyond CONSTRAINTS #17/#18. See `.claude/agents/engineer-manager.md`.
 
 ---
 

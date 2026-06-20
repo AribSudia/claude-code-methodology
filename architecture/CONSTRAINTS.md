@@ -343,8 +343,15 @@ when modifying the methodology repo or shipping a new release.
     `HOLD` → human. `--hold-merge` / Waves opt-out holds every PR. Branch
     protection (#10) still governs and is never bypassed.
 
+18. **The engineer-manager dispatches; it does not rule.** `engineer-manager`
+    (via `/arib-build`) is the only agent with `Task` and may decompose and
+    dispatch the specialist team autonomously — but gains NO authority beyond
+    #17: never merges high-stakes, never bypasses branch protection, re-checks
+    CONSTRAINTS each dispatch wave, self-stops under the autonomy guard,
+    verifies with `verification-agent` last (ADR-027/029).
+
 > Constraints #14–#17 = AEPG adoption (ADR-026); #17's reconciliation-gated
-> auto-merge + `verification-agent` = ADR-027.
+> auto-merge + `verification-agent` = ADR-027; #18 (engineer-manager) = ADR-029.
 
 ---
 

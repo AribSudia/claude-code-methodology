@@ -550,6 +550,54 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-029: The Engineer-Manager — a Conductor Agent for the Specialist Team (v3.14.0)
+
+**Status:** Accepted   **Date:** 2026-06-20
+
+**Context.** The owner asked for CCM to have a "project engineering manager" — an agent
+that commands the specialist team and deploys them as needed, making CCM intelligent,
+autonomous, and engineering-driven. CCM already had 16 specialists, but they were
+keyword-activated leaves: nothing *commanded* them as a team. Orchestration happened
+implicitly in the parent session or ad hoc inside skills. A developer plan ("Synthesis",
+proposed as v3.13.0) gestured at this but mis-versioned against the just-shipped v3.13.0
+"Honest Memory", reused ADR-028, and bundled it with external-tool absorptions (rtk,
+Graphify, Ponytail, ECC) that are absent/unsourceable in this environment.
+
+**Decision.** Extract the highest-leverage, dependency-free piece and ship it as the
+headline of **v3.14.0 "Engineering Manager"**:
+1. **`.claude/agents/engineer-manager.md`** (17th agent) — the conductor, and the **first
+   agent granted the `Task` tool**. That single capability turns 16 leaf specialists into
+   a commanded team. Cycle: **decompose** (architect+planner in parallel → task graph) →
+   **dispatch** (specialist fan-out batches obeying the existing no-write-conflict /
+   no-read-after-write rules in AGENT_ARCHITECTURE.md) → **integrate** (writes converge in
+   the parent) → **verify** (`verification-agent` last → RECONCILED/GAP/HOLD, ADR-027). It
+   writes ZERO new infrastructure — it sequences existing agents under existing governance.
+2. **`.claude/skills/arib-build/SKILL.md`** (28th skill) — the thin human trigger that
+   dispatches the manager and scopes it vs `/arib-engine` (engine *discovers* a backlog;
+   `/arib-build` *executes* a known goal).
+3. **CONSTRAINTS #18** — the manager dispatches autonomously but holds NO authority beyond
+   #17: never merges high-stakes, never bypasses branch protection, self-stops under the
+   autonomy guard. #18 references #17, never weakens it.
+
+**Consequences.** CCM becomes a *commanded* team, not a bag of keyword agents — the
+owner's "intelligent, autonomous, engineering-driven" goal, delivered with one agent + one
+thin skill and ~0 always-on tokens. The human-in-the-loop posture is preserved exactly:
+the manager re-inserts `verification-agent` at the verify phase and routes merge through
+the same #17 gate `/arib-engine` and Waves use. It is a sibling of `/arib-engine`, not a
+replacement, and not a competing OS (no new state/memory/merge authority).
+
+**Alternatives rejected.**
+- *A pre-flight phase bolted onto `/arib-wave-start` (the plan's shape).* An agent is the
+  CCM-native unit that commands other agents via `Task`; a skill-only bolt-on can't.
+- *The plan's "single human trigger / maximize auto-fire" doctrine.* It collapses
+  pre-execution judgment and erodes v3.12's two-gate posture; CCM keeps the two distinct
+  gates (reconciliation + human-on-high-stakes).
+- *Shipping the rtk/Graphify/Ponytail/ECC absorptions now.* Those tools are absent or
+  unsourceable here; advertising them live would violate the honesty principle. Staged/
+  deferred behind presence checks (see the v3.14 brief), not shipped inert.
+
+---
+
 # ADR-028: Memory Freshness Is CI-Enforced (v3.13.0)
 
 **Status:** Accepted   **Date:** 2026-06-20
@@ -1529,6 +1577,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-026 | Adopt the AEPG engine — `/arib-engine` skill + folded constraints (v3.11.0) | Accepted | 2026-06-17 |
 | ADR-027 | Reconciliation-gated auto-merge + `verification-agent` (v3.12.0) | Accepted | 2026-06-20 |
 | ADR-028 | Memory freshness is CI-enforced (v3.13.0) | Accepted | 2026-06-20 |
+| ADR-029 | Engineer-manager conductor agent + `/arib-build` (v3.14.0) | Accepted | 2026-06-20 |
 
 ---
 

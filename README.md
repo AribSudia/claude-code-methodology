@@ -2,14 +2,14 @@
 
 ### An opinionated methodology and skill pack for Claude Code
 
-A convention layer for serious work in Claude Code: 27 branded `/arib-*` skills,
-16 specialist agents, kernel-level enforcement hooks, path-scoped rules, persistent
+A convention layer for serious work in Claude Code: 28 branded `/arib-*` skills,
+17 specialist agents (incl. a project engineering manager), kernel-level enforcement hooks, path-scoped rules, persistent
 memory files, a 5-mode bootstrap, a wave delivery overlay with auto-advancing
 execution, a compliance layer, and full CI/PR governance. It is **not** a runtime,
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.13.0 "Honest Memory"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.14.0 "Engineering Manager"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -130,7 +130,7 @@ This methodology solves all of that:
 | Problem                          | Solution                                     |
 |----------------------------------|----------------------------------------------|
 | Claude forgets between sessions  | **Persistent Memory** — 7 data files, freshness CI-gated (v3.13.0) |
-| No consistent code quality       | **16 Specialist Agents** — each with checklists |
+| No consistent code quality       | **17 Specialist Agents** — a conductor + 16 specialists |
 | Dangerous operations slip through| **Safety Hooks** — block before damage happens |
 | Every session starts from scratch| **Session Protocol** — read → work → write    |
 | Architecture decisions are lost  | **Decision Records** — permanent, searchable  |
@@ -143,7 +143,7 @@ This methodology solves all of that:
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  L4 — AGENTS          16 specialists with scoped context    ║
+║  L4 — AGENTS          17 specialists (incl. engineer-manager) ║
 ║  Architect · Security · Reviewer · Tester · Debugger        ║
 ║  Refactor · Language · Deploy Guardian · Reality Auditor     ║
 ║  Database Guardian · Performance · API Docs · Accessibility  ║
@@ -151,13 +151,13 @@ This methodology solves all of that:
 ║  L3 — HOOKS           Safety gates & automation             ║
 ║  PreToolUse · PostToolUse · PreCommit · Notification        ║
 ╠══════════════════════════════════════════════════════════════╣
-║  L2 — SKILLS          27 branded /arib-* deep reference     ║
-║  Session·Dev·Check·Wave·Audit·Docs·Engine (27 skills)    ║
+║  L2 — SKILLS          28 branded /arib-* deep reference     ║
+║  Session·Dev·Check·Wave·Audit·Docs·Engine (28 skills)   ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  I/O — CHANNEL        Inter-agent nervous system            ║
 ║  Requests · Results · Signals · Pipelines · Threads         ║
 ╠══════════════════════════════════════════════════════════════╣
-║  L1 — CLAUDE.md       The Master Brain (179 lines)          ║
+║  L1 — CLAUDE.md       The Master Brain (lean core)          ║
 ║  + .claude/rules/ (9 path-scoped rule files)                ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
@@ -187,7 +187,7 @@ curl -fsSL https://raw.githubusercontent.com/AribSudia/claude-code-methodology/m
 #    Claude reads everything, knows your project, and begins
 ```
 
-**What you get**: Every file populated — CONSTRAINTS.md with your rules, TECH_STACK.md with your libraries, API_ENDPOINTS.md with your routes, CONTEXT_MAP.md with your folders, and all 16 agents configured for your stack.
+**What you get**: Every file populated — CONSTRAINTS.md with your rules, TECH_STACK.md with your libraries, API_ENDPOINTS.md with your routes, CONTEXT_MAP.md with your folders, and all 17 agents configured for your stack.
 
 ### Use Case 2: Existing Project (Reverse Bootstrap)
 
@@ -273,7 +273,7 @@ protocol can use the explicit prompts in `bootstrap/RUN.md`.)
 
 ---
 
-## The 27 /arib-* Skills
+## The 28 /arib-* Skills
 
 All skills are deep reference documents (250-800 lines each) with decision trees, examples, templates, edge cases, and common mistakes. They live in `.claude/skills/arib-*/SKILL.md`.
 
@@ -318,8 +318,9 @@ All skills are deep reference documents (250-800 lines each) with decision trees
 | Skill | Command | What It Does | Lines |
 |-------|---------|-------------|-------|
 | **Engine** | `/arib-engine [goal] [--with-arib-family] [--hold-merge]` | Autonomous campaign engine — discover→ship→verify→**reconcile**→close across many reversible PRs; adversarial find→refute→confirm sweeps; evidence-based closure + decision-list hand-off. Standalone by default; pace it with `/loop`. Auto-merges by default, gated on a `verification-agent` RECONCILED verdict (not CI alone); high-stakes always holds for a human; `--hold-merge` holds every PR. | 300 |
+| **Build** | `/arib-build <goal>` | Command the engineering **team** to deliver a KNOWN goal — dispatches the `engineer-manager` (decompose → dispatch specialists in parallel → integrate → reconcile → merge gate). Sibling of `/arib-engine`: the engine *discovers* its backlog, `/arib-build` *executes* the goal you name. | 70 |
 
-**Total**: 27 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
+**Total**: 28 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
 
 ### How to Use a Skill
 
@@ -399,7 +400,7 @@ human checkpoint:
 
 ---
 
-## The 16 Specialist Agents
+## The 17 Specialist Agents
 
 Agents activate automatically based on keywords in your instructions. Each operates with a specific checklist and delivers a structured output.
 
@@ -421,6 +422,7 @@ Agents activate automatically based on keywords in your instructions. Each opera
 | **Planner**           | wave-start, "sequence", "plan steps" | Step sequence + dependency map + risk register |
 | **CI/PR Engineer**    | "/arib-ci-audit", workflows, CODEOWNERS | CI/PR posture report (audit/init/review/BP) |
 | **Verification Agent**| pre-merge in `/arib-engine` + Waves     | RECONCILED / GAP / HOLD — reconciles discovered↔fixed before merge |
+| **Engineer Manager**  | `/arib-build`, any goal needing a team  | The conductor — decompose → dispatch specialists → integrate → reconcile (only agent with `Task`) |
 
 Agent definitions live in `.claude/agents/`.
 
@@ -500,7 +502,7 @@ Instead of a massive CLAUDE.md, domain rules live in `.claude/rules/` and **only
 | `architecture.md` | `architecture/**` touched | Architecture layer rules |
 | `implementation.md` | `implementation/**` touched | Implementation layer rules |
 
-This keeps CLAUDE.md at 179 lines (under the 200-line best practice) while preserving all domain knowledge.
+This keeps CLAUDE.md lean (the always-on budget is CI-enforced under 8K) while preserving all domain knowledge.
 
 ---
 
@@ -569,8 +571,8 @@ claude-code-methodology/                  ← v3.10 "Integrity" — counts live 
 │   ├── settings.json                     ← Permissions + hook wiring (committed)
 │   ├── settings.local.json               ← Personal overrides (gitignored)
 │   ├── rules/                            ← 9 path-scoped rule files (load on matching paths)
-│   ├── skills/                           ← 27 branded skills (/arib-*) — see the table above
-│   ├── agents/                           ← 15 specialist agent definitions — see the table above
+│   ├── skills/                           ← 28 branded skills (/arib-*) — see the table above
+│   ├── agents/                           ← 17 specialist agent definitions — see the table above
 │   ├── hooks/                            ← 7 hook scripts + lib/common.sh (exit-2 blocking gates)
 │   ├── commands/                         ← legacy commands (deprecated; kept for back-compat)
 │   └── output-styles/                    ← Custom output styles
@@ -708,7 +710,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.10.0 | Integrity | Six-agent full audit + fix wave: hooks fail CLOSED, validate-system.sh rewritten dynamic, docs-match-disk sweep, ccm-fetch hardening, dead infra deleted (ADR-025) |
 | v3.11.0 | Engine | `/arib-engine` autonomous-campaign skill (standalone-first, opt-in family orchestration, `/loop`-paced) + folded AEPG into CCM: adversarial find→refute→confirm in deep-audit, verify-before-fix/`TZ=UTC`/backward-compat constraints (#14–#17), wave-end closure test (ADR-026) |
 | v3.12.0 | Reconcile | `verification-agent` (16th) reconciles discovered↔fixed before merge; `/arib-engine` + Waves flip to AUTO-MERGE by default gated on reconciliation (not CI alone), `--hold-merge` opt-out, high-stakes always human; Waves become a reference-based validate→re-engineer loop (ADR-027) |
-| **v3.13.0** | **Honest Memory** | **Memory-freshness CI gate (`validate-coherence.sh` §8) + non-blocking Stop-hook reminder; backfilled the always-on handoff files (the repo was dogfooding its own worst failure); semantic layer reframed honestly (grep default, claude-mem opt-in); §2.3/file-count contradictions reconciled (ADR-028)** |
+| v3.13.0 | Honest Memory | Memory-freshness CI gate (`validate-coherence.sh` §8) + non-blocking Stop-hook reminder; backfilled the always-on handoff files; semantic layer reframed honestly (grep default, claude-mem opt-in); §2.3/file-count contradictions reconciled (ADR-028) |
+| **v3.14.0** | **Engineering Manager** | **`engineer-manager` (17th agent) — the conductor that commands the team: decompose→dispatch specialists→integrate→reconcile; the first agent with `Task`. New `/arib-build` skill triggers it. Reviewed + extracted from the developer "Synthesis" plan; external-tool absorptions (rtk/Graphify/Ponytail/ECC) staged/deferred — honesty principle. CONSTRAINTS #18, ADR-029** |
 
 ---
 
