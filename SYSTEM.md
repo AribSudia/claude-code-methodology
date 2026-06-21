@@ -21,11 +21,11 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.18.0                                                   |
-| **Codename**         | "Compression & Lean"                                |
+| **Version**          | 3.19.0                                                   |
+| **Codename**         | "Code Graph"                                         |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
-| **Last Updated**     | 2026-06-20                                               |
+| **Last Updated**     | 2026-06-21                                               |
 | **Engineered By**    | Abdullah × Claude Opus 4.6                               |
 | **License**          | MIT                                                      |
 | **Status**           | Production-Ready                                         |
@@ -117,7 +117,7 @@ The system is built on five engineering principles:
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
-║  L2 — SKILLS                    32 auto-invoked skills      ║
+║  L2 — SKILLS                    33 auto-invoked skills      ║
 ║  6 categories: Session · Dev · Wave · Check · CI · Docs             ║
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
@@ -175,7 +175,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 ├── .claude/                     ← CLAUDE CODE CONFIG
 │   ├── settings.json            ← Permissions, hooks, context
 │   ├── agents/ (17)             ← Specialist agent definitions
-│   ├── skills/ (32)             ← Branded /arib-* skills (canonical)
+│   ├── skills/ (33)             ← Branded /arib-* skills (canonical)
 │   ├── hooks/                   ← Hook scripts
 │   └── commands/                ← Legacy commands (deprecated)
 │
@@ -225,7 +225,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 │
 ├── reference/                   ← READ-ONLY REFERENCE (2 files)
 │   ├── MASTER_GUIDE.md          ← Quick reference card
-│   └── SKILLS_REGISTRY.md       ← 32 skills catalog
+│   └── SKILLS_REGISTRY.md       ← 33 skills catalog
 │
 ├── scripts/                     ← AUTOMATION (5 files)
 │   ├── git-setup.sh             ← One-time repo setup
@@ -588,7 +588,7 @@ old system never had.
 
 | #  | Feature                          | Component                  | Description                                                |
 |----|----------------------------------|----------------------------|------------------------------------------------------------|
-| 75 | **Skills Registry**              | reference/SKILLS_REGISTRY.md | 32 skills cataloged with install commands                |
+| 75 | **Skills Registry**              | reference/SKILLS_REGISTRY.md | 33 skills cataloged with install commands                |
 | 76 | **15 Category A Skills**         | Coding excellence          | Frontend, debugging, TDD, security, architecture, review   |
 | 77 | **6 Category B Skills**          | Design & automation        | Research, marketing, UI/UX, persistent memory              |
 | 78 | **Auto-Activation System**       | SKILL.md description field | Skills activate on keyword match — no explicit invocation  |

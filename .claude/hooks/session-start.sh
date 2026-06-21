@@ -45,4 +45,17 @@ for tool in jq git; do
   fi
 done
 
+# 6. Code-graph staleness recommendation (advisory, v3.19.0/ADR-034). Never
+# auto-runs (autonomy guard) — just surfaces a one-line recommendation. No-op
+# unless a code-graph manifest exists and is stale / behind the current commit.
+GRAPH_MANIFEST="${CCM_ROOT}/memory/code-graph/graph-manifest.json"
+if command -v jq >/dev/null 2>&1 && [[ -f "$GRAPH_MANIFEST" ]]; then
+  GBUILT="$(jq -r '.built // false' "$GRAPH_MANIFEST" 2>/dev/null || echo false)"
+  GCOMMIT="$(jq -r '.last_build_commit // ""' "$GRAPH_MANIFEST" 2>/dev/null || echo)"
+  HEAD_SHA="$(git -C "${CCM_ROOT}" rev-parse HEAD 2>/dev/null || echo)"
+  if [[ "$GBUILT" == "true" && -n "$GCOMMIT" && "$GCOMMIT" != "$HEAD_SHA" ]]; then
+    printf '[CCM] code-graph is stale (built at %s, HEAD is %s) — consider /arib-graph refresh.\n' "${GCOMMIT:0:8}" "${HEAD_SHA:0:8}" >&2
+  fi
+fi
+
 allow "session-start checks complete"

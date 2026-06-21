@@ -182,6 +182,20 @@ fi
 rm -f "$PONY_TMP"
 
 echo ""
+echo "5d. graph-consult (PreToolUse advisory — exit 0, no-op when graph absent)"
+GC_TMP="$(mktemp)"
+printf '{"tool_name":"Grep","tool_input":{"pattern":"foo"}}' > "$GC_TMP"
+# CCM's committed graph manifest is built:false → must be a silent no-op, exit 0.
+run_test "graph-consult: no graph built (exit 0)" "$HOOKS/graph-consult.sh" "$GC_TMP" 0
+GC_OUT="$(cat "$GC_TMP" | "$HOOKS/graph-consult.sh" 2>&1)"
+if [[ -z "$GC_OUT" ]]; then
+  PASS=$((PASS+1)); printf '  [PASS] %-50s silent (no graph)\n' "graph-consult: no-op silent"
+else
+  FAIL=$((FAIL+1)); FAIL_LIST+=("graph-consult not silent without graph"); printf '  [FAIL] %-50s emitted output\n' "graph-consult: no-op silent"
+fi
+rm -f "$GC_TMP"
+
+echo ""
 echo "6. Autonomy guard"
 # Run against an ISOLATED CCM_ROOT (temp dir) so "fresh state" is genuinely
 # fresh. Otherwise the guard's BLOCK-rate check counts the BLOCK events the

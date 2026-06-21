@@ -75,6 +75,16 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "matcher": "Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/graph-consult.sh",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "Stop": [

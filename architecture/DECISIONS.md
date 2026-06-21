@@ -550,6 +550,49 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-034: Native Code-Graph — A Lightweight Import Graph, On-Demand Only (v3.19.0)
+
+**Status:** Accepted   **Date:** 2026-06-21
+
+**Context.** `/loop` backlog iteration 4. The "Synthesis" plan wanted a Graphify-style
+code-graph so a large monorepo can be navigated by structure ("what imports `X`?") instead
+of re-grepping the whole tree every session. Graphify itself is an ABSENT tool — claiming
+semantic call-graph/type-resolution would violate the honesty principle. But the *useful
+80%* — an import/symbol graph — is buildable natively with ripgrep/grep, which CCM already
+depends on.
+
+**Decision.** Ship a **native, lightweight import graph**, dependency-free and honest about
+its scope:
+
+1. **`scripts/build-code-graph.sh`** — extracts file→file import edges (TS/JS/Py/Go/Java/Rb/
+   PHP) via rg/grep, dedups, and writes `memory/code-graph/{graph.json, GRAPH_REPORT.md,
+   graph-manifest.json}`. Edges capped (`--max`, default 8000). On CCM itself (markdown +
+   shell) the graph is empty — honestly so.
+2. **`/arib-graph`** skill (33rd) — `build` / `refresh` / `query <entity>`. Query is a `jq`
+   filter over the built graph (importers-of, imports-from). Categorized **Session** (a
+   memory/recall tool beside `/arib-memory-search`) — no new skill category.
+3. **`graph-consult.sh`** — PreToolUse advisory on `Grep`/`Glob`. Exit 0 always; **pure
+   no-op when the graph is absent**; never blocks (the blocking gate stays `pre-tool-use.sh`).
+   When the graph exists it surfaces a one-line "use `/arib-graph query`" hint — it does NOT
+   rewrite the search or inject the full graph (unreliable + token-heavy).
+4. **Session-start recommendation** — when the manifest is built but behind HEAD, session-start
+   *recommends* `/arib-graph refresh`. Advisory; never auto-runs (autonomy guard).
+
+**Honest scope.** This is an **import/symbol graph**, NOT semantic analysis — no call-graph,
+no type resolution. It is named and documented as such everywhere.
+
+**Zero always-on cost.** The graph and its digest are **fully on-demand** — nothing is added
+to CLAUDE.md or any always-on file. The 8K session budget is untouched. `graph.json` is
+generated runtime state (gitignored); only the seed `GRAPH_REPORT.md` + `graph-manifest.json`
+(`built:false`) are committed.
+
+**Consequences.** Big repos get structural navigation without a new dependency or a token
+tax. The cost is that "graph" can over-promise — mitigated by naming it an *import* graph in
+the skill, the report, the hook, and this ADR. Refresh is a full rebuild (cheap on rg); an
+incremental refresh is a future optimization, not needed for the MVP.
+
+---
+
 # ADR-033: Output Compression + Lean Guard — CCM's First PostToolUse Hooks (v3.18.0)
 
 **Status:** Accepted   **Date:** 2026-06-21
@@ -1743,6 +1786,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-031 | `/arib-build` scales its reach — Workflow + `/loop` escalation (v3.16.0) | Accepted | 2026-06-21 |
 | ADR-032 | Pre-wave requirement lock — `/arib-wave-plan` (v3.17.0) | Accepted | 2026-06-21 |
 | ADR-033 | Output compression + lean guard — first PostToolUse hooks (v3.18.0) | Accepted | 2026-06-21 |
+| ADR-034 | Native code-graph — lightweight import graph, on-demand only (v3.19.0) | Accepted | 2026-06-21 |
 
 ---
 

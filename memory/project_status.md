@@ -6,18 +6,18 @@
 
 ## Current Phase
 
-**v3.18.0 "Compression & Lean"** (`/loop` iter 3, ADR-033): CCM's first PostToolUse
-hooks (advisory exit-0) — `compress-output.sh` (rtk graceful) + native
-`ponytail-lite.sh`; `/arib-dev-lean` review; security-auditor hardened natively.
-Self-hosted: 32 skills, 17 agents, 9 rules, 10 hook scripts, CI/PR on `main`.
+**v3.19.0 "Code Graph"** (`/loop` iter 4, ADR-034): native **import graph** (rg/grep,
+honest — not semantic) — `build-code-graph.sh`, `/arib-graph` (build/refresh/query),
+advisory `graph-consult.sh` (PreToolUse, exit-0/no-op-when-absent), session-start
+staleness note. **Zero always-on.** Self-hosted: 33 skills, 17 agents, 11 hook scripts.
 
 ## Current State
 
 - Team of 17 *commanded* by `engineer-manager` (only `Task`-holder); merge authority
-  unchanged (#17/#18). Enforcement real (hooks exit 2, 49/49); memory freshness gated.
+  unchanged (#17/#18). Enforcement real (hooks exit 2, 61/61 tests); memory freshness gated.
   Engine/Waves/Build auto-merge gated on reconciliation, high-stakes always human.
 
 ## Next Tasks
 
-- `/loop` STAGE: rtk hook, native code-graph (`/arib-graph`), Ponytail; `/arib-wave-plan`.
-  DEFER: ECC repo cherry-picks (need repo+license). No blockers.
+- `/loop` iter 5 (close): move always-on §4 skill table out of CLAUDE.md → `reference/`;
+  final 'Plan deliverables → status in CCM' table; STOP loop. No blockers.

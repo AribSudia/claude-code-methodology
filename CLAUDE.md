@@ -10,12 +10,12 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.18.0 "Compression & Lean"          |
+| Version           | 3.19.0 "Code Graph"                  |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |
 | Created           | 2026-04-15                               |
-| Last Updated      | 2026-06-20                               |
+| Last Updated      | 2026-06-21                               |
 | Language Support   | Universal (RTL, LTR, CJK, Indic, Bidi)  |
 | Methodology       | 4-Layer Architecture + I/O Channel + Memory |
 | Status            | Production-Ready                         |
@@ -90,7 +90,7 @@ your-project/
 |   |-- settings.json                  <- Permissions, hooks (committed)
 |   |-- settings.local.json            <- Personal overrides (gitignored)
 |   |-- rules/                         <- Path-scoped modular rules
-|   |-- skills/                        <- Branded skills (/arib-*) — 32 total
+|   |-- skills/                        <- Branded skills (/arib-*) — 33 total
 |   |   |-- arib-session-start/SKILL.md
 |   |   |-- arib-dev-feature/SKILL.md
 |   |   +-- (26 more skills)
@@ -120,11 +120,12 @@ your-project/
 | /arib-session-end           | Session    | Close session, update memory, commit                 |
 | /arib-io                    | Session    | Process I/O Channel (Cowork bridge)                  |
 | /arib-memory-search         | Session    | Semantic search across memory (claude-mem + grep)    |
+| /arib-graph                 | Session    | Code-graph — native import graph; build/refresh/query (on-demand) |
 | /arib-dev-feature           | Dev        | New feature with branch + TDD                        |
 | /arib-dev-debug             | Dev        | Scientific debugging (3 hypotheses)                  |
 | /arib-dev-review            | Dev        | Code review with parallel agent fan-out              |
 | /arib-dev-lean              | Dev        | Over-engineering review — delete-list of bloat (advisory) |
-| /arib-wave-plan             | Wave       | Pre-wave requirement lock — grill + Codex adversarial review; merge-hold if no Codex |
+| /arib-wave-plan             | Wave       | Pre-wave requirement lock — grill + Codex review; merge-hold if no Codex |
 | /arib-wave-start            | Wave       | Start a wave (auto-chains wave-plan; architect + planner) |
 | /arib-wave-run              | Wave       | Execute wave steps with auto-advance (pauses only on issue/checkpoint) |
 | /arib-wave-end              | Wave       | Close a wave (deep-audit gate + stakeholder report)  |
@@ -140,14 +141,14 @@ your-project/
 | /arib-check-arabic          | Check      | Arabic/RTL audit (typography, mirroring, MENA)       |
 | /arib-check-security        | Check      | OWASP Top 10 + supply chain                          |
 | /arib-check-compliance      | Check      | Framework alignment (OWASP/GDPR/ISO/SOC2/PDPL)       |
-| /arib-ci-audit              | CI         | Audit, init, review, or branch-protection check (v3.5) |
+| /arib-ci-audit              | CI         | Audit, init, review, or branch-protection check |
 | /arib-docs-api              | Docs       | API documentation + OpenAPI                          |
 | /arib-docs-generate         | Docs       | Generate documentation                               |
 | /arib-docs-language         | Docs       | i18n/RTL/LTR compliance (generic)                    |
-| /arib-engine                | Engine     | Autonomous campaign — discovers its own backlog; auto-merge gated on reconciliation, high-stakes human |
-| /arib-build                 | Engine     | Command the team for a KNOWN goal — dispatches engineer-manager (decompose→dispatch→integrate→reconcile) |
-| /arib-nestjs                | Stack      | NestJS patterns + review (DI, DTO/validation, guards, N+1, security) |
-| /arib-postgres              | Stack      | PostgreSQL optimization & safety (indexes, plans, online migrations, RLS) |
+| /arib-engine                | Engine     | Autonomous campaign — discovers its own backlog; auto-merge gated on reconciliation |
+| /arib-build                 | Engine     | Command the team for a KNOWN goal — dispatches engineer-manager (decompose→dispatch→reconcile) |
+| /arib-nestjs                | Stack      | NestJS patterns + review (DI, DTO, guards, N+1, security) |
+| /arib-postgres              | Stack      | PostgreSQL optimization & safety (indexes, plans, migrations, RLS) |
 
 ---
 
