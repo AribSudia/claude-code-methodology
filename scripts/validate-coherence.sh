@@ -41,6 +41,17 @@ HOOKS_DECL=$(jq -r '.stats.hookScripts // "missing"' VERSION.json)
 [ "$RULES_DISK" = "$RULES_DECL" ]   && note_ok "rules: $RULES_DISK"   || note_fail "rules: disk=$RULES_DISK VERSION.json=$RULES_DECL"
 [ "$HOOKS_DISK" = "$HOOKS_DECL" ]   && note_ok "hookScripts: $HOOKS_DISK" || note_fail "hookScripts: disk=$HOOKS_DISK VERSION.json=$HOOKS_DECL"
 
+# Catalog drift guard (v3.20.0, ADR-035): the /arib-* skill table moved out of
+# CLAUDE.md §4 into reference/SKILLS_CATALOG.md (on-demand). Since it left the
+# always-on view where drift is obvious, gate its row count against VERSION.json.
+if [ -f reference/SKILLS_CATALOG.md ]; then
+  CATALOG_ROWS=$(grep -cE '^\| /arib-' reference/SKILLS_CATALOG.md 2>/dev/null || true)
+  [ "$CATALOG_ROWS" = "$SKILLS_DECL" ] && note_ok "SKILLS_CATALOG.md rows: $CATALOG_ROWS" \
+    || note_fail "SKILLS_CATALOG.md rows=$CATALOG_ROWS != VERSION.json skills=$SKILLS_DECL"
+else
+  note_fail "reference/SKILLS_CATALOG.md missing (the canonical /arib-* catalog, ADR-035)"
+fi
+
 # ---------- 2. Every agent file has frontmatter with name==basename ----------
 echo ""
 echo "2. Agent frontmatter (name must equal filename)"

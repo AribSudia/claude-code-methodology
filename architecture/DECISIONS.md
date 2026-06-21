@@ -550,6 +550,38 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-035: Skill Catalog Moved Out of Always-On — `reference/SKILLS_CATALOG.md` (v3.20.0)
+
+**Status:** Accepted   **Date:** 2026-06-21
+
+**Context.** `/loop` backlog iteration 5 (the close). The `/arib-*` skill table lived in
+CLAUDE.md §4 — always-on, read every session. As the skill count grew (26 → 33), the table
+became the dominant always-on line item and forced a token trim on *every* release to stay
+under the 8000 budget (v3.19 shipped with only **13 tokens** of headroom). The table is
+reference material — you don't need all 33 rows in working memory every session; you need to
+know the catalog exists and where to find it.
+
+**Decision.** Move the full Skill · Category · Purpose table out of CLAUDE.md §4 into
+**`reference/SKILLS_CATALOG.md`** (loaded on demand, like every other reference doc per
+ADR-019). CLAUDE.md §4 keeps a **one-line pointer + the category-count summary** (33 across
+9 categories) so the shape is still visible at a glance. This is the structural completion of
+the v3.8.0 "Lean Core" work (ADR-019) — hence the codename "Lean Core II".
+
+**Anti-drift guard.** Because the table left the always-on view (where drift is obvious), a
+new check in `scripts/validate-coherence.sh` fails CI if `SKILLS_CATALOG.md`'s `/arib-` row
+count ≠ `VERSION.json` `stats.skills`. Adding a skill now means updating the catalog +
+VERSION together, enforced by CI — the same disk-vs-declared discipline ADR-025 applies
+elsewhere.
+
+**Consequences.** Always-on drops **7987 → 7212 tokens** — UNDER 8000 with ~788 of real
+headroom, so future skills no longer force a release-time trim of the master brain. The cost
+is one extra on-demand file and a pointer indirection, both cheap. Three skill lists now
+exist — CLAUDE.md §4 (summary/pointer), `SKILLS_CATALOG.md` (canonical full table, the new
+single source for the list), and `COMMAND_PREFIX.md` (prefix/autocomplete convention) — all
+cross-linked, with the CI guard pinning the canonical one to disk.
+
+---
+
 # ADR-034: Native Code-Graph — A Lightweight Import Graph, On-Demand Only (v3.19.0)
 
 **Status:** Accepted   **Date:** 2026-06-21
@@ -1787,6 +1819,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-032 | Pre-wave requirement lock — `/arib-wave-plan` (v3.17.0) | Accepted | 2026-06-21 |
 | ADR-033 | Output compression + lean guard — first PostToolUse hooks (v3.18.0) | Accepted | 2026-06-21 |
 | ADR-034 | Native code-graph — lightweight import graph, on-demand only (v3.19.0) | Accepted | 2026-06-21 |
+| ADR-035 | Skill catalog moved out of always-on — reference/SKILLS_CATALOG.md (v3.20.0) | Accepted | 2026-06-21 |
 
 ---
 

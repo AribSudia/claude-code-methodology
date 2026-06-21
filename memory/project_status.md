@@ -6,10 +6,10 @@
 
 ## Current Phase
 
-**v3.19.0 "Code Graph"** (`/loop` iter 4, ADR-034): native **import graph** (rg/grep,
-honest — not semantic) — `build-code-graph.sh`, `/arib-graph` (build/refresh/query),
-advisory `graph-consult.sh` (PreToolUse, exit-0/no-op-when-absent), session-start
-staleness note. **Zero always-on.** Self-hosted: 33 skills, 17 agents, 11 hook scripts.
+**v3.20.0 "Lean Core II"** (`/loop` iter 5 — the close, ADR-035): the `/arib-*` skill
+table moved out of always-on CLAUDE.md §4 → `reference/SKILLS_CATALOG.md` (on-demand);
+§4 keeps a pointer + category summary. Always-on **7987→7212** (UNDER 8000, ~788 headroom);
+CI drift-guard pins catalog rows to VERSION. Self-hosted: 33 skills, 17 agents, 11 hooks.
 
 ## Current State
 
@@ -19,5 +19,5 @@ staleness note. **Zero always-on.** Self-hosted: 33 skills, 17 agents, 11 hook s
 
 ## Next Tasks
 
-- `/loop` iter 5 (close): move always-on §4 skill table out of CLAUDE.md → `reference/`;
-  final 'Plan deliverables → status in CCM' table; STOP loop. No blockers.
+- Autonomous Synthesis-backlog campaign (v3.12→v3.20) is **COMPLETE** (scorecard:
+  `io/ledger/synthesis-campaign-scorecard-2026-06-21.md`). No active backlog. No blockers.

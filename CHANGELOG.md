@@ -7,6 +7,38 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.20.0] "Lean Core II" — 2026-06-21
+
+`/loop` backlog iteration 5 — **the close**. The structural completion of v3.8.0 "Lean Core":
+the `/arib-*` skill table is moved out of always-on so future skills no longer force a
+release-time trim of the master brain.
+
+### Changed
+- **`CLAUDE.md §4`** — the 33-row Skill · Category · Purpose table moved out to
+  **`reference/SKILLS_CATALOG.md`** (on-demand). §4 now keeps a one-line pointer + the
+  category-count summary (33 across 9 categories). ADR-035.
+- Always-on session-start context: **7987 → 7212 tokens** — UNDER 8000 with **~788 of real
+  headroom** (was 13).
+
+### Added
+- **`reference/SKILLS_CATALOG.md`** — the canonical full `/arib-*` catalog (the new single
+  source for the list); cross-linked from CLAUDE.md §4 and `COMMAND_PREFIX.md`.
+- **Anti-drift CI guard** — `validate-coherence.sh` fails if `SKILLS_CATALOG.md`'s row count
+  ≠ `VERSION.json` `stats.skills` (the table left the always-on view, so CI pins it to disk).
+
+### Fixed
+- Stale inventory bits corrected in the same pass: SYSTEM.md skills diagram "6 categories" →
+  "9 categories"; CLAUDE.md §3 structure note "(26 more skills)" → "(31 more)"; always-on
+  token note ~7.4K → ~7.2K (CLAUDE.md §6, README).
+
+### Notes
+- **Campaign close (v3.12 → v3.20).** This is the final iteration of the autonomous
+  Synthesis-backlog build. The complete 'Plan deliverable → status in CCM' scorecard is in
+  `io/ledger/synthesis-campaign-scorecard-2026-06-21.md`.
+- ADR-035 records the move. VERSION → token 7212, totalFiles +1.
+
+---
+
 ## [3.19.0] "Code Graph" — 2026-06-21
 
 `/loop` backlog iteration 4 — a **native, lightweight import graph** so a large monorepo can
