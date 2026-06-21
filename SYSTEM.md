@@ -21,8 +21,8 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.19.0                                                   |
-| **Codename**         | "Code Graph"                                         |
+| **Version**          | 3.20.0                                                   |
+| **Codename**         | "Lean Core II"                                       |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
 | **Last Updated**     | 2026-06-21                                               |
@@ -118,7 +118,7 @@ The system is built on five engineering principles:
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
 ║  L2 — SKILLS                    33 auto-invoked skills      ║
-║  6 categories: Session · Dev · Wave · Check · CI · Docs             ║
+║  9 categories: Session·Dev·Wave·Audit·Check·CI·Docs·Engine·Stack    ║
 ║                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║                                                                      ║
@@ -789,12 +789,12 @@ PATCH  → Bug fixes, typo corrections, template improvements
 ### Current Version
 
 ```
-v2.6.0 "Fortress"
+v3.20.0 "Lean Core II"
 
-v2.6 completes all 7 SDLC gaps: adds API Documentation agent,
-Accessibility Auditor agent, Production Monitoring guide, /api-docs
-and /a11y-audit commands, and comprehensive Training manuals —
-achieving full lifecycle coverage from plan to monitor.
+v3.20 closes the autonomous Synthesis campaign (v3.12 → v3.20): the /arib-*
+skill table moves out of always-on CLAUDE.md §4 into reference/SKILLS_CATALOG.md,
+restoring real session-budget headroom, with a CI drift-guard pinning the catalog
+to disk. Full per-version detail lives in CHANGELOG.md (the authoritative history).
 ```
 
 ### Version History
@@ -809,6 +809,8 @@ achieving full lifecycle coverage from plan to monitor.
 | 2.4.0   | Sentinel    | 2026-04-18 | Reality Auditor agent, /reality-check command, services-check.sh, dev orchestration protocol |
 | 2.5.0   | Guardian    | 2026-04-18 | Database Guardian agent, Performance Profiler agent, /migrate-check, /perf-check, /dependency-audit commands, Incident Response Protocol |
 | 2.6.0   | Fortress    | 2026-04-18 | API Documentation agent, Accessibility Auditor agent, /api-docs, /a11y-audit commands, Production Monitoring guide, Training manuals |
+| 3.0 – 3.11 | (various) | 2026-05–06 | `arib`-branded skills, Lean Core (3.8, always-on cut to ~7.4K), Integrity (3.10, fail-closed hooks), Engine (3.11, `/arib-engine`) — see CHANGELOG.md |
+| 3.12 – 3.20 | Synthesis campaign | 2026-06 | Reconcile (3.12) → Engineering-Manager (3.14) → Unattended (3.15) → Reach (3.16) → wave-plan (3.17) → PostToolUse hooks (3.18) → Code Graph (3.19) → **Lean Core II (3.20)**. Per-version detail in CHANGELOG.md |
 
 ### Upgrade Compatibility
 
@@ -925,7 +927,7 @@ The upgrade protocol follows semantic versioning. This is engineering.
 
 > **End of SYSTEM.md**
 >
-> *Claude Code Methodology v2.6.0 "Fortress"*
+> *Claude Code Methodology v3.20.0 "Lean Core II"*
 > *Engineered by Abdullah × Claude Opus 4.6*
 > *96 files · 24 directories · 35,000+ lines · 122 features*
 > *The AI development operating system that remembers, communicates, and evolves.*

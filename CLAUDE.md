@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 3.19.0 "Code Graph"                  |
+| Version           | 3.20.0 "Lean Core II"                |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |
@@ -93,7 +93,7 @@ your-project/
 |   |-- skills/                        <- Branded skills (/arib-*) — 33 total
 |   |   |-- arib-session-start/SKILL.md
 |   |   |-- arib-dev-feature/SKILL.md
-|   |   +-- (26 more skills)
+|   |   +-- (31 more skills)
 |   |-- agents/                        <- 17 specialist subagents (incl. engineer-manager)
 |   +-- output-styles/                 <- Custom output styles
 |-- io/                                <- I/O Channel (inter-agent comms + ledger)
@@ -114,41 +114,14 @@ your-project/
 
 ## 4. Skills (branded /arib-*)
 
-| Skill                       | Category   | Purpose                                              |
-|-----------------------------|------------|------------------------------------------------------|
-| /arib-session-start         | Session    | Initialize session, read context                     |
-| /arib-session-end           | Session    | Close session, update memory, commit                 |
-| /arib-io                    | Session    | Process I/O Channel (Cowork bridge)                  |
-| /arib-memory-search         | Session    | Semantic search across memory (claude-mem + grep)    |
-| /arib-graph                 | Session    | Code-graph — native import graph; build/refresh/query (on-demand) |
-| /arib-dev-feature           | Dev        | New feature with branch + TDD                        |
-| /arib-dev-debug             | Dev        | Scientific debugging (3 hypotheses)                  |
-| /arib-dev-review            | Dev        | Code review with parallel agent fan-out              |
-| /arib-dev-lean              | Dev        | Over-engineering review — delete-list of bloat (advisory) |
-| /arib-wave-plan             | Wave       | Pre-wave requirement lock — grill + Codex review; merge-hold if no Codex |
-| /arib-wave-start            | Wave       | Start a wave (auto-chains wave-plan; architect + planner) |
-| /arib-wave-run              | Wave       | Execute wave steps with auto-advance (pauses only on issue/checkpoint) |
-| /arib-wave-end              | Wave       | Close a wave (deep-audit gate + stakeholder report)  |
-| /arib-deep-audit            | Audit      | 21-section wave-end audit + IMPLEMENT-FROM-FILE      |
-| /arib-check-deploy          | Check      | Pre-deployment 7-phase verification + TestSprite     |
-| /arib-check-services        | Check      | Infrastructure health (adaptive)                     |
-| /arib-check-reality         | Check      | Scan for mock/fake data                              |
-| /arib-check-migrate         | Check      | DB migration safety review                           |
-| /arib-check-perf            | Check      | Performance audit                                    |
-| /arib-check-deps            | Check      | Dependency audit                                     |
-| /arib-check-a11y            | Check      | Accessibility WCAG 2.1 AA                            |
-| /arib-check-design          | Check      | Design system contract (tokens, components)          |
-| /arib-check-arabic          | Check      | Arabic/RTL audit (typography, mirroring, MENA)       |
-| /arib-check-security        | Check      | OWASP Top 10 + supply chain                          |
-| /arib-check-compliance      | Check      | Framework alignment (OWASP/GDPR/ISO/SOC2/PDPL)       |
-| /arib-ci-audit              | CI         | Audit, init, review, or branch-protection check |
-| /arib-docs-api              | Docs       | API documentation + OpenAPI                          |
-| /arib-docs-generate         | Docs       | Generate documentation                               |
-| /arib-docs-language         | Docs       | i18n/RTL/LTR compliance (generic)                    |
-| /arib-engine                | Engine     | Autonomous campaign — discovers its own backlog; auto-merge gated on reconciliation |
-| /arib-build                 | Engine     | Command the team for a KNOWN goal — dispatches engineer-manager (decompose→dispatch→reconcile) |
-| /arib-nestjs                | Stack      | NestJS patterns + review (DI, DTO, guards, N+1, security) |
-| /arib-postgres              | Stack      | PostgreSQL optimization & safety (indexes, plans, migrations, RLS) |
+**33 skills across 9 categories** — Session 5 · Dev 4 · Wave 4 · Audit 1 · Check 11
+· CI 1 · Docs 3 · Engine 2 · Stack 2. The full Skill · Category · Purpose table
+lives in **`reference/SKILLS_CATALOG.md`** (on demand — moved out of always-on in
+v3.20.0, ADR-035). Prefix/autocomplete convention: `reference/COMMAND_PREFIX.md`.
+
+> Type `/arib` in Claude Code to see them all; skills also auto-match by task.
+> Adding a skill? Update `reference/SKILLS_CATALOG.md` + `VERSION.json` together —
+> `validate-coherence.sh` fails CI if the two disagree.
 
 ---
 
@@ -171,7 +144,7 @@ The 17 agents: `architect`, `code-reviewer`, `security-auditor`,
 
 > **Lean Core (v3.8.0, ADR-019):** only `CLAUDE.md`, `architecture/CONSTRAINTS.md`,
 > `memory/project_status.md`, and `memory/session_notes.md` are **always-on**
-> (~7.3K tokens). Everything in the table below is **read on demand** — pull
+> (~7.2K tokens). Everything in the table below is **read on demand** — pull
 > it when the task needs it, don't bulk-read at session start. This table IS
 > the on-demand loading map.
 
@@ -195,6 +168,7 @@ The 17 agents: `architect`, `code-reviewer`, `security-auditor`,
 | Vulnerability disclosure   | `SECURITY.md` (repo-root)                    |
 | Code of Conduct            | `CODE_OF_CONDUCT.md`                         |
 | Agent definitions          | `.claude/agents/*.md`                        |
+| Skill catalog (/arib-*)    | `reference/SKILLS_CATALOG.md` (full table; ADR-035) |
 | Skill definitions          | `.claude/skills/*/SKILL.md`                  |
 | Bootstrap protocol charter | `bootstrap/PROTOCOL_PRINCIPLES.md` (binding for all 5 below) |
 | Bootstrap new project      | `bootstrap/BOOTSTRAP.md`                     |

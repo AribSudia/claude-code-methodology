@@ -1,6 +1,6 @@
 # Branded Command Naming System
 
-> **Version**: v3.19.0+
+> **Version**: v3.20.0+
 > **Purpose**: Every CCM skill uses the official `arib` brand for its slash
 > command, with hierarchical categories so the picker filters as you type.
 >

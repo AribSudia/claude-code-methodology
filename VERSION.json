@@ -1,14 +1,14 @@
 {
   "name": "claude-code-methodology",
-  "version": "3.19.0",
-  "codename": "Code Graph",
+  "version": "3.20.0",
+  "codename": "Lean Core II",
   "releaseDate": "2026-06-21",
-  "previousVersion": "3.18.0",
+  "previousVersion": "3.19.0",
   "engineeredBy": "Abdullah x Claude Opus 4.6 / 4.7 / 4.8",
   "license": "MIT",
   "repository": "https://github.com/AribSudia/claude-code-methodology",
   "stats": {
-    "totalFiles": 294,
+    "totalFiles": 295,
     "totalDirectories": 58,
     "agents": 17,
     "skills": 33,
@@ -27,8 +27,8 @@
     "trainingManuals": 11,
     "githubWorkflows": 5,
     "issueTemplates": 3,
-    "tokenCostOnSessionStart": 7987,
-    "tokenCostNote": "v3.8.0 Lean Core: always-on cut 45855 -> 7987 (83%); UNDER the 8000 target (tight — v3.20 moves the §4 skill table out of always-on). Reference docs load on demand (ADR-019)."
+    "tokenCostOnSessionStart": 7288,
+    "tokenCostNote": "v3.20.0 Lean Core II (ADR-035): /arib-* skill table moved out of CLAUDE.md §4 to reference/SKILLS_CATALOG.md (on-demand). Always-on 7987->7288; UNDER 8000 with ~712 headroom (was 13). Reference docs load on demand (ADR-019)."
   },
   "compatibility": {
     "minClaudeCodeVersion": "1.0.0",

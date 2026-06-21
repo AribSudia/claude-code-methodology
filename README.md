@@ -9,7 +9,7 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.19.0 "Code Graph"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.20.0 "Lean Core II"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.2K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -580,7 +580,7 @@ claude-code-methodology/                  ← v3.10 "Integrity" — counts live 
 │   ├── rules/                            ← 9 path-scoped rule files (load on matching paths)
 │   ├── skills/                           ← 33 branded skills (/arib-*) — see the table above
 │   ├── agents/                           ← 17 specialist agent definitions — see the table above
-│   ├── hooks/                            ← 10 hook scripts + lib/common.sh (exit-2 blocking gates)
+│   ├── hooks/                            ← 11 hook scripts incl. lib/common.sh (exit-2 blocking gates)
 │   ├── commands/                         ← legacy commands (deprecated; kept for back-compat)
 │   └── output-styles/                    ← Custom output styles
 │
@@ -722,7 +722,9 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.15.0 | Unattended | Unattended autonomy mode (rule-17 re-cast: no solicited pauses; intervention only on explicit command; structural floor kept) + native `/arib-nestjs` & `/arib-postgres` Stack skills (ECC cherry-picks authored, not faked). ADR-030 |
 | v3.16.0 | Reach | `/arib-build` scales its own execution — inline → parallel **Workflow** → **`/loop`** campaign, "runs if it needs." Reach scales, authority doesn't (same #17 gate). ADR-031 |
 | v3.17.0 | Requirement Lock | `/arib-wave-plan` (31st skill) — pre-wave adversarial requirement lock: grill (derive from code) + Codex independent review; auto-chained from `/arib-wave-start`; merge-hold if no Codex. ADR-032 |
-| **v3.18.0** | **Compression & Lean** | **CCM's first PostToolUse hooks (advisory, exit-0): `compress-output.sh` (rtk graceful, no-op without it) + native `ponytail-lite.sh` over-engineering tripwire; `/arib-dev-lean` review (32nd skill); security-auditor hardened natively. Honest: absent tools never claimed live. ADR-033** |
+| v3.18.0 | Compression & Lean | CCM's first PostToolUse hooks (advisory, exit-0): `compress-output.sh` (rtk graceful, no-op without it) + native `ponytail-lite.sh` over-engineering tripwire; `/arib-dev-lean` review (32nd skill); security-auditor hardened natively. Honest: absent tools never claimed live. ADR-033 |
+| v3.19.0 | Code Graph | Native lightweight **import graph** (ripgrep/grep; honest — not semantic): `/arib-graph` (33rd skill) + `build-code-graph.sh`; advisory `graph-consult.sh` (PreToolUse, no-op when absent). Zero always-on. ADR-034 |
+| **v3.20.0** | **Lean Core II** | **Campaign close: `/arib-*` skill table moved out of always-on CLAUDE.md §4 → `reference/SKILLS_CATALOG.md`; always-on 7987→7288 (~712 headroom, was 13); CI drift-guard pins catalog rows to VERSION. ADR-035** |
 
 ---
 
