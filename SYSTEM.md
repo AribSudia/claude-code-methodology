@@ -223,9 +223,14 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 │   ├── REVERSE_BOOTSTRAP.md     ← Existing project (auto-scan)
 │   └── REENGINEERING_GUIDE.md   ← Overlay methodology guide
 │
-├── reference/                   ← READ-ONLY REFERENCE (2 files)
+├── reference/                   ← READ-ONLY REFERENCE (7 files)
 │   ├── MASTER_GUIDE.md          ← Quick reference card
-│   └── SKILLS_REGISTRY.md       ← 33 skills catalog
+│   ├── COMMAND_PREFIX.md        ← /arib-* prefix convention + 33-skill map
+│   ├── SKILLS_REGISTRY.md       ← ~30 EXTERNAL ecosystem skills catalog (not /arib-*)
+│   ├── COMMANDS_GUIDE.md        ← command usage guide
+│   ├── USAGE_GUIDE.md           ← usage guide
+│   ├── AUTONOMOUS_ENGINEERING_METHODOLOGY.md ← AEPG reference (/arib-engine)
+│   └── template-hashes.json     ← drift-classifier manifest
 │
 ├── scripts/                     ← AUTOMATION (5 files)
 │   ├── git-setup.sh             ← One-time repo setup
@@ -588,7 +593,7 @@ old system never had.
 
 | #  | Feature                          | Component                  | Description                                                |
 |----|----------------------------------|----------------------------|------------------------------------------------------------|
-| 75 | **Skills Registry**              | reference/SKILLS_REGISTRY.md | 33 skills cataloged with install commands                |
+| 75 | **Skills Registry**              | reference/SKILLS_REGISTRY.md | ~30 EXTERNAL ecosystem skills/tools cataloged with install commands (distinct from the 33 `/arib-*` skills — see COMMAND_PREFIX.md) |
 | 76 | **15 Category A Skills**         | Coding excellence          | Frontend, debugging, TDD, security, architecture, review   |
 | 77 | **6 Category B Skills**          | Design & automation        | Research, marketing, UI/UX, persistent memory              |
 | 78 | **Auto-Activation System**       | SKILL.md description field | Skills activate on keyword match — no explicit invocation  |

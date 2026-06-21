@@ -1,6 +1,6 @@
 {
   "version": "3.19.0",
-  "generated_from_git": "dd89818",
+  "generated_from_git": "7e47f45",
   "_note": "sha256 of shipped framework files. Project-state files are intentionally absent. Regenerate with scripts/gen-template-hashes.sh on each release.",
   "files": {
     ".claude/agents/accessibility.md": "6db83f097bcc0d6ca02d44f47fd452720b26eff4c47b4cfaa2c5bb0730b0e2ce",
@@ -95,7 +95,7 @@
     "CONTRIBUTING.md": "814ee05cea9bffe715464e988d5ebdb572542091b37076cd4960f3f9e78a291d",
     "README.md": "b9c0fe89f7bf9127c47107c272440cf47648bf629d71bd0c1dc1fb37043a09fb",
     "SECURITY.md": "972bfc1e929baf5f45733d72d447d97ebced9eedcf28a1675811c9c02273644e",
-    "SYSTEM.md": "10b458ef7cfbf6a087a3903dd09af50a0caaa3216d4dc328a2a9f4a7faecc716",
+    "SYSTEM.md": "6426326b8bc15f7e100ac19d842067cfe5a232191537e935564f8a361a6d221f",
     "Training/01-SYSTEM-OVERVIEW.md": "905e428b389beb27784b45c1290650339e19b803f766e53b65cfaf420ec9e235",
     "Training/02-AGENTS-MANUAL.md": "a6c25fe78cbdc736cb8d290c9258042197dd620eaee1acd7cc21e30160736681",
     "Training/03-SKILLS-MANUAL.md": "45c550f0db3558762cb53cb5f435f4736e97aacc6b69e2837f115277c3628b90",

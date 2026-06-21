@@ -193,18 +193,16 @@ You never see the skill activation — it just makes Claude Code smarter.
 
 ### Installing Skills
 
-Skills live in `.claude/skills/[skill-name]/SKILL.md`. The methodology
-includes a Skills Registry (`reference/SKILLS_REGISTRY.md`) with 21 pre-cataloged
-skills across two categories:
+Skills live in `.claude/skills/[skill-name]/SKILL.md`. Separately, the
+methodology ships a **Skills Registry** (`reference/SKILLS_REGISTRY.md`)
+cataloging **~30 external / community** Claude Code ecosystem skills & tools —
+across four categories (world-class coding, design/marketing/automation, npx
+marketplace, community repos), each with its own install command.
 
-**Category A — Coding Skills (15):**
-Frontend, Debugging, Security, TDD, Git Worktrees, Performance, Database,
-API Design, Docker, CI/CD, Code Review, Refactoring, Documentation,
-Error Handling, Logging
-
-**Category B — Design & Automation Skills (6):**
-Algorithmic Art, Presentation Design, Spreadsheet Automation, PDF Processing,
-Word Document Generation, Canvas Design
+> These ~30 are **external** skills, distinct from CCM's own **33 `/arib-*`
+> skills** (canonical in CLAUDE.md §4, mirrored in `reference/COMMAND_PREFIX.md`).
+> See `reference/SKILLS_REGISTRY.md` for the full external catalog — it's kept
+> there rather than duplicated here so the list can't drift.
 
 ### How to Install a Skill
 
