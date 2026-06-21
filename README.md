@@ -2,14 +2,14 @@
 
 ### An opinionated methodology and skill pack for Claude Code
 
-A convention layer for serious work in Claude Code: 32 branded `/arib-*` skills,
+A convention layer for serious work in Claude Code: 33 branded `/arib-*` skills,
 17 specialist agents (incl. a project engineering manager), kernel-level enforcement hooks, path-scoped rules, persistent
 memory files, a 5-mode bootstrap, a wave delivery overlay with auto-advancing
 execution, a compliance layer, and full CI/PR governance. It is **not** a runtime,
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v3.18.0 "Compression & Lean"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
+**v3.19.0 "Code Graph"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.4K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -151,8 +151,8 @@ This methodology solves all of that:
 ║  L3 — HOOKS           Safety gates & automation             ║
 ║  PreToolUse · PostToolUse · PreCommit · Notification        ║
 ╠══════════════════════════════════════════════════════════════╣
-║  L2 — SKILLS          32 branded /arib-* deep reference     ║
-║  Session·Dev·Check·Wave·Audit·CI·Docs·Engine·Stack (32) ║
+║  L2 — SKILLS          33 branded /arib-* deep reference     ║
+║  Session·Dev·Check·Wave·Audit·CI·Docs·Engine·Stack (33) ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  I/O — CHANNEL        Inter-agent nervous system            ║
 ║  Requests · Results · Signals · Pipelines · Threads         ║
@@ -273,7 +273,7 @@ protocol can use the explicit prompts in `bootstrap/RUN.md`.)
 
 ---
 
-## The 32 /arib-* Skills
+## The 33 /arib-* Skills
 
 All skills are deep reference documents (250-800 lines each) with decision trees, examples, templates, edge cases, and common mistakes. They live in `.claude/skills/arib-*/SKILL.md`.
 
@@ -327,7 +327,7 @@ All skills are deep reference documents (250-800 lines each) with decision trees
 | **NestJS** | `/arib-nestjs [module\|feature\|review <path>]` | NestJS architecture/patterns + review — modules/DI, DTO+validation, guards/interceptors/pipes/filters, config/lifecycle, data-access at scale, testing, security pitfalls. Authored natively (MIT). | 90 |
 | **Postgres** | `/arib-postgres [review\|index\|tune]` | PostgreSQL optimization & safety — indexing, `EXPLAIN` plans, N+1, safe online (lock-aware) migrations, pooling, JSONB, RLS multi-tenancy. Authored natively (MIT). | 85 |
 
-**Total**: 32 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
+**Total**: 33 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
 
 ### How to Use a Skill
 
@@ -456,7 +456,7 @@ The `Training/` directory contains **11 comprehensive user manuals** — everyth
 | Manual | File | What It Covers |
 |--------|------|----------------|
 | **01 — System Overview** | `Training/01-SYSTEM-OVERVIEW.md` | Complete system architecture, how all layers connect, mental model |
-| **02 — Agents Manual** | `Training/02-AGENTS-MANUAL.md` | All 15 agents explained — triggers, checklists, outputs, customization |
+| **02 — Agents Manual** | `Training/02-AGENTS-MANUAL.md` | All 17 agents explained — triggers, checklists, outputs, customization |
 | **03 — Skills Manual** | `Training/03-SKILLS-MANUAL.md` | Skills system — how they work, how to use /arib-* commands |
 | **04 — Hooks Manual** | `Training/04-HOOKS-MANUAL.md` | Safety hooks — 6 types, 7 recipes, configuration, custom hooks |
 | **05 — Commands Manual** | `Training/05-COMMANDS-MANUAL.md` | All slash commands explained with examples and workflows |
@@ -578,9 +578,9 @@ claude-code-methodology/                  ← v3.10 "Integrity" — counts live 
 │   ├── settings.json                     ← Permissions + hook wiring (committed)
 │   ├── settings.local.json               ← Personal overrides (gitignored)
 │   ├── rules/                            ← 9 path-scoped rule files (load on matching paths)
-│   ├── skills/                           ← 32 branded skills (/arib-*) — see the table above
+│   ├── skills/                           ← 33 branded skills (/arib-*) — see the table above
 │   ├── agents/                           ← 17 specialist agent definitions — see the table above
-│   ├── hooks/                            ← 9 hook scripts + lib/common.sh (exit-2 blocking gates)
+│   ├── hooks/                            ← 10 hook scripts + lib/common.sh (exit-2 blocking gates)
 │   ├── commands/                         ← legacy commands (deprecated; kept for back-compat)
 │   └── output-styles/                    ← Custom output styles
 │

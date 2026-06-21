@@ -7,6 +7,35 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [3.19.0] "Code Graph" — 2026-06-21
+
+`/loop` backlog iteration 4 — a **native, lightweight import graph** so a large monorepo can
+be navigated by structure instead of re-grepping every session. Honest about scope (import/
+symbol graph, NOT semantic), dependency-free (ripgrep/grep), and **zero always-on cost**.
+
+### Added
+- **`scripts/build-code-graph.sh`** — extracts file→file import edges (TS/JS/Py/Go/Java/Rb/PHP)
+  via rg/grep, dedups, writes `memory/code-graph/{graph.json, GRAPH_REPORT.md, graph-manifest.json}`.
+  `--root` / `--max` (default 8000). Empty on CCM itself (markdown + shell) — honestly so.
+- **`/arib-graph`** skill (33rd, Session) — `build` / `refresh` / `query <entity>` (jq filter:
+  importers-of, imports-from).
+- **`graph-consult.sh`** — PreToolUse advisory on `Grep`/`Glob`: surfaces a one-line
+  `/arib-graph query` hint when the graph exists; **no-op when absent**; exit 0 always, NEVER
+  blocks.
+- **Session-start recommendation** — suggests `/arib-graph refresh` when the manifest is behind
+  HEAD; advisory, never auto-runs.
+- Test suite §5d (graph-consult exit-0 / silent-when-absent) — now 61 tests.
+
+### Notes
+- Honest scope: import/symbol graph, **not** semantic call-graph/type resolution (no Graphify
+  dependency). Named as such in the skill, report, hook, and ADR-034.
+- Zero always-on: nothing added to CLAUDE.md or any always-on file; the 8K budget is untouched.
+  `graph.json` is gitignored runtime state; only the seed report + manifest (`built:false`) are
+  committed.
+- ADR-034 records it. VERSION → skills 33, hookScripts 11, scripts 15.
+
+---
+
 ## [3.18.0] "Compression & Lean" — 2026-06-21
 
 `/loop` backlog iteration 3 — rtk + Ponytail absorbed honestly as CCM's **first PostToolUse

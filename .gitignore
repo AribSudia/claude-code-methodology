@@ -58,6 +58,11 @@ temp/
 .claude/settings.local.json
 .claude/agent-memory-local/
 
+# ── Code Graph (generated runtime, per-project) ─────────
+# The large generated graph is rebuilt by /arib-graph build; not committed.
+# The seed GRAPH_REPORT.md + graph-manifest.json ARE committed (honest "not built").
+memory/code-graph/graph.json
+
 # ── CCM Hook Artifacts ──────────────────────────────────
 # High-volume hook logs — not committed.
 io/hook-logs/
