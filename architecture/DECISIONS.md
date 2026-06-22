@@ -550,6 +550,45 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-036: Relicense to PolyForm Noncommercial 1.0.0 — Paid Commercial Model (v4.0.0)
+
+**Status:** Accepted   **Date:** 2026-06-22
+
+**Context.** CCM shipped under the MIT License through v3.20.0 — fully open, free for any use
+including commercial. The owner (Abdullah Alzahrani / arib.sa IT Company) chose to move to a
+paid commercial model: keep it free for noncommercial use, charge for commercial use.
+
+**Decision.** From **v4.0.0 onward**, license CCM under the **PolyForm Noncommercial License
+1.0.0** (a published, lawyer-drafted source-available license). Any noncommercial purpose —
+plus personal use and noncommercial organizations (charity, education, public research,
+government) — is free. **Commercial use requires a separate paid commercial license** from
+arib.sa (`COMMERCIAL.md`, contact licensing@arib.sa).
+
+**Why PolyForm Noncommercial (vs alternatives).** It states the intended boundary directly —
+"free for noncommercial, pay for commercial" — without BSL's change-date mechanics or the
+complexity of an AGPL+commercial dual-license. It is a standard license (not hand-rolled),
+which matters for a legal document.
+
+**Constraints honored.**
+- **Sole copyright holder.** All commits trace to Abdullah / arib.sa; the Claude co-author
+  lines create no third-party rights-holder, and no third-party code was vendored (the ECC
+  "cherry-picks" were authored natively). So the relicense is clean — no CLA backfill needed.
+- **MIT is irrevocable for shipped versions.** v3.20.0 and earlier remain available under MIT
+  for those versions; this is stated honestly in LICENSE, README, COMMERCIAL.md, and CHANGELOG.
+  Relicensing binds only future versions.
+- **High-stakes (legal/compliance) → human merge.** Per CONSTRAINTS #17, this change ships via
+  PR and holds for a human merge; it is not auto-merged.
+- **Source-available, not OSI open-source.** Docs no longer call CCM "open source" in a
+  license sense; "free for noncommercial use" is the accurate framing.
+
+**Consequences.** Commercial adopters now need a paid license (new revenue path); noncommercial
+users are unaffected. A forker could continue from the last MIT tag (v3.20.0) — mitigated by
+the brand/trademark ("arib", "/arib-*", "CCM") and by ongoing v4.0.0+ development being the
+valuable, licensed line. Future outside contributors should sign a CLA to preserve relicensing
+ability (noted for follow-up; not required for this sole-holder relicense).
+
+---
+
 # ADR-035: Skill Catalog Moved Out of Always-On — `reference/SKILLS_CATALOG.md` (v3.20.0)
 
 **Status:** Accepted   **Date:** 2026-06-21
@@ -1820,6 +1859,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-033 | Output compression + lean guard — first PostToolUse hooks (v3.18.0) | Accepted | 2026-06-21 |
 | ADR-034 | Native code-graph — lightweight import graph, on-demand only (v3.19.0) | Accepted | 2026-06-21 |
 | ADR-035 | Skill catalog moved out of always-on — reference/SKILLS_CATALOG.md (v3.20.0) | Accepted | 2026-06-21 |
+| ADR-036 | Relicense to PolyForm Noncommercial 1.0.0 — paid commercial model (v4.0.0) | Accepted | 2026-06-22 |
 
 ---
 

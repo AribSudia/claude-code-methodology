@@ -7,6 +7,35 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [4.0.0] "Licensed" — 2026-06-22
+
+**License change (major).** CCM moves from MIT to a source-available commercial model.
+
+### Changed
+- **License: MIT → [PolyForm Noncommercial License 1.0.0](LICENSE)** for **v4.0.0 and
+  later**. Free for any **noncommercial** purpose (personal, study, research, hobby) and for
+  noncommercial organizations (charities, schools, public research, government). **Any
+  commercial use now requires a paid commercial license.**
+- `VERSION.json` `license` → `PolyForm-Noncommercial-1.0.0`. SYSTEM.md / README / CLAUDE.md
+  license references updated; README is explicit that this is **source-available, not OSI
+  open-source**.
+
+### Added
+- **`COMMERCIAL.md`** — commercial-licensing terms, what counts as commercial use, and how to
+  obtain a license (**licensing@arib.sa**).
+- `architecture/CONTEXT_MAP.md` allow-list now includes `LICENSE` + `COMMERCIAL.md`.
+
+### Notes
+- **Prior versions stay MIT.** Everything released at **v3.20.0 or earlier remains under the
+  MIT License** for those versions — relicensing binds only v4.0.0+ (MIT is irrevocable for
+  already-published versions). Sole-copyright-holder relicense (Abdullah Alzahrani / arib.sa);
+  no third-party code was vendored, so there are no inbound license conflicts.
+- This is a legal/compliance high-stakes change → it ships via PR and **holds for human
+  merge** (CONSTRAINTS #17); it is not auto-merged.
+- ADR-036 records the decision.
+
+---
+
 ## [3.20.0] "Lean Core II" — 2026-06-21
 
 `/loop` backlog iteration 5 — **the close**. The structural completion of v3.8.0 "Lean Core":
