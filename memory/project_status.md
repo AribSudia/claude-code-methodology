@@ -6,11 +6,12 @@
 
 ## Current Phase
 
-**v4.0.0 "Licensed"** (ADR-036): relicense **MIT → PolyForm Noncommercial 1.0.0** for
-v4.0.0+ — free for noncommercial use; commercial use needs a paid license (`COMMERCIAL.md`,
-licensing@arib.sa). v3.20.0 and earlier stay MIT. Legal/compliance high-stakes → ships via PR,
-**holds for human merge** (#17). Prior: v3.20 Lean Core II moved the `/arib-*` table to
-`reference/SKILLS_CATALOG.md` (always-on ~7.2K). Self-hosted: 33 skills, 17 agents, 11 hooks.
+**v4.1.0 "Commercial"** (ADR-037): hardens the commercial program — CLA-enforcement workflow
+`.github/workflows/cla.yml` (dormant until `CLA_ENABLED=true`), `TRADEMARK.md` (arib/CCM marks;
+usage policy, not a registration), README commercial/pricing section. Prior: **v4.0.0 Licensed**
+(ADR-036) relicensed MIT → PolyForm Noncommercial 1.0.0 for v4.0.0+ (free noncommercial; paid
+commercial via licensing@arib.sa; ≤v3.20.0 stays MIT) + CLA. Self-hosted: 33 skills, 17 agents,
+11 hooks, 6 workflows.
 
 ## Current State
 

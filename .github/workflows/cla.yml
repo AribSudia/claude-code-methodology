@@ -1,0 +1,53 @@
+name: CLA
+
+# Contributor License Agreement enforcement (v4.1.0).
+#
+# DORMANT BY DEFAULT — the job is gated on the repository variable CLA_ENABLED.
+# Until you set it, this workflow is a no-op (skipped, green) and never blocks a PR.
+#
+# To ACTIVATE:
+#   1. Settings → Secrets and variables → Actions → Variables:
+#        add  CLA_ENABLED = true
+#   2. (Recommended) Settings → Secrets → Actions:
+#        add  CLA_SIGNATURES_TOKEN = a fine-grained PAT with `contents:write`
+#        on this repo, so signatures can be stored on the `cla-signatures` branch.
+#        Without it the action falls back to GITHUB_TOKEN (works for same-repo PRs;
+#        a PAT is more reliable, especially for fork PRs).
+#   3. (Optional) make "CLA" a required status check in branch protection.
+#
+# The CLA text contributors agree to lives in .github/CLA.md.
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  cla:
+    # Gate on a NON-secret repo variable so the workflow is inert until you opt in.
+    # (Repository variables are available in `if:`; secrets are not.)
+    if: ${{ vars.CLA_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: CLA assistant
+        if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
+        uses: contributor-assistant/github-action@v2.6.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Optional; falls back to GITHUB_TOKEN when unset.
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_SIGNATURES_TOKEN }}
+        with:
+          path-to-document: 'https://github.com/AribSudia/claude-code-methodology/blob/main/.github/CLA.md'
+          path-to-signatures: 'signatures/cla.json'
+          branch: 'cla-signatures'
+          custom-pr-sign-comment: 'I have read the CLA Document and I hereby sign the CLA'
+          custom-notsigned-prcomment: 'Thanks for the PR. Before it can be merged, please read **[.github/CLA.md](https://github.com/AribSudia/claude-code-methodology/blob/main/.github/CLA.md)** and post the exact comment below to sign. CCM v4.0.0+ is PolyForm Noncommercial + paid commercial; the CLA lets your contribution ship in commercial builds.'
+          # Bots and the maintainer never need to sign.
+          allowlist: 'dependabot[bot],github-actions[bot],AribSudia,arib-sa'

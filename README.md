@@ -9,7 +9,7 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v4.0.0 "Licensed"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.2K
+**v4.1.0 "Commercial"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.2K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -725,7 +725,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.18.0 | Compression & Lean | CCM's first PostToolUse hooks (advisory, exit-0): `compress-output.sh` (rtk graceful, no-op without it) + native `ponytail-lite.sh` over-engineering tripwire; `/arib-dev-lean` review (32nd skill); security-auditor hardened natively. Honest: absent tools never claimed live. ADR-033 |
 | v3.19.0 | Code Graph | Native lightweight **import graph** (ripgrep/grep; honest — not semantic): `/arib-graph` (33rd skill) + `build-code-graph.sh`; advisory `graph-consult.sh` (PreToolUse, no-op when absent). Zero always-on. ADR-034 |
 | v3.20.0 | Lean Core II | Campaign close: `/arib-*` skill table moved out of always-on CLAUDE.md §4 → `reference/SKILLS_CATALOG.md`; always-on 7987→7288 (~712 headroom, was 13); CI drift-guard pins catalog rows to VERSION. ADR-035 |
-| **v4.0.0** | **Licensed** | **Relicense: MIT → [PolyForm Noncommercial 1.0.0](LICENSE) for v4.0.0+ (free noncommercial; commercial use needs a paid license — [COMMERCIAL.md](COMMERCIAL.md)). v3.20.0 and earlier stay MIT. ADR-036** |
+| v4.0.0 | Licensed | Relicense: MIT → [PolyForm Noncommercial 1.0.0](LICENSE) for v4.0.0+ (free noncommercial; commercial use needs a paid license — [COMMERCIAL.md](COMMERCIAL.md)). v3.20.0 and earlier stay MIT. + contributor CLA. ADR-036 |
+| **v4.1.0** | **Commercial** | **Commercial-program hardening: CLA-enforcement workflow (dormant until `CLA_ENABLED`), [TRADEMARK.md](TRADEMARK.md) (arib/CCM marks), README commercial/pricing section. ADR-037** |
 
 ---
 
@@ -746,15 +747,30 @@ principle and what CCM can / cannot do per framework.
 
 ---
 
-## License
+## License & Commercial Use
 
 **v4.0.0 and later: [PolyForm Noncommercial License 1.0.0](LICENSE)** — free for
 any **noncommercial** purpose (personal, study, research, hobby; and for charities,
-schools, public research, government). **Commercial use requires a paid license** —
-see [COMMERCIAL.md](COMMERCIAL.md) or contact **licensing@arib.sa**.
+schools, public research, government). Source-available, **not** OSI open-source.
 
 > Versions **3.20.0 and earlier remain under the MIT License** for those versions.
-> Source-available, not OSI open-source. © 2026 Abdullah Alzahrani / arib.sa.
+> © 2026 Abdullah Alzahrani / arib.sa IT Company.
+
+### Using CCM at a company or in a product? You need a commercial license.
+
+| Your use | What you need |
+|----------|---------------|
+| Personal, study, research, hobby · charity / school / public-research / government | **Free** under the [PolyForm Noncommercial License](LICENSE) |
+| Any **commercial / for-profit / revenue-generating** use (inside a company, in a paid product, client work, a commercial SaaS) | A **paid commercial license** |
+
+Commercial licensing is fast and friendly — team, product/OEM, and enterprise
+options. See **[COMMERCIAL.md](COMMERCIAL.md)** or email **licensing@arib.sa**.
+
+**Contributing?** Contributions are covered by the [Contributor License Agreement](.github/CLA.md)
+so they can ship in commercial builds — see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+**Trademarks.** "arib", `/arib-*`, "CCM", and "Claude Code Methodology" are marks of
+arib.sa IT Company — a code license is not a trademark license. See [TRADEMARK.md](TRADEMARK.md).
 
 ---
 

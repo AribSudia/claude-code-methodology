@@ -1,14 +1,14 @@
 {
   "name": "claude-code-methodology",
-  "version": "4.0.0",
-  "codename": "Licensed",
+  "version": "4.1.0",
+  "codename": "Commercial",
   "releaseDate": "2026-06-22",
-  "previousVersion": "3.20.0",
+  "previousVersion": "4.0.0",
   "engineeredBy": "Abdullah x Claude Opus 4.6 / 4.7 / 4.8",
   "license": "PolyForm-Noncommercial-1.0.0",
   "repository": "https://github.com/AribSudia/claude-code-methodology",
   "stats": {
-    "totalFiles": 297,
+    "totalFiles": 299,
     "totalDirectories": 58,
     "agents": 17,
     "skills": 33,
@@ -25,7 +25,7 @@
     "scripts": 15,
     "bootstrapMethods": 5,
     "trainingManuals": 11,
-    "githubWorkflows": 5,
+    "githubWorkflows": 6,
     "issueTemplates": 3,
     "tokenCostOnSessionStart": 7288,
     "tokenCostNote": "v3.20.0 Lean Core II (ADR-035): /arib-* skill table moved out of CLAUDE.md §4 to reference/SKILLS_CATALOG.md (on-demand). Always-on 7987->7288; UNDER 8000 with ~712 headroom (was 13). Reference docs load on demand (ADR-019)."

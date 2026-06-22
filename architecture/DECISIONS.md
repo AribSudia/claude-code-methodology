@@ -550,6 +550,44 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-037: Commercial-Program Hardening — CLA Enforcement, Trademark Policy, Pricing Surface (v4.1.0)
+
+**Status:** Accepted   **Date:** 2026-06-22
+
+**Context.** v4.0.0 (ADR-036) moved CCM to PolyForm Noncommercial + paid commercial. Three
+follow-ups were needed to make the commercial program operable and defensible: (1) *enforce*
+the CLA so contributions can legally ship in commercial builds, (2) protect the brand (the
+source is forkable under the license, so the **trademark** is the durable moat), and (3) give
+commercial buyers a clear path.
+
+**Decision.**
+1. **CLA enforcement workflow** (`.github/workflows/cla.yml`) using
+   `contributor-assistant/github-action`. It is **dormant by default** — gated on the
+   repository variable `CLA_ENABLED`, so it is a skipped no-op (never red, never blocking)
+   until the owner opts in by setting `CLA_ENABLED=true` (+ optionally a `CLA_SIGNATURES_TOKEN`
+   PAT). This honors the ci-pr rule "don't add a workflow that fails on main" and the honesty
+   principle (the bot is *wired*, not falsely claimed *live*). Activation steps are documented
+   in the workflow header and `CONTRIBUTING.md`.
+2. **Trademark policy** (`TRADEMARK.md`) — asserts the "arib" / "arib.sa" / `/arib-*` / "CCM" /
+   "Claude Code Methodology" marks as arib.sa IT Company's, with nominative-fair-use
+   permissions and a fork-must-rename rule. States plainly that a code license is **not** a
+   trademark license, and that "Claude"/"Claude Code" are Anthropic's (used nominatively).
+3. **Commercial/pricing surface** — README gains a "License & Commercial Use" section with the
+   free-vs-paid table pointing at `COMMERCIAL.md` / licensing@arib.sa.
+
+**Honesty constraints.** The CLA bot is **not** asserted as active (it is gated off until the
+owner enables it). `TRADEMARK.md` explicitly says it is a *usage policy, not a registration
+record* — registration (e.g. SAIP) is a separate legal step the owner must take. No claim of a
+registered mark is made; no legal advice is given.
+
+**Consequences.** The commercial program is now operable end-to-end on the doc/automation side:
+contributors have an enforceable agreement (one toggle away), the brand has a written policy,
+and buyers have a path. The actual legal acts — enabling the bot, filing trademarks, attorney
+review of the commercial agreement — remain the owner's. Not a new always-on token cost
+(workflow + root docs are not in `context.include`).
+
+---
+
 # ADR-036: Relicense to PolyForm Noncommercial 1.0.0 — Paid Commercial Model (v4.0.0)
 
 **Status:** Accepted   **Date:** 2026-06-22
@@ -1860,6 +1898,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-034 | Native code-graph — lightweight import graph, on-demand only (v3.19.0) | Accepted | 2026-06-21 |
 | ADR-035 | Skill catalog moved out of always-on — reference/SKILLS_CATALOG.md (v3.20.0) | Accepted | 2026-06-21 |
 | ADR-036 | Relicense to PolyForm Noncommercial 1.0.0 — paid commercial model (v4.0.0) | Accepted | 2026-06-22 |
+| ADR-037 | Commercial-program hardening — CLA enforcement, trademark policy, pricing (v4.1.0) | Accepted | 2026-06-22 |
 
 ---
 

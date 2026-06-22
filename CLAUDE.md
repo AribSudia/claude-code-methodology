@@ -10,7 +10,7 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 4.0.0 "Licensed"                     |
+| Version           | 4.1.0 "Commercial"                   |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |

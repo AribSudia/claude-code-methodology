@@ -7,6 +7,28 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [4.1.0] "Commercial" — 2026-06-22
+
+Hardens the v4.0.0 commercial program (ADR-037): enforce the CLA, protect the brand, surface pricing.
+
+### Added
+- **`.github/workflows/cla.yml`** — CLA-enforcement workflow (`contributor-assistant/github-action`).
+  **Dormant by default**: gated on repo variable `CLA_ENABLED`, so it's a skipped no-op (never
+  red, never blocking) until the owner sets `CLA_ENABLED=true` (+ optional `CLA_SIGNATURES_TOKEN`
+  PAT). Activation steps in the workflow header + `CONTRIBUTING.md`. (workflows 5 → 6)
+- **`TRADEMARK.md`** — trademark policy for "arib" / `/arib-*` / "CCM" / "Claude Code Methodology"
+  (arib.sa IT Company): nominative fair use allowed, forks must rename, code-license ≠
+  trademark-license, "Claude" is Anthropic's. States it's a usage policy, **not** a registration.
+- **README "License & Commercial Use"** — free-vs-paid table → `COMMERCIAL.md` / licensing@arib.sa,
+  plus CLA + trademark pointers.
+
+### Notes
+- Honesty: the CLA bot is **wired, not claimed live** (off until enabled); `TRADEMARK.md` does
+  not claim a registered mark — registration (e.g. SAIP) is a separate legal step.
+- `CONTEXT_MAP` allow-list += `TRADEMARK.md`. ADR-037 records it.
+
+---
+
 ## [4.0.0] "Licensed" — 2026-06-22
 
 **License change (major).** CCM moves from MIT to a source-available commercial model.
