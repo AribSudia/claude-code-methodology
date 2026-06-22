@@ -236,7 +236,24 @@ contributions that violate the code.
 
 ---
 
-## License
+## License & Contributor Agreement
 
-By contributing, you agree your work is licensed under MIT (see
-`LICENSE`). If you can't agree, don't contribute.
+CCM **v4.0.0 and later** is licensed under the
+[PolyForm Noncommercial License 1.0.0](LICENSE) — free for noncommercial use —
+with paid **commercial** licenses available ([COMMERCIAL.md](COMMERCIAL.md)).
+Versions **3.20.0 and earlier remain MIT**.
+
+By submitting a contribution you agree to the **Contributor License Agreement**
+in [`.github/CLA.md`](.github/CLA.md): you keep your copyright, but you grant
+arib.sa a broad license to your contribution **including the right to include it
+in commercially-licensed versions**. This is what makes the dual model possible.
+
+How to accept (do both):
+
+1. Sign off your commits — `git commit -s` adds a
+   `Signed-off-by: Name <email>` trailer (the
+   [DCO](https://developercertificate.org/)).
+2. Check the **CLA** box in the pull-request template.
+
+Contributing on behalf of an employer? Use the **Entity** path in `.github/CLA.md`.
+If you can't agree to the CLA, please don't contribute.

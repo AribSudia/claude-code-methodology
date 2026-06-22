@@ -21,13 +21,13 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 3.20.0                                                   |
-| **Codename**         | "Lean Core II"                                       |
+| **Version**          | 4.0.0                                                    |
+| **Codename**         | "Licensed"                                           |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
-| **Last Updated**     | 2026-06-21                                               |
+| **Last Updated**     | 2026-06-22                                               |
 | **Engineered By**    | Abdullah × Claude Opus 4.6                               |
-| **License**          | MIT                                                      |
+| **License**          | PolyForm Noncommercial 1.0.0 (v4.0.0+; ≤ v3.20.0 = MIT)  |
 | **Status**           | Production-Ready                                         |
 
 ---
@@ -157,7 +157,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 ├── VERSION.json                 ← Machine-readable version manifest
 ├── CHANGELOG.md                 ← Release history
 ├── README.md                    ← GitHub showcase
-├── LICENSE                      ← MIT License
+├── LICENSE                      ← PolyForm Noncommercial 1.0.0
 │
 ├── io/                          ← I/O CHANNEL (14 files)
 │   ├── IO_PROTOCOL.md           ← Communication law

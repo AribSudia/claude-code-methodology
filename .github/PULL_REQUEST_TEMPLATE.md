@@ -74,3 +74,12 @@ and why. Use the honest framing — never "compliant". -->
 - [ ] If new agents/skills: registered in CLAUDE.md and `Training/03-SKILLS-MANUAL.md`.
 - [ ] If breaking change: CHANGELOG entry under the upcoming version.
 - [ ] If touching `.github/`: branch protection rules still satisfied.
+
+## Licensing / CLA
+
+<!-- CCM v4.0.0+ is PolyForm Noncommercial (free noncommercial) + paid commercial
+licenses. Contributions need the CLA so they can be included in commercial builds. -->
+
+- [ ] I have read and agree to the **Contributor License Agreement** ([`.github/CLA.md`](CLA.md)) — I keep my copyright but grant arib.sa the right to license my contribution under the project's terms, **including commercial licenses**.
+- [ ] My commits are **signed off** (`git commit -s` → `Signed-off-by:`, the [DCO](https://developercertificate.org/)).
+- [ ] If contributing on behalf of an employer: I am authorized to bind it (Entity path in `.github/CLA.md`).
