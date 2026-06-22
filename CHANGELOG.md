@@ -23,7 +23,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 - **`COMMERCIAL.md`** — commercial-licensing terms, what counts as commercial use, and how to
   obtain a license (**licensing@arib.sa**).
-- `architecture/CONTEXT_MAP.md` allow-list now includes `LICENSE` + `COMMERCIAL.md`.
+- **`.github/CLA.md`** — Contributor License Agreement (Individual + Entity). Contributors keep
+  copyright but grant arib.sa the right to license their contribution under the project's terms
+  **including commercial licenses** — the grant the dual model requires. Accepted via DCO
+  sign-off + a PR-template checkbox. `CONTRIBUTING.md` "License" section and the PR template
+  updated accordingly (the old "contributions are MIT" line is replaced).
+- `architecture/CONTEXT_MAP.md` allow-list now includes `LICENSE`, `COMMERCIAL.md`, `CONTRIBUTING.md`.
 
 ### Notes
 - **Prior versions stay MIT.** Everything released at **v3.20.0 or earlier remains under the
