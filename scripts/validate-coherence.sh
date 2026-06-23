@@ -137,6 +137,20 @@ for doc in CLAUDE.md SYSTEM.md; do
     note_fail "$doc uses '5-Layer Stack' — canonical framing is 4-Layer (ADR-017)"
   fi
 done
+# License-drift guard (v4.1.1, ADR-038): since v4.0.0 the current license is
+# PolyForm Noncommercial, not MIT. Flag a license-FIELD declaration of MIT (the
+# identity-table "| **License** | MIT |" form, or "License: MIT") in a current-facing
+# doc. Legacy ≤3.20.0 references that mention MIT always carry a qualifier (3.20 /
+# earlier / ≤ / remain / those versions) and are exempt; the dependency-scanner's
+# educational "MIT=safe" risk table is NOT a License field, so it does not match.
+for doc in CLAUDE.md SYSTEM.md README.md Training/01-SYSTEM-OVERVIEW.md; do
+  [ -f "$doc" ] || continue
+  if grep -nE "\*\*License\*\*[^|]*\|[^|]*\bMIT\b|License:[[:space:]]*MIT" "$doc" 2>/dev/null \
+       | grep -viE "3\.20|earlier|legacy|≤|<=|remain|stay|prior|LICENSE-MIT|those versions" \
+       | grep -q .; then
+    note_fail "$doc declares MIT as a current license field — v4.0.0+ is PolyForm Noncommercial (qualify legacy ≤3.20.0 refs)"
+  fi
+done
 [ "$FAIL" = "0" ] && note_ok "no stale tokens found"
 
 # ---------- 6. Skill/agent reference resolution (lightweight) ----------

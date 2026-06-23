@@ -1,9 +1,12 @@
 # Contributor License Agreement (CLA)
 
+> **CLA v1.0 — 2026-06-22.** When this text changes materially, bump the version
+> so each acceptance is tied to a known revision.
+
 > **Why this exists.** Claude Code Methodology (CCM) v4.0.0+ is offered under a
 > dual model: the [PolyForm Noncommercial License 1.0.0](../LICENSE) for free
 > noncommercial use, **and** paid commercial licenses ([COMMERCIAL.md](../COMMERCIAL.md))
-> sold by arib.sa IT Company. For arib.sa to offer those commercial licenses, it
+> sold by Areeb Establishment for Information Technology. For arib.sa to offer those commercial licenses, it
 > needs the right to license **your** contributions under those same terms. This
 > CLA grants that right. You keep your copyright — this is a license, not an
 > assignment.
@@ -26,13 +29,16 @@ that matches who owns your contribution.
   modifications or additions to existing work, that you intentionally submit to
   this project for inclusion. "Submit" means any form of electronic or written
   communication sent to the project or its maintainers, including a pull request.
-- **"Licensor" / "Project Owner"** means **arib.sa IT Company (and its principal,
-  Abdullah Alzahrani)**, the holder of the project copyright and the party offering
-  the project's licenses (the PolyForm Noncommercial license and the paid commercial
-  licenses). The grants in this CLA run to **arib.sa IT Company** so that it — as the
-  entity that offers commercial licenses — holds the relicensing rights, and the
-  Project Owner may **assign or transfer** these rights and this CLA (e.g., between
-  Abdullah Alzahrani and arib.sa IT Company, or to a successor).
+- **"Licensor" / "Project Owner"** means **Areeb Establishment for Information
+  Technology** — a sole proprietorship (Unified CR No. 7004791427, Kingdom of Saudi
+  Arabia) owned by **Abdullah Alzahrani**, operating as **"arib.sa"** — the holder of
+  the project copyright and the party offering the project's licenses (the PolyForm
+  Noncommercial license and the paid commercial licenses). Because the Establishment
+  is a sole proprietorship, its owner Abdullah Alzahrani is the underlying legal
+  person. The grants in this CLA run to the Project Owner so that it — as the party
+  that offers commercial licenses — holds the relicensing rights, and the Project
+  Owner may **assign or transfer** these rights and this CLA (e.g., to arib.sa, a
+  successor entity, or an acquirer).
 
 ## 2. Copyright license
 

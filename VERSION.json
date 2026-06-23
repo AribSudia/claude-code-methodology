@@ -1,14 +1,14 @@
 {
   "name": "claude-code-methodology",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "codename": "Commercial",
-  "releaseDate": "2026-06-22",
-  "previousVersion": "4.0.0",
+  "releaseDate": "2026-06-23",
+  "previousVersion": "4.1.0",
   "engineeredBy": "Abdullah x Claude Opus 4.6 / 4.7 / 4.8",
   "license": "PolyForm-Noncommercial-1.0.0",
   "repository": "https://github.com/AribSudia/claude-code-methodology",
   "stats": {
-    "totalFiles": 299,
+    "totalFiles": 302,
     "totalDirectories": 58,
     "agents": 17,
     "skills": 33,

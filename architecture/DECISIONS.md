@@ -550,6 +550,52 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-038: Commercial-Doc Hardening + Registered-Entity Identity (v4.1.1)
+
+**Status:** Accepted   **Date:** 2026-06-23
+
+**Context.** A 4-lens document review of the licensing stack (LICENSE, COMMERCIAL.md,
+CLA.md, TRADEMARK.md) plus the owner's **Commercial Registration certificate** surfaced
+fixable doc-level gaps and one identity correction. The CR shows the registered legal
+entity is **Areeb Establishment for Information Technology** (sole proprietorship, Unified
+CR 7004791427, owner Abdullah Alzahrani) — not "arib.sa IT Company," which was an informal
+trade label used in v4.0.0/v4.1.0 docs.
+
+**Decision (document-level only; no legal opinion).**
+1. **Registered identity everywhere** — LICENSE (Required Notice + Licensor), CLA §1,
+   COMMERCIAL.md, TRADEMARK.md, README now name "Areeb Establishment for Information
+   Technology (Unified CR 7004791427), owner Abdullah Alzahrani, operating as arib.sa." For a
+   sole proprietorship the owner is the underlying legal person — this also resolves the prior
+   individual-vs-company copyright-holder ambiguity.
+2. **Must-fix:** `Training/01-SYSTEM-OVERVIEW.md` declared "License: MIT" in two places
+   (stale) → corrected; a **license-drift CI guard** added to `validate-coherence.sh` (fails
+   on a MIT license-*field* in current-facing docs; legacy ≤3.20.0 refs and the
+   dependency-scanner's educational table are exempt).
+3. **Preserved MIT:** `LICENSE-MIT` added so the ≤v3.20.0 terms are retrievable.
+4. **COMMERCIAL.md:** seller-identity block, free-vs-paid **Examples** table, an explicit
+   **30-day evaluation grant**, a **Fees & VAT (15% KSA / ZATCA)** note, and a stated
+   "≤3.20.0 may be forked under MIT indefinitely; protection rests on the active v4 line +
+   trademark" position.
+5. **Commercial agreement:** `COMMERCIAL_LICENSE_AGREEMENT.md` added as a clearly-marked
+   **DRAFT** (registered entity baked in; governing-law / dispute / VAT / liability as
+   `[counsel]` placeholders) — closes the gap that COMMERCIAL.md referenced an agreement that
+   did not exist.
+6. **Privacy:** `PRIVACY.md` starter PDPL notice for the licensing-intake data.
+7. **CLA durability:** version stamp + a CONTRIBUTING rule that, until the CLA bot is enabled,
+   maintainers must manually confirm CLA on every external PR or revert it.
+
+**Honesty boundary.** All of this is document scaffolding by a non-lawyer. The actual
+commercial-agreement terms, KSA enforceability of PolyForm + the disclaimers, VAT/ZATCA
+structure, PDPL specifics, and SAIP trademark strategy remain **needs-lawyer** and must be
+cleared by a licensed Saudi attorney before the first paid sale; the DRAFT agreement and the
+PRIVACY notice say so on their face.
+
+**Consequences.** The licensing surface is now internally complete and accurate to the
+registered entity; a buyer-facing contract exists (as a draft for counsel); CI prevents
+MIT-as-current from reappearing. No always-on token cost.
+
+---
+
 # ADR-037: Commercial-Program Hardening — CLA Enforcement, Trademark Policy, Pricing Surface (v4.1.0)
 
 **Status:** Accepted   **Date:** 2026-06-22
@@ -569,7 +615,7 @@ commercial buyers a clear path.
    principle (the bot is *wired*, not falsely claimed *live*). Activation steps are documented
    in the workflow header and `CONTRIBUTING.md`.
 2. **Trademark policy** (`TRADEMARK.md`) — asserts the "arib" / "arib.sa" / `/arib-*` / "CCM" /
-   "Claude Code Methodology" marks as arib.sa IT Company's, with nominative-fair-use
+   "Claude Code Methodology" marks as Areeb Establishment for Information Technology's, with nominative-fair-use
    permissions and a fork-must-rename rule. States plainly that a code license is **not** a
    trademark license, and that "Claude"/"Claude Code" are Anthropic's (used nominatively).
 3. **Commercial/pricing surface** — README gains a "License & Commercial Use" section with the
@@ -593,7 +639,7 @@ review of the commercial agreement — remain the owner's. Not a new always-on t
 **Status:** Accepted   **Date:** 2026-06-22
 
 **Context.** CCM shipped under the MIT License through v3.20.0 — fully open, free for any use
-including commercial. The owner (Abdullah Alzahrani / arib.sa IT Company) chose to move to a
+including commercial. The owner (Abdullah Alzahrani / Areeb Establishment for Information Technology) chose to move to a
 paid commercial model: keep it free for noncommercial use, charge for commercial use.
 
 **Decision.** From **v4.0.0 onward**, license CCM under the **PolyForm Noncommercial License
@@ -1899,6 +1945,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-035 | Skill catalog moved out of always-on — reference/SKILLS_CATALOG.md (v3.20.0) | Accepted | 2026-06-21 |
 | ADR-036 | Relicense to PolyForm Noncommercial 1.0.0 — paid commercial model (v4.0.0) | Accepted | 2026-06-22 |
 | ADR-037 | Commercial-program hardening — CLA enforcement, trademark policy, pricing (v4.1.0) | Accepted | 2026-06-22 |
+| ADR-038 | Commercial-doc hardening + registered-entity identity (v4.1.1) | Accepted | 2026-06-23 |
 
 ---
 

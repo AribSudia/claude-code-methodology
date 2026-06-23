@@ -37,6 +37,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: CLA assistant
+        # Advisory, not blocking: the action posts its CLA-sign comment for external
+        # contributors, but an unsigned committer does NOT red-X the check. This
+        # avoids false failures on the maintainer's own AI-co-authored commits
+        # (the `Co-Authored-By:` trailer is not a signable GitHub user). The real
+        # gate stays the maintainer reviewing the bot's comment before merge.
+        continue-on-error: true
         if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
         uses: contributor-assistant/github-action@v2.6.1
         env:

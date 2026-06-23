@@ -357,7 +357,10 @@ clear error message. Hard-denied paths (`.git/`, `.env*`, `~/.ssh/`, `~/.aws/`,
 - CLAUDE.md
 - .gitignore
 - LICENSE
+- LICENSE-MIT
 - COMMERCIAL.md
+- COMMERCIAL_LICENSE_AGREEMENT.md
+- PRIVACY.md
 - CONTRIBUTING.md
 - TRADEMARK.md
 <!-- allowed_write_paths:end -->

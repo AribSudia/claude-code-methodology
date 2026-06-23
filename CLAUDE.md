@@ -10,12 +10,12 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 4.1.0 "Commercial"                   |
+| Version           | 4.1.1 "Commercial"                   |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |
 | Created           | 2026-04-15                               |
-| Last Updated      | 2026-06-22                               |
+| Last Updated      | 2026-06-23                               |
 | Language Support   | Universal (RTL, LTR, CJK, Indic, Bidi)  |
 | Methodology       | 4-Layer Architecture + I/O Channel + Memory |
 | Status            | Production-Ready                         |
