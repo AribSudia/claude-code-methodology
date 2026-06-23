@@ -257,3 +257,8 @@ How to accept (do both):
 
 Contributing on behalf of an employer? Use the **Entity** path in `.github/CLA.md`.
 If you can't agree to the CLA, please don't contribute.
+
+> **Maintainer:** CLA sign-off can be auto-enforced by `.github/workflows/cla.yml`.
+> It's **dormant until you opt in** — set the repo variable `CLA_ENABLED=true` (and
+> optionally a `CLA_SIGNATURES_TOKEN` PAT); see the workflow header for steps. Brand
+> usage is governed by [`TRADEMARK.md`](TRADEMARK.md).

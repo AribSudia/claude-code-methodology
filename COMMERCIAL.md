@@ -12,7 +12,7 @@
 | Personal projects, study, hobby, research, evaluation | PolyForm Noncommercial (the [LICENSE](LICENSE)) | **Free** |
 | Charity, school/university, public research, government, public-health/safety, environmental orgs | PolyForm Noncommercial | **Free** |
 | **Any commercial / for-profit / revenue-generating use** (inside a company, in a paid product, for client work, in a commercial SaaS) | **Commercial license** | **Paid — contact us** |
-| Versions **≤ 3.20.0** | MIT (unchanged, still open) | Free, incl. commercial |
+| Versions **≤ 3.20.0** | MIT (unchanged, still open source) | Free, incl. commercial |
 
 If you are unsure which bucket you fall into, assume commercial and contact us —
 we make it easy.

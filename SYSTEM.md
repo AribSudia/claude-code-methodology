@@ -21,8 +21,8 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 4.0.0                                                    |
-| **Codename**         | "Licensed"                                           |
+| **Version**          | 4.1.0                                                    |
+| **Codename**         | "Commercial"                                         |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
 | **Last Updated**     | 2026-06-22                                               |
