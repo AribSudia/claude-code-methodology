@@ -6,12 +6,13 @@
 
 ## Current Phase
 
-**v4.1.0 "Commercial"** (ADR-037): hardens the commercial program — CLA-enforcement workflow
-`.github/workflows/cla.yml` (dormant until `CLA_ENABLED=true`), `TRADEMARK.md` (arib/CCM marks;
-usage policy, not a registration), README commercial/pricing section. Prior: **v4.0.0 Licensed**
-(ADR-036) relicensed MIT → PolyForm Noncommercial 1.0.0 for v4.0.0+ (free noncommercial; paid
-commercial via licensing@arib.sa; ≤v3.20.0 stays MIT) + CLA. Self-hosted: 33 skills, 17 agents,
-11 hooks, 6 workflows.
+**v4.1.1 "Commercial"** (ADR-038): commercial-doc hardening + **registered-entity identity**
+correction. Licensor is now **Areeb Establishment for Information Technology** (Unified CR
+7004791427, owner Abdullah Alzahrani, brand "arib.sa") everywhere. Added DRAFT
+`COMMERCIAL_LICENSE_AGREEMENT.md`, `LICENSE-MIT`, `PRIVACY.md` (PDPL); COMMERCIAL.md examples +
+30-day eval grant + VAT note; fixed stale "License: MIT" in Training/01 + a CI license-drift
+guard. Prior: v4.1.0 (CLA bot dormant + TRADEMARK) / v4.0.0 relicense MIT→PolyForm-NC (≤v3.20.0
+stays MIT). Self-hosted: 33 skills, 17 agents, 11 hooks, 6 workflows.
 
 ## Current State
 

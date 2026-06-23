@@ -21,11 +21,11 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 4.1.0                                                    |
+| **Version**          | 4.1.1                                                    |
 | **Codename**         | "Commercial"                                         |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
-| **Last Updated**     | 2026-06-22                                               |
+| **Last Updated**     | 2026-06-23                                               |
 | **Engineered By**    | Abdullah × Claude Opus 4.6                               |
 | **License**          | PolyForm Noncommercial 1.0.0 (v4.0.0+; ≤ v3.20.0 = MIT)  |
 | **Status**           | Production-Ready                                         |
@@ -789,12 +789,15 @@ PATCH  → Bug fixes, typo corrections, template improvements
 ### Current Version
 
 ```
-v3.20.0 "Lean Core II"
+v4.1.1 "Commercial"
 
-v3.20 closes the autonomous Synthesis campaign (v3.12 → v3.20): the /arib-*
-skill table moves out of always-on CLAUDE.md §4 into reference/SKILLS_CATALOG.md,
-restoring real session-budget headroom, with a CI drift-guard pinning the catalog
-to disk. Full per-version detail lives in CHANGELOG.md (the authoritative history).
+The v4 line makes CCM a commercially-licensed product: v4.0.0 relicensed
+MIT → PolyForm Noncommercial (free noncommercial; paid commercial) with a
+contributor CLA; v4.1.0 added CLA enforcement (dormant), a trademark policy, and a
+pricing surface; v4.1.1 corrected the registered-entity identity (Areeb
+Establishment for Information Technology, CR 7004791427) and added a draft
+commercial agreement, LICENSE-MIT, and a PDPL privacy notice. Versions ≤3.20.0
+remain MIT. Full per-version detail lives in CHANGELOG.md (the authoritative history).
 ```
 
 ### Version History
@@ -811,6 +814,7 @@ to disk. Full per-version detail lives in CHANGELOG.md (the authoritative histor
 | 2.6.0   | Fortress    | 2026-04-18 | API Documentation agent, Accessibility Auditor agent, /api-docs, /a11y-audit commands, Production Monitoring guide, Training manuals |
 | 3.0 – 3.11 | (various) | 2026-05–06 | `arib`-branded skills, Lean Core (3.8, always-on cut to ~7.4K), Integrity (3.10, fail-closed hooks), Engine (3.11, `/arib-engine`) — see CHANGELOG.md |
 | 3.12 – 3.20 | Synthesis campaign | 2026-06 | Reconcile (3.12) → Engineering-Manager (3.14) → Unattended (3.15) → Reach (3.16) → wave-plan (3.17) → PostToolUse hooks (3.18) → Code Graph (3.19) → **Lean Core II (3.20)**. Per-version detail in CHANGELOG.md |
+| 4.0 – 4.1 | Licensed / Commercial | 2026-06 | Relicense MIT → PolyForm Noncommercial + paid commercial (4.0); CLA + dormant CLA-bot + trademark policy + pricing (4.1.0); registered-entity identity + draft commercial agreement + LICENSE-MIT + PDPL privacy (4.1.1). Per-version detail in CHANGELOG.md |
 
 ### Upgrade Compatibility
 
@@ -927,7 +931,7 @@ The upgrade protocol follows semantic versioning. This is engineering.
 
 > **End of SYSTEM.md**
 >
-> *Claude Code Methodology v3.20.0 "Lean Core II"*
+> *Claude Code Methodology v4.1.1 "Commercial"*
 > *Engineered by Abdullah × Claude Opus 4.6*
 > *96 files · 24 directories · 35,000+ lines · 122 features*
 > *The AI development operating system that remembers, communicates, and evolves.*

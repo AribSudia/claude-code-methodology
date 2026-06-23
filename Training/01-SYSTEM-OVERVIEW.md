@@ -58,7 +58,7 @@ It works like an operating system for your project:
 | **Codename** | "Lean Core" |
 | **Release Date** | 2026-05-08 |
 | **Engineered By** | Abdullah × Claude Opus 4.6 / 4.7 / 4.8 |
-| **License** | MIT |
+| **License** | PolyForm Noncommercial 1.0.0 (v4.0.0+; ≤ v3.20.0 = MIT) |
 | **Status** | Production-Ready |
 
 ---
@@ -1185,7 +1185,7 @@ claude-code-methodology/
 | **Release Date** | 2026-05-08 |
 | **Previous Version** | 3.8.3 |
 | **Status** | Production-Ready |
-| **License** | MIT |
+| **License** | PolyForm Noncommercial 1.0.0 (v4.0.0+; ≤ v3.20.0 = MIT) |
 
 ### System Statistics
 

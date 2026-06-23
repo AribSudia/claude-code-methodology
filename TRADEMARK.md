@@ -1,13 +1,13 @@
 # Trademark Policy
 
 **The marks** — **"arib"**, **"arib.sa"**, the **`/arib-*`** skill brand, and
-**"Claude Code Methodology" / "CCM"** — are trademarks of **arib.sa IT Company**
+**"Claude Code Methodology" / "CCM"** — are trademarks of **Areeb Establishment for Information Technology** (Unified CR 7004791427)
 (owner: Abdullah Alzahrani). This policy explains how you may and may not use them.
 
 > **Code license ≠ trademark license.** The [PolyForm Noncommercial License](LICENSE)
 > (and any [commercial license](COMMERCIAL.md)) grants rights to the *software*. It
 > does **not** grant any right to use the marks above. Trademark rights are separate
-> and are reserved by arib.sa IT Company.
+> and are reserved by Areeb Establishment for Information Technology.
 
 ## You may, without asking (nominative / fair use)
 
@@ -45,7 +45,7 @@ endorsed by, or sponsored by** Anthropic.
 ## Requests & enforcement
 
 For permission beyond the above, or for partnership/co-marketing, contact
-**licensing@arib.sa**. arib.sa IT Company reserves all rights in the marks and may
+**licensing@arib.sa**. Areeb Establishment for Information Technology reserves all rights in the marks and may
 update this policy.
 
 ---
@@ -56,4 +56,4 @@ update this policy.
 > document asserts and governs use of the marks but does not by itself constitute a
 > registered trademark. Have it reviewed by IP counsel.
 
-*© 2026 arib.sa IT Company. Contact: licensing@arib.sa · https://arib.sa*
+*© 2026 Areeb Establishment for Information Technology. Contact: licensing@arib.sa · https://arib.sa*

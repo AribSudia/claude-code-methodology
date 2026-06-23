@@ -7,6 +7,40 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [4.1.1] "Commercial" — 2026-06-23
+
+Document-level hardening of the commercial program from a 4-lens review + the Commercial
+Registration certificate (ADR-038). **Non-lawyer doc work; the needs-lawyer items still go to
+counsel before the first paid sale.**
+
+### Fixed
+- **must-fix:** `Training/01-SYSTEM-OVERVIEW.md` declared "License: MIT" in two places (stale
+  post-relicense) → PolyForm Noncommercial (v4.0.0+; ≤v3.20.0 = MIT). Added a **license-drift
+  CI guard** to `validate-coherence.sh` so MIT-as-current can't reappear in a license field.
+- **Registered identity** corrected everywhere (LICENSE, CLA §1, COMMERCIAL.md, TRADEMARK.md,
+  README): licensor is **Areeb Establishment for Information Technology** (Unified CR
+  7004791427), owner Abdullah Alzahrani, operating as "arib.sa" — replacing the informal
+  "arib.sa IT Company" label. Resolves the individual-vs-company copyright-holder ambiguity.
+
+### Added
+- **`COMMERCIAL_LICENSE_AGREEMENT.md`** — clearly-marked **DRAFT** commercial agreement template
+  (grant/term/fees+VAT/IP/warranty/liability/termination/governing-law/dispute as `[counsel]`
+  placeholders), closing the gap that COMMERCIAL.md referenced an agreement that didn't exist.
+- **`LICENSE-MIT`** — preserved MIT text for the ≤v3.20.0 line.
+- **`PRIVACY.md`** — starter PDPL privacy notice for the licensing-intake data.
+- **COMMERCIAL.md** — seller-identity block, free-vs-paid **Examples** table, a **30-day
+  evaluation grant**, a **Fees & VAT (15% KSA / ZATCA)** note, and the "fork ≤3.20.0 under MIT
+  is intentional; protection = active v4 line + trademark" position.
+- **CLA** version stamp ("v1.0 — 2026-06-22") + CONTRIBUTING rule: until the CLA bot is enabled,
+  maintainers must manually confirm CLA on every external PR or revert it.
+
+### Notes
+- Still **needs-lawyer** before the first paid sale: the binding commercial-agreement terms,
+  KSA enforceability of PolyForm + disclaimers, VAT/ZATCA structure, PDPL specifics, SAIP
+  trademark strategy. ADR-038 records it.
+
+---
+
 ## [4.1.0] "Commercial" — 2026-06-22
 
 Hardens the v4.0.0 commercial program (ADR-037): enforce the CLA, protect the brand, surface pricing.
@@ -17,7 +51,7 @@ Hardens the v4.0.0 commercial program (ADR-037): enforce the CLA, protect the br
   red, never blocking) until the owner sets `CLA_ENABLED=true` (+ optional `CLA_SIGNATURES_TOKEN`
   PAT). Activation steps in the workflow header + `CONTRIBUTING.md`. (workflows 5 → 6)
 - **`TRADEMARK.md`** — trademark policy for "arib" / `/arib-*` / "CCM" / "Claude Code Methodology"
-  (arib.sa IT Company): nominative fair use allowed, forks must rename, code-license ≠
+  (Areeb Establishment for Information Technology): nominative fair use allowed, forks must rename, code-license ≠
   trademark-license, "Claude" is Anthropic's. States it's a usage policy, **not** a registration.
 - **README "License & Commercial Use"** — free-vs-paid table → `COMMERCIAL.md` / licensing@arib.sa,
   plus CLA + trademark pointers.
