@@ -35,6 +35,11 @@ counsel before the first paid sale.**
   maintainers must manually confirm CLA on every external PR or revert it.
 
 ### Notes
+- **CLA bot made advisory** (`continue-on-error`): now that `CLA_ENABLED=true`, the bot posts
+  its sign-request comment for external contributors but no longer red-Xes the check on the
+  maintainer's own AI-co-authored commits (the `Co-Authored-By:` trailer isn't a signable
+  GitHub user; `cla` is a non-required check anyway). Created the `cla-signatures` storage
+  branch the bot needs.
 - Still **needs-lawyer** before the first paid sale: the binding commercial-agreement terms,
   KSA enforceability of PolyForm + disclaimers, VAT/ZATCA structure, PDPL specifics, SAIP
   trademark strategy. ADR-038 records it.

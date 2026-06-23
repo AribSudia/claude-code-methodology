@@ -1,6 +1,6 @@
 {
   "version": "4.1.1",
-  "generated_from_git": "5235c56",
+  "generated_from_git": "ac7e8cc",
   "_note": "sha256 of shipped framework files. Project-state files are intentionally absent. Regenerate with scripts/gen-template-hashes.sh on each release.",
   "files": {
     ".claude/agents/accessibility.md": "6db83f097bcc0d6ca02d44f47fd452720b26eff4c47b4cfaa2c5bb0730b0e2ce",
@@ -82,7 +82,7 @@
     ".github/ISSUE_TEMPLATE/security.yml": "2c40305457f3260ac61ef81c3238e38e17cf23f29d270925685eabbae7ca2880",
     ".github/PULL_REQUEST_TEMPLATE.md": "e7bbadd2713c8567169bfee2f0b4dab95a0fc0274db5004e5ab53895f7e5595a",
     ".github/dependabot.yml": "9ed8b48328b07dad8c33888d255979f02fd278dbc72768160b8291b46006558a",
-    ".github/workflows/cla.yml": "62fbbc57de87c7211ed0f8c6ddffc922ca8de68b1ba6a1671be6d1822d96822b",
+    ".github/workflows/cla.yml": "44b1b61099f3257305ab0d738b86dbb4c9598f00b031426f03cde5b520fe0fa6",
     ".github/workflows/coherence.yml": "b432d9f20b537a945f3879e0599ef72add1da40e9c8214d2b2e8c0714307f0c4",
     ".github/workflows/hooks.yml": "2a3c6720bfb5be35c823d7afe6c5a94a785c11209d5dc656c1f64a09bd8b8186",
     ".github/workflows/json-validate.yml": "222a3900b7816c73b2ce001368358d835d2c5cc9e99923a0fd5d8cedd490f411",
@@ -91,7 +91,7 @@
     ".gitignore": "b4532eab3bb3faa058119fdb409ad2d442911da80d3423faef651e94e00becf8",
     ".markdownlint.json": "6c65a1386401536a54425437bc776eace7bd75d38ae12dd9b703a5bbbddaa7d1",
     ".mcp.json": "b38f1a057fcf6b45584ef373d2e657f924fa665cae38f2b9e1350bfe95175107",
-    "CHANGELOG.md": "b1e49d99865f5c250478350cd4e27960c8474b02fb0a46b8a177a7df83bbcf93",
+    "CHANGELOG.md": "b3b986afeae6a2c09a330ddaee9cf05ab445f7ce419ed77e907917148aa9765e",
     "CLAUDE.md": "c38cb94bab2a9887700d409be8c0378121fd6f4e66ab937ddf9ef2dd95ae1af3",
     "CODE_OF_CONDUCT.md": "2f1b94fb897338de2f8673ca303da8ea0fcf19f02e57e0f2a7b950d1c2310b60",
     "CONTRIBUTING.md": "140b3732aae5efdf581473a826adc44e616e12a0f312fc90ff25dd30984d73d5",
