@@ -29,7 +29,7 @@ jobs:
       # that actually matter. (The TODO/FIXME detector below DOES block.)
       - name: markdownlint-cli2 (advisory)
         continue-on-error: true
-        uses: DavidAnson/markdownlint-cli2-action@v16
+        uses: DavidAnson/markdownlint-cli2-action@v24.1.0
         with:
           globs: |
             **/*.md
