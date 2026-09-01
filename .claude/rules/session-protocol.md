@@ -15,6 +15,13 @@ STEP 0: Check I/O Channel:
   - If REQUESTS pending -> report to user, propose processing order
   - If clear -> continue to Step 1
 
+STEP 0b: Check the plan mesh (ADR-039):
+  $ bash scripts/ccm-plan.sh status
+  - If a plan is ACTIVE -> report ready tasks + who else is attached,
+    read the inbox, and join with /arib-plan join instead of re-planning
+  - If UNREAD messages -> another session left you something; read it
+  - If no active plan -> continue to Step 1
+
 STEP 1: Read the LEAN CORE only (v3.8.0 Lean Core — ADR-019).
   These four are always-on; read them every session:
   1. CLAUDE.md                          <- the master brain

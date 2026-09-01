@@ -9,7 +9,7 @@ execution, a compliance layer, and full CI/PR governance. It is **not** a runtim
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v4.1.1 "Commercial"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.2K
+**v4.2.0 "Mesh"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.2K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
 > **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
@@ -318,6 +318,7 @@ All skills are deep reference documents (250-800 lines each) with decision trees
 | Skill | Command | What It Does | Lines |
 |-------|---------|-------------|-------|
 | **Engine** | `/arib-engine [goal] [--with-arib-family] [--hold-merge]` | Autonomous campaign engine — discover→ship→verify→**reconcile**→close across many reversible PRs; adversarial find→refute→confirm sweeps; evidence-based closure + decision-list hand-off. Standalone by default; pace it with `/loop`. Auto-merges by default, gated on a `verification-agent` RECONCILED verdict (not CI alone); high-stakes always holds for a human; `--hold-merge` holds every PR. | 300 |
+| **Plan** | `/arib-plan [run\|import\|join\|status\|close]` | Turn a plan into a live **task mesh** — imports the Claude Code plan panel (or any markdown plan) into a dependency-aware graph, enriches it with specialist routing + parallel **lanes** (a lane is a write-collision mutex), dispatches ready tasks to subagents, and keeps every attached session in sync via a shared store + live `SendMessage`. Substrate: `scripts/ccm-plan.sh`. | 150 |
 | **Build** | `/arib-build <goal>` | Command the engineering **team** to deliver a KNOWN goal — dispatches the `engineer-manager` (decompose → dispatch specialists in parallel → integrate → reconcile → merge gate). Sibling of `/arib-engine`: the engine *discovers* its backlog, `/arib-build` *executes* the goal you name. | 70 |
 
 ### Stack Skills (opt-in, stack-specific patterns)
@@ -327,7 +328,7 @@ All skills are deep reference documents (250-800 lines each) with decision trees
 | **NestJS** | `/arib-nestjs [module\|feature\|review <path>]` | NestJS architecture/patterns + review — modules/DI, DTO+validation, guards/interceptors/pipes/filters, config/lifecycle, data-access at scale, testing, security pitfalls. Authored natively. | 90 |
 | **Postgres** | `/arib-postgres [review\|index\|tune]` | PostgreSQL optimization & safety — indexing, `EXPLAIN` plans, N+1, safe online (lock-aware) migrations, pooling, JSONB, RLS multi-tenancy. Authored natively. | 85 |
 
-**Total**: 33 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
+**Total**: 34 skills, comprehensive reference depth (run scripts/token-audit.sh — only the lean core loads at session start).
 
 ### How to Use a Skill
 
@@ -727,7 +728,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v3.20.0 | Lean Core II | Campaign close: `/arib-*` skill table moved out of always-on CLAUDE.md §4 → `reference/SKILLS_CATALOG.md`; always-on 7987→7288 (~712 headroom, was 13); CI drift-guard pins catalog rows to VERSION. ADR-035 |
 | v4.0.0 | Licensed | Relicense: MIT → [PolyForm Noncommercial 1.0.0](LICENSE) for v4.0.0+ (free noncommercial; commercial use needs a paid license — [COMMERCIAL.md](COMMERCIAL.md)). v3.20.0 and earlier stay MIT. + contributor CLA. ADR-036 |
 | v4.1.0 | Commercial | Commercial-program hardening: CLA-enforcement workflow (dormant until `CLA_ENABLED`), [TRADEMARK.md](TRADEMARK.md) (arib/CCM marks), README commercial/pricing section. ADR-037 |
-| **v4.1.1** | **Commercial** | **Commercial-doc hardening (ADR-038): registered-entity identity (Areeb Establishment for IT, CR 7004791427); DRAFT [commercial agreement](COMMERCIAL_LICENSE_AGREEMENT.md), [LICENSE-MIT](LICENSE-MIT), [PRIVACY.md](PRIVACY.md); commercial-use examples + eval grant + VAT note; stale-MIT fix + CI guard** |
+| v4.1.1 | Commercial | Commercial-doc hardening (ADR-038): registered-entity identity (Areeb Establishment for IT, CR 7004791427); DRAFT [commercial agreement](COMMERCIAL_LICENSE_AGREEMENT.md), [LICENSE-MIT](LICENSE-MIT), [PRIVACY.md](PRIVACY.md); commercial-use examples + eval grant + VAT note; stale-MIT fix + CI guard |
+| **v4.2.0** | **Mesh** | **Plan automation + session mesh (ADR-039): `/arib-plan` (34th skill) + `scripts/ccm-plan.sh` — import the live plan panel (or any markdown plan) into a dependency-aware task graph; parallel lanes as write-collision mutexes; atomic claiming; one store shared by every worktree; durable inter-session messages + live `SendMessage` handoff** |
 
 ---
 
