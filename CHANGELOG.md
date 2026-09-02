@@ -21,7 +21,7 @@ sessions were blind to each other.
   dependencies, **lanes**, specialist routing, `done_when`, and checkpoints. Owns atomic
   claiming (`mkdir` lock with dead-holder reclaim), the session registry with heartbeats,
   durable inter-session messages, a markdown board, and an append-only event log. Bash + `jq`
-  only; **38-case built-in `selftest`**.
+  only; **50-case built-in `selftest`**.
 - **`/arib-plan`** (34th skill, Engine) — the judgment on top: enrich the imported graph with
   dependencies, lanes, and specialist routing, dispatch lane-disjoint tasks to the 16
   specialists in parallel, and keep every attached session in sync. Modes: `run` · `import`
@@ -31,6 +31,20 @@ sessions were blind to each other.
   *agents*, the mesh coordinates *tasks*.
 - **`.github/workflows/plan-mesh.yml`** (7th workflow, non-required) + `tests/ccm-plan.test.sh`
   — CI runs the selftest against a throwaway store.
+
+### Fixed (found by driving it for real, before merge)
+- **Cycle guard cried wolf on every legitimate dependency.** The jq recursion lost its input
+  context (`.tasks[]` evaluated against a string), jq errored, and the shell read the error as
+  "cycle". Rewritten to carry the root object; now silent on chains and diamonds, loud on real
+  rings. Guarded by 4 new cases.
+- **`--deps ''` was impossible** — `${2:?}` rejects an empty value, so the exact remedy the
+  cycle warning prints could not be run. Clearing a lane or agent was equally impossible. Arity
+  is now checked instead of emptiness (`need_arg`): empty *is* a value, missing is not.
+- **The EXIT trap masked failure exit codes** — its last command set the status, so some errors
+  reported 0 to callers. It now preserves `$?`.
+- **`--session` was silently ignored by `done`/`fail`/`note`/`set`**, mis-attributing the event
+  log to the host+pid fallback. It is now parsed globally before dispatch, so no subcommand can
+  drop it.
 
 ### Changed
 - **Session protocol STEP 0b** — session start now reports the active plan mesh (ready tasks,

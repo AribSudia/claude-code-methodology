@@ -30,6 +30,7 @@ else
 fi
 
 die()  { printf '%sccm-plan: %s%s\n' "$RED" "$*" "$NC" >&2; exit 1; }
+need_arg() { [ "$1" -ge 2 ] || die "$2 needs a value"; }   # empty IS a value; missing is not
 warn() { printf '%sccm-plan: %s%s\n' "$YEL" "$*" "$NC" >&2; }
 now()  { date -u +%Y-%m-%dT%H:%M:%SZ; }
 
@@ -72,7 +73,9 @@ lock() {
   echo "$$" > "$LOCK/pid"; LOCK_HELD=1
 }
 unlock() { [ "$LOCK_HELD" = "1" ] && rm -rf "$LOCK"; LOCK_HELD=0; }
-trap 'unlock' EXIT INT TERM
+on_exit() { local rc=$?; unlock; exit "$rc"; }   # preserve the real status
+trap on_exit EXIT
+trap 'unlock; exit 130' INT TERM
 
 write_json() {  # write_json <file> <json-text>
   local f="$1" tmp; tmp="$(mktemp "${f}.XXXXXX")"
@@ -217,10 +220,10 @@ cmd_import() {
   local from="auto" src="" id="" title="" force=0 chain=0 keep_done=0
   while [ $# -gt 0 ]; do
     case "$1" in
-      --from) from="${2:?}"; shift 2 ;;
-      --source|-s) src="${2:?}"; shift 2 ;;
-      --id) id="${2:?}"; shift 2 ;;
-      --title) title="${2:?}"; shift 2 ;;
+      --from) need_arg $# "$1"; from="$2"; shift 2 ;;
+      --source|-s) need_arg $# "$1"; src="$2"; shift 2 ;;
+      --id) need_arg $# "$1"; id="$2"; shift 2 ;;
+      --title) need_arg $# "$1"; title="$2"; shift 2 ;;
       --chain) chain=1; shift ;;
       --keep-done) keep_done=1; shift ;;
       --force) force=1; shift ;;
@@ -326,9 +329,9 @@ cmd_next() {
   local count=1 json=0
   while [ $# -gt 0 ]; do
     case "$1" in
-      --count|-n) count="${2:?}"; shift 2 ;;
+      --count|-n) need_arg $# "$1"; count="$2"; shift 2 ;;
       --json) json=1; shift ;;
-      --plan) PLAN_ID="${2:?}"; shift 2 ;;
+      --plan) need_arg $# "$1"; PLAN_ID="$2"; shift 2 ;;
       --all) count=9999; shift ;;
       *) die "next: unknown option '$1'" ;;
     esac
@@ -352,9 +355,9 @@ cmd_list() {
   local status="" json=0
   while [ $# -gt 0 ]; do
     case "$1" in
-      --status) status="${2:?}"; shift 2 ;;
+      --status) need_arg $# "$1"; status="$2"; shift 2 ;;
       --json) json=1; shift ;;
-      --plan) PLAN_ID="${2:?}"; shift 2 ;;
+      --plan) need_arg $# "$1"; PLAN_ID="$2"; shift 2 ;;
       *) die "list: unknown option '$1'" ;;
     esac
   done
@@ -393,14 +396,14 @@ cmd_set() {
   local set_agent=0 set_lane=0 set_deps=0 set_dw=0 set_goal=0 set_cp=0 set_title=0
   while [ $# -gt 0 ]; do
     case "$1" in
-      --agent) agent="${2:?}"; set_agent=1; shift 2 ;;
-      --lane) lane="${2:?}"; set_lane=1; shift 2 ;;
-      --deps) deps="${2:?}"; set_deps=1; shift 2 ;;
-      --done-when) dw="${2:?}"; set_dw=1; shift 2 ;;
-      --goal) goal="${2:?}"; set_goal=1; shift 2 ;;
-      --checkpoint) cp="${2:?}"; set_cp=1; shift 2 ;;
-      --title) title="${2:?}"; set_title=1; shift 2 ;;
-      --plan) PLAN_ID="${2:?}"; shift 2 ;;
+      --agent) need_arg $# "$1"; agent="$2"; set_agent=1; shift 2 ;;
+      --lane) need_arg $# "$1"; lane="$2"; set_lane=1; shift 2 ;;
+      --deps) need_arg $# "$1"; deps="$2"; set_deps=1; shift 2 ;;
+      --done-when) need_arg $# "$1"; dw="$2"; set_dw=1; shift 2 ;;
+      --goal) need_arg $# "$1"; goal="$2"; set_goal=1; shift 2 ;;
+      --checkpoint) need_arg $# "$1"; cp="$2"; set_cp=1; shift 2 ;;
+      --title) need_arg $# "$1"; title="$2"; set_title=1; shift 2 ;;
+      --plan) need_arg $# "$1"; PLAN_ID="$2"; shift 2 ;;
       *) die "set: unknown option '$1'" ;;
     esac
   done
@@ -425,19 +428,25 @@ cmd_set() {
     --arg dw "$dw" --arg goal "$goal" --arg cp "$cp" --arg title "$title" \
     --argjson sa "$set_agent" --argjson sl "$set_lane" --argjson sd "$set_deps" \
     --argjson sw "$set_dw" --argjson sg "$set_goal" --argjson sc "$set_cp" --argjson st "$set_title"
-  # cycle check after the write
+  # cycle check after the write — a cycle would deadlock `next` forever
   if [ "$set_deps" = "1" ]; then
-    if ! jq -e '
-      def reachable($start; $seen):
-        if ($seen | index($start)) then true
-        else (.tasks[] | select(.id == $start) | .deps) as $d
-          | if ($d | length) == 0 then false
-            else any($d[]; . as $x | reachable($x; $seen + [$start]))
-            end
-        end;
-      [ .tasks[].id | . as $i | reachable($i; []) ] | any | not' "$(require_plan)" >/dev/null 2>&1; then
-      warn "dependency cycle detected after updating $id — fix with: ccm-plan.sh set $id --deps ''"
-    fi
+    local cyc
+    cyc="$(jq -r '
+      . as $root
+      | def deps_of($t): [ $root.tasks[] | select(.id == $t) | .deps[] ];
+        def cyc($t; $seen):
+          if ($seen | index($t)) then true
+          else deps_of($t) as $d
+            | if ($d | length) == 0 then false
+              else any($d[]; cyc(.; $seen + [$t]))
+              end
+          end;
+        [ $root.tasks[].id | cyc(.; []) ] | any' "$(require_plan)" 2>/dev/null || echo error)"
+    case "$cyc" in
+      true)  warn "dependency cycle created by $id — nothing in that ring will ever be ready; clear it: ccm-plan.sh set $id --deps ''" ;;
+      false) : ;;
+      *)     warn "cycle check could not run on $id (unexpected plan shape) — verify deps by hand" ;;
+    esac
   fi
   log_event "set" "$id" "agent=$agent lane=$lane deps=$deps"
   printf '%s✓%s %s updated\n' "$GRN" "$NC" "$id"
@@ -447,9 +456,9 @@ cmd_claim() {
   local id="" force=0
   while [ $# -gt 0 ]; do
     case "$1" in
-      --session) SESSION="${2:?}"; shift 2 ;;
-      --agent) CLAIM_AGENT="${2:?}"; shift 2 ;;
-      --plan) PLAN_ID="${2:?}"; shift 2 ;;
+      --session) need_arg $# "$1"; SESSION="$2"; shift 2 ;;
+      --agent) need_arg $# "$1"; CLAIM_AGENT="$2"; shift 2 ;;
+      --plan) need_arg $# "$1"; PLAN_ID="$2"; shift 2 ;;
       --force) force=1; shift ;;
       --next) id="__next__"; shift ;;
       -*) die "claim: unknown option '$1'" ;;
@@ -534,10 +543,10 @@ cmd_attach() {
   local role="worker" name=""
   while [ $# -gt 0 ]; do
     case "$1" in
-      --session) SESSION="${2:?}"; shift 2 ;;
-      --role) role="${2:?}"; shift 2 ;;
-      --name) name="${2:?}"; shift 2 ;;
-      --plan) PLAN_ID="${2:?}"; shift 2 ;;
+      --session) need_arg $# "$1"; SESSION="$2"; shift 2 ;;
+      --role) need_arg $# "$1"; role="$2"; shift 2 ;;
+      --name) need_arg $# "$1"; name="$2"; shift 2 ;;
+      --plan) need_arg $# "$1"; PLAN_ID="$2"; shift 2 ;;
       *) die "attach: unknown option '$1'" ;;
     esac
   done
@@ -559,7 +568,7 @@ cmd_attach() {
 }
 
 cmd_detach() {
-  [ "${1:-}" = "--session" ] && SESSION="${2:?}"
+  # --session is handled globally before dispatch
   init_store
   local sid; sid="$(session_id)"
   lock
@@ -569,7 +578,7 @@ cmd_detach() {
 }
 
 cmd_heartbeat() {
-  [ "${1:-}" = "--session" ] && SESSION="${2:?}"
+  # --session is handled globally before dispatch
   init_store
   local sid; sid="$(session_id)"
   lock
@@ -596,10 +605,10 @@ cmd_post() {
   local to="all" text=""
   while [ $# -gt 0 ]; do
     case "$1" in
-      --session|--from) SESSION="${2:?}"; shift 2 ;;
-      --to) to="${2:?}"; shift 2 ;;
-      --text|-m) text="${2:?}"; shift 2 ;;
-      --task) MSG_TASK="${2:?}"; shift 2 ;;
+      --session|--from) need_arg $# "$1"; SESSION="$2"; shift 2 ;;
+      --to) need_arg $# "$1"; to="$2"; shift 2 ;;
+      --text|-m) need_arg $# "$1"; text="$2"; shift 2 ;;
+      --task) need_arg $# "$1"; MSG_TASK="$2"; shift 2 ;;
       *) die "post: unknown option '$1'" ;;
     esac
   done
@@ -617,7 +626,7 @@ cmd_inbox() {
   local json=0 all=0
   while [ $# -gt 0 ]; do
     case "$1" in
-      --session) SESSION="${2:?}"; shift 2 ;;
+      --session) need_arg $# "$1"; SESSION="$2"; shift 2 ;;
       --json) json=1; shift ;;
       --all) all=1; shift ;;
       *) die "inbox: unknown option '$1'" ;;
@@ -672,8 +681,8 @@ cmd_board() {
   local export=""
   while [ $# -gt 0 ]; do
     case "$1" in
-      --export) export="${2:?}"; shift 2 ;;
-      --plan) PLAN_ID="${2:?}"; shift 2 ;;
+      --export) need_arg $# "$1"; export="$2"; shift 2 ;;
+      --plan) need_arg $# "$1"; PLAN_ID="$2"; shift 2 ;;
       *) die "board: unknown option '$1'" ;;
     esac
   done
@@ -860,6 +869,25 @@ MD
   t "stdin import"            "printf -- '- alpha\n- beta\n' | bash '$self' import - --id t3 && [ \"\$(bash '$self' list --json | jq length)\" = 2 ]"
   t "empty plan rejected"     "! printf 'nothing here\n' | bash '$self' import - --id t4"
   t "duplicate id rejected"   "! bash '$self' import --from file --source '$tmp/plan.md' --id t1"
+
+  echo "  --- cycle guard ---"
+  bash "$self" import --from file --source "$tmp/plan.md" --id t5 --force >/dev/null 2>&1
+  t "legit chain is silent"   "! bash '$self' set T02 --deps T01 2>&1 | grep -i cycle"
+  t "diamond is silent"       "bash '$self' set T03 --deps T01 && ! bash '$self' set T03 --deps T01,T02 2>&1 | grep -i cycle"
+  t "2-node cycle warns"      "bash '$self' set T01 --deps T02 2>&1 | grep -i cycle"
+  t "3-node cycle warns"      "bash '$self' set T01 --deps '' && bash '$self' set T03 --deps T02 && bash '$self' set T01 --deps T03 && bash '$self' set T02 --deps T01 2>&1 | grep -i cycle"
+  t "clearing deps recovers"  "bash '$self' set T02 --deps '' && ! bash '$self' set T01 --deps T03 2>&1 | grep -i cycle"
+  t "empty value accepted"    "bash '$self' set T01 --lane '' && [ \"\$(bash '$self' show T01 | jq -r .lane)\" = '' ]"
+  t "missing value rejected"  "! bash '$self' set T01 --lane"
+  t "cleared lane frees mutex" "bash '$self' set T02 --lane '' && bash '$self' set T03 --deps '' --lane ''"
+  t "failure exit code is 1"  "bash '$self' show T99; [ \"\$?\" = 1 ]"
+
+  echo "  --- global --session ---"
+  bash "$self" import --from file --source "$tmp/plan.md" --id t6 --force >/dev/null 2>&1
+  t "done attributes actor"   "bash '$self' claim T01 --session who1 && bash '$self' done T01 --session who1 && bash '$self' events --tail 3 | grep -q 'who1  done'"
+  t "note attributes actor"   "bash '$self' note T02 'x' --session who2 && bash '$self' show T02 | jq -e '.notes[-1].by == \"who2\"'"
+  t "set attributes actor"    "bash '$self' set T03 --agent debugger --session who3 && bash '$self' events --tail 2 | grep -q who3"
+  bash "$self" active t1 >/dev/null 2>&1
   t "--force overwrites"      "bash '$self' import --from file --source '$tmp/plan.md' --id t1 --force"
 
   rm -rf "$tmp"
@@ -870,6 +898,20 @@ MD
 
 # ═══════════════════════════════════════════════════════════════════════
 CMD="${1:-help}"; shift || true
+
+# --session / --plan are GLOBAL: every command must attribute to the right
+# session and act on the right plan. Parsed here so no subcommand can silently
+# ignore them (done/fail/note/set once did, mis-attributing the event log).
+ARGS=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --session) need_arg $# "$1"; SESSION="$2"; shift 2 ;;
+    --plan)    need_arg $# "$1"; PLAN_ID="$2"; shift 2 ;;
+    *)         ARGS+=("$1"); shift ;;
+  esac
+done
+set -- ${ARGS[@]+"${ARGS[@]}"}
+
 case "$CMD" in
   import)    cmd_import "$@" ;;
   list|ls)   cmd_list "$@" ;;

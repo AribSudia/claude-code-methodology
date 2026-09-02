@@ -1,6 +1,6 @@
 name: Plan mesh
 
-# Non-required check (ADR-039). Exercises scripts/ccm-plan.sh's 38-case
+# Non-required check (ADR-039). Exercises scripts/ccm-plan.sh's 50-case
 # selftest: parsers, dependency graph, lane mutexes, atomic claiming,
 # session mesh, messages, views. Runs against a throwaway store, never
 # the repo's own.

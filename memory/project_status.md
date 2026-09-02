@@ -12,7 +12,7 @@ markdown plan — into a dependency-aware task graph stored off the working tree
 (`$(git rev-parse --git-common-dir)/ccm-plan`), so **every worktree's session shares one mesh**:
 parallel **lanes** as write-collision mutexes, atomic claiming, specialist routing, durable
 inter-session mail + live `SendMessage` handoff. Session protocol STEP 0b now reports it, so a new
-session joins running work instead of re-planning it. 38-case selftest, CI-gated. Prior: v4.1.1
+session joins running work instead of re-planning it. 50-case selftest, CI-gated. Prior: v4.1.1
 (registered-entity identity + commercial-doc hardening) / v4.1.0 (CLA bot dormant + TRADEMARK) /
 v4.0.0 relicense MIT→PolyForm-NC (≤v3.20.0 stays MIT). Self-hosted: 34 skills, 17 agents, 11 hooks,
 7 workflows.

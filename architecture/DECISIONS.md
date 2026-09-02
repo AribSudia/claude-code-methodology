@@ -574,7 +574,7 @@ determinism in a script, judgment in a skill:
   via the session transcript, any markdown plan, or stdin) into a task graph;
   owns status, dependencies, lanes, atomic claiming, sessions, messages, and an
   append-only event log. Bash + `jq` only (both already in `requiredTools`), with
-  a 38-case built-in `selftest`.
+  a 50-case built-in `selftest`.
 - **`/arib-plan`** — the judgment. Enriches the imported graph with dependencies,
   parallel lanes, and specialist routing, then dispatches ready tasks to the 16
   specialists and keeps the mesh in sync.

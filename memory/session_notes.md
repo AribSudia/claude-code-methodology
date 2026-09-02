@@ -10,7 +10,7 @@
 - **`scripts/ccm-plan.sh`** — plan → task graph → dispatch substrate. Imports the live plan
   panel (session transcript), any markdown plan (wave Steps via `--chain`), or stdin. Owns deps,
   **lanes as mutexes**, atomic claim (`mkdir` lock + dead-holder reclaim), session registry +
-  heartbeats, durable messages, board, event log. **38/38 selftest green.** Store lives at
+  heartbeats, durable messages, board, event log. **50/50 selftest green.** Store lives at
   `$(git rev-parse --git-common-dir)/ccm-plan` — all worktrees share one mesh, git stays clean.
 - **`/arib-plan`** (34th skill, Engine) — enrich (deps / lanes / specialist routing / `done_when`),
   dispatch lane-disjoint tasks to the 16 specialists in parallel, sync sessions (durable `post`
