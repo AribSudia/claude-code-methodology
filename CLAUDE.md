@@ -10,12 +10,12 @@
 | Field             | Value                                    |
 |-------------------|------------------------------------------|
 | System Name       | Claude Code Methodology (CCM)            |
-| Version           | 4.1.1 "Commercial"                   |
+| Version           | 4.2.0 "Mesh"                             |
 | Type              | Opinionated methodology + skill pack     |
 | Owner             | Abdullah                                 |
 | Engineered By     | Abdullah x Claude Opus 4.6 / 4.7 / 4.8   |
 | Created           | 2026-04-15                               |
-| Last Updated      | 2026-06-23                               |
+| Last Updated      | 2026-09-02                               |
 | Language Support   | Universal (RTL, LTR, CJK, Indic, Bidi)  |
 | Methodology       | 4-Layer Architecture + I/O Channel + Memory |
 | Status            | Production-Ready                         |
@@ -90,7 +90,7 @@ your-project/
 |   |-- settings.json                  <- Permissions, hooks (committed)
 |   |-- settings.local.json            <- Personal overrides (gitignored)
 |   |-- rules/                         <- Path-scoped modular rules
-|   |-- skills/                        <- Branded skills (/arib-*) — 33 total
+|   |-- skills/                        <- Branded skills (/arib-*) — 34 total
 |   |   |-- arib-session-start/SKILL.md
 |   |   |-- arib-dev-feature/SKILL.md
 |   |   +-- (31 more skills)
@@ -114,8 +114,8 @@ your-project/
 
 ## 4. Skills (branded /arib-*)
 
-**33 skills across 9 categories** — Session 5 · Dev 4 · Wave 4 · Audit 1 · Check 11
-· CI 1 · Docs 3 · Engine 2 · Stack 2. The full Skill · Category · Purpose table
+**34 skills across 9 categories** — Session 5 · Dev 4 · Wave 4 · Audit 1 · Check 11
+· CI 1 · Docs 3 · Engine 3 · Stack 2. The full Skill · Category · Purpose table
 lives in **`reference/SKILLS_CATALOG.md`** (on demand — moved out of always-on in
 v3.20.0, ADR-035). Prefix/autocomplete convention: `reference/COMMAND_PREFIX.md`.
 
@@ -161,6 +161,7 @@ The 17 agents: `architect`, `code-reviewer`, `security-auditor`,
 | Hook setup                 | `.claude/rules/hooks.md` + `hooks/HOOKS_PROTOCOL.md` + `Training/04-HOOKS-MANUAL.md` |
 | Compliance frameworks      | `compliance/README.md` + `compliance/COMPLIANCE.md` + `compliance/frameworks/*.md` |
 | Wave delivery              | `waves/README.md` + `arib-wave-start` / `arib-wave-end` skills |
+| Plan → task mesh           | `io/PLAN_MESH.md` + `/arib-plan` (ADR-039)   |
 | Autonomy mode              | `operations/AUTONOMY_MODE.md`                |
 | Token cost on session start| run `./scripts/token-audit.sh` (always-on vs path-scoped) |
 | Coherence self-check       | run `./scripts/validate-coherence.sh` (CI-enforced) |

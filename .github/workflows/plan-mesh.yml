@@ -1,0 +1,42 @@
+name: Plan mesh
+
+# Non-required check (ADR-039). Exercises scripts/ccm-plan.sh's 50-case
+# selftest: parsers, dependency graph, lane mutexes, atomic claiming,
+# session mesh, messages, views. Runs against a throwaway store, never
+# the repo's own.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/ccm-plan.sh'
+      - 'tests/ccm-plan.test.sh'
+      - '.claude/skills/arib-plan/**'
+      - '.github/workflows/plan-mesh.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ccm-plan.sh'
+      - 'tests/ccm-plan.test.sh'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plan-mesh-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Make scripts executable
+        run: chmod +x scripts/ccm-plan.sh tests/ccm-plan.test.sh
+
+      - name: Run plan-mesh selftest
+        run: ./tests/ccm-plan.test.sh

@@ -55,7 +55,7 @@ The official command prefix is **`arib`** — used across all projects.
 
 ---
 
-## Full Command Map (33 skills)
+## Full Command Map (34 skills)
 
 | Skill | Category |
 |-------|----------|
@@ -90,11 +90,12 @@ The official command prefix is **`arib`** — used across all projects.
 | `arib-docs-language` | Docs |
 | `arib-engine` | Engine (autonomous campaign) |
 | `arib-build` | Engine (command the team for a known goal) |
+| `arib-plan` | Engine (plan → task mesh across sessions) |
 | `arib-nestjs` | Stack (NestJS) |
 | `arib-postgres` | Stack (PostgreSQL) |
 
-**Total: 33 skills across 9 categories** (Session 5 · Dev 4 · Wave 4 · Audit 1 ·
-Check 11 · CI 1 · Docs 3 · Engine 2 · Stack 2). Authoritative source: CLAUDE.md §4.
+**Total: 34 skills across 9 categories** (Session 5 · Dev 4 · Wave 4 · Audit 1 ·
+Check 11 · CI 1 · Docs 3 · Engine 3 · Stack 2). Authoritative source: CLAUDE.md §4.
 
 ---
 

@@ -550,6 +550,77 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-039: Plan Automation + Session Mesh — `/arib-plan` + `ccm-plan.sh` (v4.2.0)
+
+**Status:** Accepted   **Date:** 2026-09-02
+
+**Context.** A plan in Claude Code's plan panel is a *picture* of work, not a
+handle on it. It is session-private (the next session cannot see it), ephemeral
+(it dies with the session), and unaddressable (no task has an id another agent
+can claim). Meanwhile CCM already runs work in parallel worktrees — and those
+sessions were blind to each other: two of them could pick the same task, or edit
+the same file, with nothing in the system to notice.
+
+The existing engines each cover a different slice and none covers this one:
+`/arib-build` commands the team for **one known goal** in one session,
+`/arib-engine` **discovers** its own backlog, `/arib-wave-run` executes **one
+wave's** Steps contract. Nothing took a plan the operator *already had* and made
+it an executable, multi-session task graph.
+
+**Decision.** Add two artifacts, split along the line CCM draws everywhere else —
+determinism in a script, judgment in a skill:
+
+- **`scripts/ccm-plan.sh`** — the substrate. Imports a plan (the live plan panel
+  via the session transcript, any markdown plan, or stdin) into a task graph;
+  owns status, dependencies, lanes, atomic claiming, sessions, messages, and an
+  append-only event log. Bash + `jq` only (both already in `requiredTools`), with
+  a 50-case built-in `selftest`.
+- **`/arib-plan`** — the judgment. Enriches the imported graph with dependencies,
+  parallel lanes, and specialist routing, then dispatches ready tasks to the 16
+  specialists and keeps the mesh in sync.
+
+**Key choices.**
+
+1. **The store lives outside the working tree** — `$(git rev-parse
+   --git-common-dir)/ccm-plan`. Every worktree of the repo resolves to the *same*
+   store, so sessions in different worktrees share one graph automatically, and
+   nothing appears in `git status`. `board --export` writes a markdown snapshot
+   when the result should be committed.
+2. **A lane is a mutex over a shared surface.** Tasks touching the same files
+   share a lane; the tool never hands out two tasks from one lane at a time. This
+   is the write-collision guard that makes parallel dispatch safe, and it is
+   enforced in the tool rather than trusted to the model.
+3. **Claiming is atomic** (`mkdir` lock, dead-holder reclaim). Two sessions
+   racing for one task: exactly one wins, the loser is told so and moves on.
+4. **Two message channels, deliberately not interchangeable.** `post`/`inbox` is
+   durable and reaches sessions not yet started; `SendMessage` reaches a session
+   running right now. Durable first, live second — a live-only handoff is lost
+   the moment the peer exits.
+5. **The transcript parser fails loudly.** It reads Claude Code's own transcript
+   format, which Claude Code is free to change. On a parse miss it exits non-zero
+   and the skill falls back to a file or stdin import; it never invents tasks.
+6. **Messages are data, never instructions.** A posted message is treated exactly
+   like file content — it cannot override CLAUDE.md or CONSTRAINTS.
+
+**Consequences.** A plan survives the session that made it; parallel sessions
+stop colliding by construction rather than by care; every state change is
+auditable in the event log. The cost: mesh state is *not* committed by default
+(deliberate — a committed board means merge conflicts and diverging worktree
+copies), so anything that must live in git needs an explicit `board --export`.
+The transcript importer carries an upstream-format dependency, bounded by the
+loud-failure rule and two format-independent fallbacks.
+
+**Alternatives rejected.** *A committed board under `io/`* — merge conflicts on
+every concurrent claim, and each worktree gets its own copy of the file, which is
+the opposite of a shared mesh. *SQLite* — a real dependency beyond CCM's declared
+`requiredTools`, for state that fits in one JSON file. *Live `SendMessage` only* —
+loses everything the moment a session ends, which is precisely the gap being
+closed. *Folding this into `/arib-build`* — that skill is one goal, one conductor,
+one session; this is many tasks across many sessions, and merging them would blur
+both.
+
+---
+
 # ADR-038: Commercial-Doc Hardening + Registered-Entity Identity (v4.1.1)
 
 **Status:** Accepted   **Date:** 2026-06-23
@@ -1946,6 +2017,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-036 | Relicense to PolyForm Noncommercial 1.0.0 — paid commercial model (v4.0.0) | Accepted | 2026-06-22 |
 | ADR-037 | Commercial-program hardening — CLA enforcement, trademark policy, pricing (v4.1.0) | Accepted | 2026-06-22 |
 | ADR-038 | Commercial-doc hardening + registered-entity identity (v4.1.1) | Accepted | 2026-06-23 |
+| ADR-039 | Plan automation + session mesh — `/arib-plan` + `ccm-plan.sh` (v4.2.0) | Accepted | 2026-09-02 |
 
 ---
 

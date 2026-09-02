@@ -21,11 +21,11 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 4.1.1                                                    |
-| **Codename**         | "Commercial"                                         |
+| **Version**          | 4.2.0                                                    |
+| **Codename**         | "Mesh"                                               |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
-| **Last Updated**     | 2026-06-23                                               |
+| **Last Updated**     | 2026-09-02                                               |
 | **Engineered By**    | Abdullah × Claude Opus 4.6                               |
 | **License**          | PolyForm Noncommercial 1.0.0 (v4.0.0+; ≤ v3.20.0 = MIT)  |
 | **Status**           | Production-Ready                                         |
@@ -789,7 +789,13 @@ PATCH  → Bug fixes, typo corrections, template improvements
 ### Current Version
 
 ```
-v4.1.1 "Commercial"
+v4.2.0 "Mesh"
+
+v4.2.0 adds the plan mesh (ADR-039): `/arib-plan` + `scripts/ccm-plan.sh` turn a
+plan — the live Claude Code plan panel, or any markdown plan — into a
+dependency-aware task graph that every worktree's session shares, with parallel
+lanes as write-collision mutexes, atomic claiming, and a durable inter-session
+channel alongside live `SendMessage`.
 
 The v4 line makes CCM a commercially-licensed product: v4.0.0 relicensed
 MIT → PolyForm Noncommercial (free noncommercial; paid commercial) with a
@@ -814,6 +820,7 @@ remain MIT. Full per-version detail lives in CHANGELOG.md (the authoritative his
 | 2.6.0   | Fortress    | 2026-04-18 | API Documentation agent, Accessibility Auditor agent, /api-docs, /a11y-audit commands, Production Monitoring guide, Training manuals |
 | 3.0 – 3.11 | (various) | 2026-05–06 | `arib`-branded skills, Lean Core (3.8, always-on cut to ~7.4K), Integrity (3.10, fail-closed hooks), Engine (3.11, `/arib-engine`) — see CHANGELOG.md |
 | 3.12 – 3.20 | Synthesis campaign | 2026-06 | Reconcile (3.12) → Engineering-Manager (3.14) → Unattended (3.15) → Reach (3.16) → wave-plan (3.17) → PostToolUse hooks (3.18) → Code Graph (3.19) → **Lean Core II (3.20)**. Per-version detail in CHANGELOG.md |
+| 4.2 | Mesh | 2026-09 | Plan automation + session mesh: `/arib-plan` (34th skill) + `scripts/ccm-plan.sh` — plan-panel import, dependency graph, lane mutexes, atomic claim, cross-session messaging. ADR-039 |
 | 4.0 – 4.1 | Licensed / Commercial | 2026-06 | Relicense MIT → PolyForm Noncommercial + paid commercial (4.0); CLA + dormant CLA-bot + trademark policy + pricing (4.1.0); registered-entity identity + draft commercial agreement + LICENSE-MIT + PDPL privacy (4.1.1). Per-version detail in CHANGELOG.md |
 
 ### Upgrade Compatibility
@@ -931,7 +938,7 @@ The upgrade protocol follows semantic versioning. This is engineering.
 
 > **End of SYSTEM.md**
 >
-> *Claude Code Methodology v4.1.1 "Commercial"*
+> *Claude Code Methodology v4.2.0 "Mesh"*
 > *Engineered by Abdullah × Claude Opus 4.6*
 > *96 files · 24 directories · 35,000+ lines · 122 features*
 > *The AI development operating system that remembers, communicates, and evolves.*

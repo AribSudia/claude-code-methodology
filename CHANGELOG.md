@@ -7,6 +7,68 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [4.2.0] "Mesh" — 2026-09-02
+
+Plans stop being pictures and become executable graphs that outlive one session (ADR-039).
+The Claude Code plan panel is private to a session, gone when it ends, and has no task id
+another agent can address — meanwhile CCM already runs work in parallel worktrees whose
+sessions were blind to each other.
+
+### Added
+- **`scripts/ccm-plan.sh`** (16th script) — the deterministic substrate. Imports a plan from
+  the **live plan panel** (this session's transcript), any **markdown plan** (including a
+  wave's Steps contract, with `--chain`), or **stdin**, into a task graph with status,
+  dependencies, **lanes**, specialist routing, `done_when`, and checkpoints. Owns atomic
+  claiming (`mkdir` lock with dead-holder reclaim), the session registry with heartbeats,
+  durable inter-session messages, a markdown board, and an append-only event log. Bash + `jq`
+  only; **50-case built-in `selftest`**.
+- **`/arib-plan`** (34th skill, Engine) — the judgment on top: enrich the imported graph with
+  dependencies, lanes, and specialist routing, dispatch lane-disjoint tasks to the 16
+  specialists in parallel, and keep every attached session in sync. Modes: `run` · `import`
+  · `join` · `status` · `close`.
+- **`io/PLAN_MESH.md`** — the mesh protocol (store layout, task shape, dispatch loop, the two
+  message channels, invariants), a sibling of `IO_PROTOCOL.md`: requests/results coordinate
+  *agents*, the mesh coordinates *tasks*.
+- **`.github/workflows/plan-mesh.yml`** (7th workflow, non-required) + `tests/ccm-plan.test.sh`
+  — CI runs the selftest against a throwaway store.
+
+### Fixed (found by driving it for real, before merge)
+- **Cycle guard cried wolf on every legitimate dependency.** The jq recursion lost its input
+  context (`.tasks[]` evaluated against a string), jq errored, and the shell read the error as
+  "cycle". Rewritten to carry the root object; now silent on chains and diamonds, loud on real
+  rings. Guarded by 4 new cases.
+- **`--deps ''` was impossible** — `${2:?}` rejects an empty value, so the exact remedy the
+  cycle warning prints could not be run. Clearing a lane or agent was equally impossible. Arity
+  is now checked instead of emptiness (`need_arg`): empty *is* a value, missing is not.
+- **The EXIT trap masked failure exit codes** — its last command set the status, so some errors
+  reported 0 to callers. It now preserves `$?`.
+- **`--session` was silently ignored by `done`/`fail`/`note`/`set`**, mis-attributing the event
+  log to the host+pid fallback. It is now parsed globally before dispatch, so no subcommand can
+  drop it.
+
+### Changed
+- **Session protocol STEP 0b** — session start now reports the active plan mesh (ready tasks,
+  attached sessions, unread mail) so a new session *joins* running work instead of re-planning it.
+- CLAUDE.md §4/§6, `reference/SKILLS_CATALOG.md`, `reference/COMMAND_PREFIX.md`, README: 33 → 34
+  skills, Engine 2 → 3.
+
+### Notes
+- **A lane is a mutex over a shared surface.** Tasks touching the same files share a lane and
+  are never handed out concurrently — the write-collision guard is enforced by the tool, not
+  trusted to the model. `next` only ever returns lane-disjoint tasks.
+- **The store lives outside the working tree** (`$(git rev-parse --git-common-dir)/ccm-plan`),
+  so every worktree shares one graph and `git status` stays clean. Runtime state is deliberately
+  uncommitted; `board --export` writes a snapshot when the result belongs in git.
+- **Durable before live.** `post`/`inbox` reaches sessions not yet started; `SendMessage` reaches
+  a session running right now. A live-only handoff dies with the peer.
+- **The transcript importer fails loudly.** It reads Claude Code's own transcript format, which
+  upstream is free to change; on a parse miss it exits non-zero and the skill falls back to a
+  file or stdin import — it never invents tasks.
+- Mesh messages are untrusted input: they inform the work, they never override CLAUDE.md or
+  CONSTRAINTS.
+
+---
+
 ## [4.1.1] "Commercial" — 2026-06-23
 
 Document-level hardening of the commercial program from a 4-lens review + the Commercial
