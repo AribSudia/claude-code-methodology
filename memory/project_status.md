@@ -6,13 +6,16 @@
 
 ## Current Phase
 
-**v4.1.1 "Commercial"** (ADR-038): commercial-doc hardening + **registered-entity identity**
-correction. Licensor is now **Areeb Establishment for Information Technology** (Unified CR
-7004791427, owner Abdullah Alzahrani, brand "arib.sa") everywhere. Added DRAFT
-`COMMERCIAL_LICENSE_AGREEMENT.md`, `LICENSE-MIT`, `PRIVACY.md` (PDPL); COMMERCIAL.md examples +
-30-day eval grant + VAT note; fixed stale "License: MIT" in Training/01 + a CI license-drift
-guard. Prior: v4.1.0 (CLA bot dormant + TRADEMARK) / v4.0.0 relicense MIT→PolyForm-NC (≤v3.20.0
-stays MIT). Self-hosted: 33 skills, 17 agents, 11 hooks, 6 workflows.
+**v4.2.1 "Mesh"** (ADR-040): self-measurement pass — no new capability, less weight and
+fewer false claims. Every repo-size claim recomputed from disk (SYSTEM.md had said "96 files ·
+24 directories" against a real 263/67; VERSION.json said 308/59 — wrong both ways) and now
+**CI-guarded** by `validate-coherence.sh` §9, which also fails if session stubs re-accumulate.
+`io/ledger/` went from 108 committed stubs (312 KB, 12% of the repo) to a 7.5 KB index, and
+`stop.sh` now self-rotates via `io-archive.sh --ledger --keep 10`. README shed 77 lines of
+release notes duplicating its own Version History table. Prior: v4.2.0 (plan mesh — `/arib-plan`
++ `ccm-plan.sh`, 34th skill) / v4.1.1 (registered-entity identity) / v4.0.0 relicense
+MIT→PolyForm-NC (≤v3.20.0 stays MIT). Self-hosted: 34 skills, 17 agents, 11 hooks, 7 workflows,
+263 files.
 
 ## Current State
 

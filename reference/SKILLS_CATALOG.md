@@ -45,8 +45,9 @@
 | /arib-docs-language         | Docs       | i18n/RTL/LTR compliance (generic)                    |
 | /arib-engine                | Engine     | Autonomous campaign — discovers its own backlog; auto-merge gated on reconciliation |
 | /arib-build                 | Engine     | Command the team for a KNOWN goal — dispatches engineer-manager (decompose→dispatch→reconcile) |
+| /arib-plan                  | Engine     | Plan → task mesh — import the plan panel, route to specialists, dispatch in lanes, sync sessions |
 | /arib-nestjs                | Stack      | NestJS patterns + review (DI, DTO, guards, N+1, security) |
 | /arib-postgres              | Stack      | PostgreSQL optimization & safety (indexes, plans, migrations, RLS) |
 
-**Total: 33 skills across 9 categories** — Session 5 · Dev 4 · Wave 4 · Audit 1 ·
-Check 11 · CI 1 · Docs 3 · Engine 2 · Stack 2.
+**Total: 34 skills across 9 categories** — Session 5 · Dev 4 · Wave 4 · Audit 1 ·
+Check 11 · CI 1 · Docs 3 · Engine 3 · Stack 2.

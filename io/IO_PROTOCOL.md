@@ -8,6 +8,10 @@
 > **Rule #1**: All inter-agent communication passes through `io/`. No exceptions.
 > **Rule #2**: Every request gets a result. Every result references its request.
 > **Rule #3**: The dashboard (`status.md`) is the single source of truth for I/O state.
+>
+> **Sibling channel**: `io/PLAN_MESH.md` describes the *plan mesh* — the shared
+> task graph and inter-session channel behind `/arib-plan` and `scripts/ccm-plan.sh`
+> (ADR-039). Requests/results coordinate *agents*; the mesh coordinates *tasks*.
 
 ---
 

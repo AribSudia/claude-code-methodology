@@ -102,6 +102,14 @@ if [[ "${COMMITS_THIS_SESSION}" -gt 0 ]] 2>/dev/null; then
 fi
 
 log INFO "ledger written: ${LEDGER_FILE}"
+
+# Self-rotate the ledger (ADR-040). Without this the stubs accumulate
+# forever — 108 of them (312 KB) had piled up by v4.2.0 while .gitignore
+# said "rotate manually". Never fail the hook over housekeeping.
+if [[ -x "${CCM_ROOT}/scripts/io-archive.sh" ]]; then
+  bash "${CCM_ROOT}/scripts/io-archive.sh" --ledger --keep 10 >/dev/null 2>&1 \
+    || log WARN "ledger rotation skipped (io-archive.sh --ledger failed)"
+fi
 notify_cowork "session-end" "commits=${COMMITS_THIS_SESSION} files=${FILES_CHANGED}"
 
 allow "stop hook complete"
