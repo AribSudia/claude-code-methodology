@@ -225,6 +225,50 @@ else
 fi
 
 echo ""
+echo "9. Repo-size claims vs disk (v4.2.1, ADR-040)"
+# The "N files · N directories" claims in SYSTEM.md/README.md were never
+# derived from disk: by v4.2.0 SYSTEM.md still said "96 files · 24
+# directories" against a real 263/67, in CCM's own spec doc, while CCM
+# polices DOCS-MATCH-DISK in CI. Metric is deterministic and tracked-only:
+#   files = git ls-files | wc -l
+#   dirs  = unique dirname of every tracked file, excluding the repo root
+FILES_DISK=$(git ls-files | wc -l | tr -d ' ')
+DIRS_DISK=$(git ls-files | xargs -n1 dirname | sort -u | grep -v '^\.$' | wc -l | tr -d ' ')
+FILES_DECL=$(jq -r '.stats.totalFiles // "missing"' VERSION.json)
+DIRS_DECL=$(jq -r '.stats.totalDirectories // "missing"' VERSION.json)
+
+[ "$FILES_DISK" = "$FILES_DECL" ] && note_ok "totalFiles: $FILES_DISK" \
+  || note_fail "totalFiles: disk=$FILES_DISK VERSION.json=$FILES_DECL (run: git ls-files | wc -l)"
+[ "$DIRS_DISK" = "$DIRS_DECL" ] && note_ok "totalDirectories: $DIRS_DISK" \
+  || note_fail "totalDirectories: disk=$DIRS_DISK VERSION.json=$DIRS_DECL"
+
+# Any doc that states the pair must state the same pair.
+SIZE_BAD=0
+for doc in SYSTEM.md README.md CLAUDE.md; do
+  [ -f "$doc" ] || continue
+  while IFS= read -r claim; do
+    [ -z "$claim" ] && continue
+    c_files=$(printf '%s' "$claim" | grep -oE '[0-9]+ files' | grep -oE '[0-9]+')
+    c_dirs=$(printf '%s' "$claim" | grep -oE '[0-9]+ directories' | grep -oE '[0-9]+')
+    if [ "$c_files" != "$FILES_DISK" ] || [ "$c_dirs" != "$DIRS_DISK" ]; then
+      note_fail "$doc claims '$c_files files · $c_dirs directories' — disk is $FILES_DISK · $DIRS_DISK"
+      SIZE_BAD=1
+    fi
+  done < <(grep -oE '[0-9]+ files · [0-9]+ directories' "$doc" 2>/dev/null)
+done
+[ "$SIZE_BAD" = "0" ] && note_ok "no stale 'N files · N directories' claims in SYSTEM/README/CLAUDE"
+
+# Session stubs are gitignored transient state (ADR-040); the committed
+# trail is io/ledger/ARCHIVE-<YYYY>.md. A pile of TRACKED stubs means the
+# ignore rule was removed and the repo is about to churn again.
+LEDGER_STUBS=$(git ls-files 'io/ledger/session-*.md' | wc -l | tr -d ' ')
+if [ "$LEDGER_STUBS" -gt 30 ]; then
+  note_fail "io/ledger/ has $LEDGER_STUBS committed session stubs — rotation is not running (bash scripts/io-archive.sh --ledger)"
+else
+  note_ok "ledger stubs committed: $LEDGER_STUBS (rotation healthy)"
+fi
+
+echo ""
 echo "=== Result ==="
 if [ "$FAIL" = "0" ]; then
   echo "COHERENT — all invariants hold."

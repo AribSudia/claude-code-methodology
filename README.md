@@ -2,98 +2,21 @@
 
 ### An opinionated methodology and skill pack for Claude Code
 
-A convention layer for serious work in Claude Code: 33 branded `/arib-*` skills,
+A convention layer for serious work in Claude Code: 34 branded `/arib-*` skills,
 17 specialist agents (incl. a project engineering manager), kernel-level enforcement hooks, path-scoped rules, persistent
 memory files, a 5-mode bootstrap, a wave delivery overlay with auto-advancing
 execution, a compliance layer, and full CI/PR governance. It is **not** a runtime,
 an orchestrator, or a kernel — it is a set of conventions that make multi-session
 Claude Code work durable.
 
-**v4.2.0 "Mesh"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.2K
+**v4.2.1 "Mesh"** · Engineered by Abdullah x Claude · Always-on token cost on session start: ~7.2K
 (measure yours: `./scripts/token-audit.sh` — down from ~45.9K; reference docs load on demand)
 
-> **What changed in v3.8.1–v3.8.3 "Lean Core"** — skill `name:` conformance
-> on all 26 skills (CI-enforced); bootstrap protocols made autonomous
-> (PROTOCOL_PRINCIPLES Rule 5 — run to completion, no permission gates);
-> migration modernized to **"From Any System"** (Cursor/Windsurf/Copilot/Kiro;
-> legacy path retired to an appendix); a **one-prompt unified entry** +
-> Situation Router (you no longer pick a protocol); skill-hygiene sweep
-> (linear steps, no duplicate headings); dead `agent-memory/` removed.
-> ADR-020/021/022.
->
-> **What changed in v3.8.0 "Lean Core"** — the headline fix. Always-on
-> session-start context cut **~45.9K → ~7.4K tokens (84%)** — UNDER the 8K
-> target for the first time. Only the master brain, hard rules, and current
-> state/handoff stay always-on; every reference doc (DECISIONS, SECURITY,
-> ERROR_PATTERNS, schemas, etc.) loads **on demand** via the skill/agent
-> that needs it (map in CLAUDE.md §6). This was the single defect keeping
-> CCM at C+; ADR-019 records it. `project_status.md` rewritten lean
-> (history → CHANGELOG). The 26-skill audit + dev-feature `develop`-branch
-> blocker shipped in v3.7.2.
->
-> **What changed in v3.7.1 (patch)** — closes the review's deferred
-> P2/P3 findings: `memory-export.sh` no longer writes failure strings
-> into the git-committed audit trail (honest header + last-known-good
-> preserved); a **real drift classifier** (`gen-template-hashes.sh` +
-> `reference/template-hashes.json` + `drift-detect.sh`) replaces the
-> upgrade heuristic that could overwrite user edits; hook hardening
-> (whitespace-normalized bash matching, `git push -f`, Stripe/GitLab/
-> npm/JWT secret patterns); the session ledger now records transport +
-> notifications; stale counts in SYSTEM.md/Training corrected. ADR-018.
->
-> **What changed in v3.7** — a 23-agent review of CCM found that the
-> system did not fully live up to its own principles, and v3.7 fixes the
-> critical gaps. **The enforcement layer now actually enforces**:
-> `block()` was using `exit 1` (which Claude Code treats as *non-blocking*)
-> — fixed to `exit 2`, so secret/dangerous-bash/OWASP/design-token/
-> wave-merge gates finally block instead of warn. **All 15 agents got YAML
-> frontmatter** so Claude Code can register them as dispatchable subagents
-> (they were prose before). **New `scripts/validate-coherence.sh` + CI**
-> self-polices the invariants CCM preaches (counts match disk, agent
-> frontmatter valid, version coherent, no stale tokens, references
-> resolve). The token metric is now **honest** (always-on vs path-scoped
-> separated; the stale ~39.6K corrected to ~43.4K). Three "documented but
-> unwired" claims were wired or downgraded. ADR-016 + ADR-017 record it.
->
-> **What changed in v3.6** — waves now execute themselves. New
-> `/arib-wave-run` skill reads the wave PLAN's Steps contract and
-> **auto-advances** from step to step without asking "continue?" between
-> them. It pauses only on a real issue (failed step), an explicit
-> `checkpoint: true` step (irreversible/high-stakes), genuine ambiguity,
-> a blocker, an autonomy-guard trip, or a user interrupt. One commit per
-> step; `/arib-wave-end` stays the explicit finish-line gate. Extends
-> the v3.5.1 decisive discipline from bootstrap protocols into wave
-> execution. ADR-015 records it. See
-> [arib-wave-run](.claude/skills/arib-wave-run/SKILL.md).
->
-> **What changed in v3.5.1 (patch)** — fixes a bug across all 5 bootstrap
-> protocols: same-version runs no longer terminate prematurely. Adds
-> `bootstrap/PROTOCOL_PRINCIPLES.md` (binding charter), a new mandatory
-> Phase 1.5 (drift detection) in `UPGRADE_PROTOCOL.md`, ADR-014, and
-> methodology constraint #11. Forbidden anti-patterns enumerated:
-> "STOP on matching versions", "your options are 1, 2, 3" multiple-choice
-> menus, asking the user about determinable things.
->
-> **What changed in v3.5** — CI/PR is now an executable subsystem, not
-> just static configuration. New `ci-pr-engineer` agent (15th in the
-> inventory) and `/arib-ci-audit` skill with four modes: `audit`
-> (default), `init` (bootstrap CI/PR for a fresh project), `review
-> <file>` (focused PR-review aid), `branch-protection` (live `gh api`
-> check against the binding settings). Output goes to
-> `io/ledger/ci-pr-<mode>-<date>.md` with the same audit-trail format
-> as `/arib-deep-audit`. ADR-013 records the decision. CCM now follows
-> the same agent+skill pattern for CI/PR as it uses for code review,
-> compliance, and waves.
->
-> v3.4 "Reviewed" (previous): adopted GitHub PR/CI governance as
-> first-class methodology — PR template, issue templates, CODEOWNERS,
-> four CI workflows, Dependabot, CONTRIBUTING.md, repo-root SECURITY.md,
-> CODE_OF_CONDUCT.md. v3.3 "Operating" (before that): the 8 deferred
-> items from the original Enforced proposal shipped with honest framing.
-> See [Training/11-CI-PR-MANUAL.md](Training/11-CI-PR-MANUAL.md),
-> [CONTRIBUTING.md](CONTRIBUTING.md),
-> [CHANGELOG](CHANGELOG.md), [compliance/README.md](compliance/README.md),
-> and [proposals/archive/](proposals/archive/) for context.
+
+> **Release notes** live where they belong: the **Version History** table at the
+> bottom of this file (one row per release, v1.0 → today) and
+> [CHANGELOG.md](CHANGELOG.md) for full detail. Architectural rationale lives in
+> [architecture/DECISIONS.md](architecture/DECISIONS.md) (ADR-001 → ADR-040).
 
 ```
  ╔═══════════════════════════════════════════════════════════════════╗
@@ -273,7 +196,7 @@ protocol can use the explicit prompts in `bootstrap/RUN.md`.)
 
 ---
 
-## The 33 /arib-* Skills
+## The 34 /arib-* Skills
 
 All skills are deep reference documents (250-800 lines each) with decision trees, examples, templates, edge cases, and common mistakes. They live in `.claude/skills/arib-*/SKILL.md`.
 
@@ -633,7 +556,7 @@ claude-code-methodology/                  ← v3.10 "Integrity" — counts live 
 │
 ├── tests/fixtures/payloads/              ← Hook regression fixtures
 │
-└── scripts/                              ← 14 automation scripts
+└── scripts/                              ← 16 automation scripts
     ├── ccm-fetch.sh                      ← ⭐ Pull latest CCM from GitHub (install + update)
     ├── validate-coherence.sh             ← Self-policing invariants (CI-enforced)
     ├── validate-system.sh                ← Structure + counts vs VERSION.json (dynamic)
@@ -729,7 +652,8 @@ Or define your own — the bootstrap asks what you're using and adapts.
 | v4.0.0 | Licensed | Relicense: MIT → [PolyForm Noncommercial 1.0.0](LICENSE) for v4.0.0+ (free noncommercial; commercial use needs a paid license — [COMMERCIAL.md](COMMERCIAL.md)). v3.20.0 and earlier stay MIT. + contributor CLA. ADR-036 |
 | v4.1.0 | Commercial | Commercial-program hardening: CLA-enforcement workflow (dormant until `CLA_ENABLED`), [TRADEMARK.md](TRADEMARK.md) (arib/CCM marks), README commercial/pricing section. ADR-037 |
 | v4.1.1 | Commercial | Commercial-doc hardening (ADR-038): registered-entity identity (Areeb Establishment for IT, CR 7004791427); DRAFT [commercial agreement](COMMERCIAL_LICENSE_AGREEMENT.md), [LICENSE-MIT](LICENSE-MIT), [PRIVACY.md](PRIVACY.md); commercial-use examples + eval grant + VAT note; stale-MIT fix + CI guard |
-| **v4.2.0** | **Mesh** | **Plan automation + session mesh (ADR-039): `/arib-plan` (34th skill) + `scripts/ccm-plan.sh` — import the live plan panel (or any markdown plan) into a dependency-aware task graph; parallel lanes as write-collision mutexes; atomic claiming; one store shared by every worktree; durable inter-session messages + live `SendMessage` handoff** |
+| v4.2.0 | Mesh | Plan automation + session mesh (ADR-039): `/arib-plan` (34th skill) + `scripts/ccm-plan.sh` — import the live plan panel (or any markdown plan) into a dependency-aware task graph; parallel lanes as write-collision mutexes; atomic claiming; one store shared by every worktree; durable inter-session messages + live `SendMessage` handoff |
+| **v4.2.1** | **Mesh** | **Self-measurement (ADR-040): every `N files · N directories` claim recomputed from disk and now CI-guarded (`validate-coherence.sh` §9) — SYSTEM.md had said 96/24 against a real 263/67; session ledger self-rotates via `io-archive.sh --ledger` (108 stubs / 312 KB → a 7.5 KB index); README shed 77 lines of release notes that duplicated its own Version History table** |
 
 ---
 

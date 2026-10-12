@@ -68,8 +68,13 @@ memory/code-graph/graph.json
 io/hook-logs/
 # Per-session marker file used by stop.sh to compute accurate diffs.
 io/.session-start-sha
-# NOTE: io/ledger/ is intentionally NOT ignored — it's the audit trail.
-# Rotate old ledgers manually if they accumulate.
+# io/ledger/ IS the audit trail and stays tracked — but only its durable
+# parts. Per-session stubs are transient local runtime state: stop.sh
+# writes one every session, so tracking them churns the repo and breaks
+# the file-count guard (validate-coherence.sh §9) on every commit.
+# Rotation (ADR-040) folds them into io/ledger/ARCHIVE-<YYYY>.md, which
+# IS committed and holds one row per session — that is the trail.
+io/ledger/session-*.md
 
 # Autonomy mode runtime state (Item #10) — ephemeral per-session counters.
 io/.autonomy/

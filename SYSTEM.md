@@ -21,11 +21,11 @@
 | Field                | Value                                                    |
 |----------------------|----------------------------------------------------------|
 | **System Name**      | Claude Code Methodology (CCM)                            |
-| **Version**          | 4.2.0                                                    |
+| **Version**          | 4.2.1                                                    |
 | **Codename**         | "Mesh"                                               |
 | **Classification**   | AI Development Operating System                          |
 | **Created**          | 2026-04-15                                               |
-| **Last Updated**     | 2026-09-02                                               |
+| **Last Updated**     | 2026-10-12                                               |
 | **Engineered By**    | Abdullah × Claude Opus 4.6                               |
 | **License**          | PolyForm Noncommercial 1.0.0 (v4.0.0+; ≤ v3.20.0 = MIT)  |
 | **Status**           | Production-Ready                                         |
@@ -150,7 +150,7 @@ L1 (CLAUDE.md) ── overrides everything
 ### 2.3 — Directory Architecture
 
 ```
-claude-code-methodology/                   96 files · 24 directories · 870 KB
+claude-code-methodology/                  263 files · 67 directories · 2.6 MB
 │
 ├── SYSTEM.md                    ← THIS FILE — complete system specification
 ├── CLAUDE.md                    ← The Master Brain (session governance)
@@ -159,7 +159,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 ├── README.md                    ← GitHub showcase
 ├── LICENSE                      ← PolyForm Noncommercial 1.0.0
 │
-├── io/                          ← I/O CHANNEL (14 files)
+├── io/                          ← I/O CHANNEL (20 files)
 │   ├── IO_PROTOCOL.md           ← Communication law
 │   ├── status.md                ← Live dashboard
 │   ├── BRIEFING_COWORK.md       ← Cowork role instructions
@@ -179,7 +179,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 │   ├── hooks/                   ← Hook scripts
 │   └── commands/                ← Legacy commands (deprecated)
 │
-├── memory/                      ← PERSISTENT MEMORY (7 files)
+├── memory/                      ← PERSISTENT MEMORY (11 files)
 │   ├── MEMORY_PROTOCOL.md       ← How memory works
 │   ├── project_status.md        ← Where the project stands
 │   ├── session_notes.md         ← Session handoff log
@@ -189,7 +189,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 │   ├── testing_log.md           ← Test results & coverage
 │   └── archive/                 ← Archived old entries
 │
-├── architecture/                ← ARCHITECTURE LAYER (7 files)
+├── architecture/                ← ARCHITECTURE LAYER (11 files)
 │   ├── CONSTRAINTS.md           ← Hard rules
 │   ├── TECH_STACK.md            ← Approved technologies
 │   ├── CONTEXT_MAP.md           ← Folder structure & flows
@@ -198,7 +198,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 │   ├── SECURITY.md              ← Security specification
 │   └── WORKFLOW.md              ← Branch strategy & conventions
 │
-├── implementation/              ← IMPLEMENTATION LAYER (8 files)
+├── implementation/              ← IMPLEMENTATION LAYER (10 files)
 │   ├── API_ENDPOINTS.md         ← Complete route inventory
 │   ├── docker-compose.yml       ← Container orchestration
 │   ├── DOCKER_LOCAL.md          ← Local dev environment
@@ -208,7 +208,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 │   ├── GATEWAY_ROUTES.md        ← API gateway config
 │   └── README.md                ← Implementation index
 │
-├── operations/                  ← OPERATIONS LAYER (5 files)
+├── operations/                  ← OPERATIONS LAYER (8 files)
 │   ├── WORKFLOW.md              ← Git flow & CI/CD pipeline
 │   ├── DEPLOYMENT.md            ← Ship to production guide
 │   ├── OPERATIONS_LOG.md        ← Audit trail
@@ -218,12 +218,12 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 ├── hooks/                       ← HOOKS DOCUMENTATION (1 file)
 │   └── HOOKS_PROTOCOL.md        ← 6 hook types, 7 recipes
 │
-├── bootstrap/                   ← PROJECT INSTANTIATION (3 files)
+├── bootstrap/                   ← PROJECT INSTANTIATION (7 files)
 │   ├── BOOTSTRAP.md             ← New project (25 questions)
 │   ├── REVERSE_BOOTSTRAP.md     ← Existing project (auto-scan)
 │   └── REENGINEERING_GUIDE.md   ← Overlay methodology guide
 │
-├── reference/                   ← READ-ONLY REFERENCE (7 files)
+├── reference/                   ← READ-ONLY REFERENCE (8 files)
 │   ├── MASTER_GUIDE.md          ← Quick reference card
 │   ├── COMMAND_PREFIX.md        ← /arib-* prefix convention + 33-skill map
 │   ├── SKILLS_REGISTRY.md       ← ~30 EXTERNAL ecosystem skills catalog (not /arib-*)
@@ -232,7 +232,7 @@ claude-code-methodology/                   96 files · 24 directories · 870 KB
 │   ├── AUTONOMOUS_ENGINEERING_METHODOLOGY.md ← AEPG reference (/arib-engine)
 │   └── template-hashes.json     ← drift-classifier manifest
 │
-├── scripts/                     ← AUTOMATION (5 files)
+├── scripts/                     ← AUTOMATION (16 files)
 │   ├── git-setup.sh             ← One-time repo setup
 │   ├── github-push.sh           ← Push to GitHub
 │   ├── validate-system.sh       ← Integrity check
@@ -789,9 +789,13 @@ PATCH  → Bug fixes, typo corrections, template improvements
 ### Current Version
 
 ```
-v4.2.0 "Mesh"
+v4.2.1 "Mesh"
 
-v4.2.0 adds the plan mesh (ADR-039): `/arib-plan` + `scripts/ccm-plan.sh` turn a
+v4.2.1 is a self-measurement pass (ADR-040): every repo-size claim in this
+spec was recomputed from disk and is now CI-guarded, and the session ledger
+rotates itself instead of accumulating (312 KB of stubs → a 7.5 KB index).
+
+v4.2.0 added the plan mesh (ADR-039): `/arib-plan` + `scripts/ccm-plan.sh` turn a
 plan — the live Claude Code plan panel, or any markdown plan — into a
 dependency-aware task graph that every worktree's session shares, with parallel
 lanes as write-collision mutexes, atomic claiming, and a durable inter-session
@@ -820,6 +824,7 @@ remain MIT. Full per-version detail lives in CHANGELOG.md (the authoritative his
 | 2.6.0   | Fortress    | 2026-04-18 | API Documentation agent, Accessibility Auditor agent, /api-docs, /a11y-audit commands, Production Monitoring guide, Training manuals |
 | 3.0 – 3.11 | (various) | 2026-05–06 | `arib`-branded skills, Lean Core (3.8, always-on cut to ~7.4K), Integrity (3.10, fail-closed hooks), Engine (3.11, `/arib-engine`) — see CHANGELOG.md |
 | 3.12 – 3.20 | Synthesis campaign | 2026-06 | Reconcile (3.12) → Engineering-Manager (3.14) → Unattended (3.15) → Reach (3.16) → wave-plan (3.17) → PostToolUse hooks (3.18) → Code Graph (3.19) → **Lean Core II (3.20)**. Per-version detail in CHANGELOG.md |
+| 4.2.1 | Mesh | 2026-10 | Self-measurement: repo-size claims recomputed from disk + CI-guarded; ledger self-rotates (312 KB → 7.5 KB); README release-note stack removed. ADR-040 |
 | 4.2 | Mesh | 2026-09 | Plan automation + session mesh: `/arib-plan` (34th skill) + `scripts/ccm-plan.sh` — plan-panel import, dependency graph, lane mutexes, atomic claim, cross-session messaging. ADR-039 |
 | 4.0 – 4.1 | Licensed / Commercial | 2026-06 | Relicense MIT → PolyForm Noncommercial + paid commercial (4.0); CLA + dormant CLA-bot + trademark policy + pricing (4.1.0); registered-entity identity + draft commercial agreement + LICENSE-MIT + PDPL privacy (4.1.1). Per-version detail in CHANGELOG.md |
 
@@ -938,7 +943,7 @@ The upgrade protocol follows semantic versioning. This is engineering.
 
 > **End of SYSTEM.md**
 >
-> *Claude Code Methodology v4.2.0 "Mesh"*
+> *Claude Code Methodology v4.2.1 "Mesh"*
 > *Engineered by Abdullah × Claude Opus 4.6*
-> *96 files · 24 directories · 35,000+ lines · 122 features*
+> *263 files · 67 directories · 76,810 lines*
 > *The AI development operating system that remembers, communicates, and evolves.*

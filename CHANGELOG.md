@@ -7,6 +7,58 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [4.2.1] "Mesh" — 2026-10-12
+
+A self-measurement pass (ADR-040). CCM enforces DOCS-MATCH-DISK in CI and was breaking it
+in its own spec: ten repo-size claims were stale, and a retention policy written in
+`.gitignore` had never once been executed. Both are now measured and enforced rather than
+asserted.
+
+### Fixed
+- **`SYSTEM.md` stated "96 files · 24 directories · 870 KB" in two places** against a real
+  **263 / 67**, plus eight stale per-directory counts in its structure tree (`io/ 14 files`
+  → 20, `scripts/ 5` → 16, `bootstrap/ 3` → 7, …). All recomputed from disk.
+- **`VERSION.json` claimed 308 files / 59 directories** — wrong in *both* directions, which
+  is how we know these were hand-maintained and never derived. Now 263 / 67, measured.
+- **`README.md`**: "33 skills" → 34, "14 automation scripts" → 16.
+- Unverifiable claims **deleted rather than re-guessed** — "122 features" and "35,000+
+  lines" became one measured line count; nothing had ever counted the features.
+- **Latent `set -e` bug in `io-archive.sh`**: `((ARCHIVED++))` returns exit 1 on the first
+  increment from 0, which would have aborted the script the moment it had anything to
+  archive. Now `ARCHIVED=$((ARCHIVED + 1))`.
+
+### Added
+- **`validate-coherence.sh` §9 — repo-size + ledger guards.** Recomputes `totalFiles` /
+  `totalDirectories` from `git ls-files` every CI run and fails on disagreement with
+  `VERSION.json`; greps every `N files · N directories` claim in SYSTEM/README/CLAUDE and
+  fails when any disagrees with disk; fails if more than 30 session stubs are ever
+  committed again. All three branches verified to fail on a mutant and pass on the fix.
+- **`io-archive.sh --ledger [--keep N]`** — folds old `io/ledger/session-*.md` stubs into a
+  per-year index (`ARCHIVE-<YYYY>.md`: timestamp · branch · SHA · commits · files changed)
+  and deletes them. Idempotent: a timestamp already indexed is never appended twice.
+- **`stop.sh` self-rotates** with `--keep 10` after writing each entry, and never fails the
+  hook over housekeeping.
+
+### Changed
+- **`io/ledger/`: 108 committed session stubs (312 KB, 12% of the repo) → one 7.5 KB index
+  of 108 rows.** The three substantive ledger documents (skill audit, synthesis scorecard,
+  unattended-mode decision) are untouched; the full stubs remain in git history.
+- **`README.md` shed 77 lines** — seven stacked `What changed in v3.5 … v3.8.3` blockquotes
+  that duplicated the Version History table 560 lines below. A reader now reaches the
+  onboarding block at line 20 instead of line 98. 781 → 704 lines.
+- `.gitignore`'s "Rotate old ledgers manually if they accumulate" note replaced with what
+  actually happens now.
+
+### Notes
+- **No new capability.** This release removes weight and false claims; nothing gained a
+  feature. The always-on token cost is unchanged at 7,709 — none of it touches
+  `context.include`.
+- The guard creates a deliberate hard dependency: anything that changes what counts as a
+  tracked file now forces a `VERSION.json` update in the same PR. That pressure is the
+  point.
+
+---
+
 ## [4.2.0] "Mesh" — 2026-09-02
 
 Plans stop being pictures and become executable graphs that outlive one session (ADR-039).

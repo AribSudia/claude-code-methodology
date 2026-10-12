@@ -4,29 +4,36 @@
 > detail lives in `CHANGELOG.md` + `io/ledger/`. CI-freshness-gated (v3.13.0):
 > must name the current line and never revert to the v1.0 bootstrap handoff.
 
-## Session: 2026-09-02 — v4.2.0 "Mesh"
+## Session: 2026-10-12 — v4.2.1 "Mesh"
 
-### Completed (ADR-039 — plan automation + session mesh)
-- **`scripts/ccm-plan.sh`** — plan → task graph → dispatch substrate. Imports the live plan
-  panel (session transcript), any markdown plan (wave Steps via `--chain`), or stdin. Owns deps,
-  **lanes as mutexes**, atomic claim (`mkdir` lock + dead-holder reclaim), session registry +
-  heartbeats, durable messages, board, event log. **50/50 selftest green.** Store lives at
-  `$(git rev-parse --git-common-dir)/ccm-plan` — all worktrees share one mesh, git stays clean.
-- **`/arib-plan`** (34th skill, Engine) — enrich (deps / lanes / specialist routing / `done_when`),
-  dispatch lane-disjoint tasks to the 16 specialists in parallel, sync sessions (durable `post`
-  first, live `SendMessage` second). Verified on a real transcript: 4 tasks imported from an
-  actual plan panel, zero copy-paste.
-- `io/PLAN_MESH.md` + `IO_PROTOCOL.md` pointer · session-protocol **STEP 0b** ·
-  `plan-mesh.yml` workflow + `tests/ccm-plan.test.sh` · docs/counts → 34 skills.
+### Completed (ADR-040 — self-measurement)
+- **Audited whether CCM needed a real update: it did not need a feature, it needed accuracy.**
+  Found ten stale self-claims in the spec CCM polices with its own DOCS-MATCH-DISK gate —
+  SYSTEM.md "96 files · 24 directories" vs a real 263/67 (stated twice), eight wrong per-dir
+  tree counts, README "33 skills"/"14 scripts". VERSION.json was wrong in both directions
+  (308/59), proving the numbers were never derived from disk. All corrected from measurement;
+  "122 features" deleted rather than re-guessed.
+- **`validate-coherence.sh` §9** now recomputes files/dirs from `git ls-files`, greps every
+  `N files · N directories` claim in SYSTEM/README/CLAUDE, and caps committed ledger stubs at
+  30. **All three branches mutation-tested** (fail on mutant, pass on fix).
+- **Ledger rotation is a mechanism now, not a .gitignore note.** `io-archive.sh --ledger
+  [--keep N]` folds stubs into `ARCHIVE-<YYYY>.md` (idempotent); `stop.sh` calls it at
+  `--keep 10`. One-time roll-up: **108 stubs / 312 KB → 7.5 KB, 108 rows, zero loss.**
+  Rotation proven end-to-end (13 stubs → 10 kept, 3 folded, index +3).
+- Fixed a latent `set -e` bug in `io-archive.sh` (`((ARCHIVED++))` aborts on first increment).
+- **README 781 → 704 lines** — cut 7 stacked v3.5–v3.8.3 release-note blocks duplicating the
+  Version History table 560 lines below; onboarding block now at line 20, was line 98.
 
 ### Next session starts with
-- Drive `/arib-plan run` on a real multi-task plan across two worktrees; report where the mesh
-  chafes (lane granularity and checkpoint placement are the guesses most likely wrong).
-- Carried from v4.1.1: merge/decline that PR; owner legal acts (CLA bot, SAIP trademark, counsel
-  review, 3 placeholders). `reference/SKILLS_REGISTRY.md` refresh still flagged.
+- **PR is open and intentionally NOT merged** — owner's call.
+- Optional next cut, measured but untouched: `Training/` is 508 KB across 11 manuals;
+  `02-AGENTS-MANUAL.md` alone is 82 KB describing 17 agents whose definitions are another
+  264 KB. Likely heavy duplication — measure before cutting, separate PR.
+- Carried: merge/decline the v4.1.1 PR; owner legal acts (CLA bot, SAIP trademark, counsel
+  review). `reference/SKILLS_REGISTRY.md` (30 KB, external skills) still flagged stale.
 
 ### Prior (detail in CHANGELOG + io/ledger)
-- **v4.1.1 (ADR-038)** registered-entity identity (Areeb Establishment for IT, CR 7004791427) +
-  commercial-doc hardening · **v4.1.0 (ADR-037, #32 MERGED)** dormant CLA bot + TRADEMARK ·
-  **v4.0.0 (ADR-036, #31 MERGED)** MIT→PolyForm-NC + CLA (≤v3.20.0 stays MIT).
-- v3.12→v3.20 Synthesis campaign complete (scorecard in io/ledger). DECISIONS ADR-024…039.
+- **v4.2.0 (ADR-039)** plan mesh: `/arib-plan` (34th skill) + `ccm-plan.sh`, 50/50 selftest ·
+  **v4.1.1 (ADR-038)** registered-entity identity · **v4.1.0 (ADR-037, #32 MERGED)** CLA bot +
+  TRADEMARK · **v4.0.0 (ADR-036, #31 MERGED)** MIT→PolyForm-NC.
+- v3.12→v3.20 Synthesis campaign complete. DECISIONS ADR-024…040.

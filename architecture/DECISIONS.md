@@ -550,6 +550,71 @@ cowork MCP" — out of scope; we don't own that surface.
 
 ---
 
+# ADR-040: Self-Measurement — Repo-Size Claims and Ledger Retention (v4.2.1)
+
+**Status:** Accepted   **Date:** 2026-10-12
+
+**Context.** CCM enforces DOCS-MATCH-DISK in CI (ADR-016, ADR-025) and then broke
+it in its own specification. At v4.2.0, `SYSTEM.md` stated **"96 files · 24
+directories · 870 KB"** in two places against a real **263 / 67**; its structure
+tree carried eight stale per-directory counts (`io/ 14 files` against a real 20,
+`scripts/ 5` against 16); `README.md` advertised "33 skills" and "14 automation
+scripts" against 34 and 16. `VERSION.json` claimed 308 files / 59 directories —
+wrong in **both** directions, which proves these numbers were hand-maintained and
+never once derived from disk.
+
+Separately, `.claude/hooks/stop.sh` writes one ledger stub per session, forever,
+and `.gitignore` carried the note *"Rotate old ledgers manually if they
+accumulate."* Nobody rotated: **108 stubs, 312 KB — 12% of the repository** — while
+`io/archive/` sat empty and `io-archive.sh` (which handles request/result pairs,
+not ledgers) was wired to nothing.
+
+Both are the same failure: a claim or a policy written down, never measured, never
+enforced.
+
+**Decision.**
+
+1. **Correct every stale count** from a measured value, and **delete the
+   unverifiable ones** rather than invent replacements — "122 features" and
+   "35,000+ lines" became a measured line count; the feature tally is gone,
+   because nothing counted it.
+2. **Make the counts un-driftable.** `validate-coherence.sh` §9 recomputes
+   `totalFiles` / `totalDirectories` from `git ls-files` on every CI run, fails on
+   disagreement with `VERSION.json`, and additionally greps every
+   `N files · N directories` claim in `SYSTEM.md` / `README.md` / `CLAUDE.md` and
+   fails when any of them disagrees with disk. The metric is deterministic and
+   tracked-only, so it cannot drift with a dirty working tree.
+3. **Ledger retention becomes a mechanism, not a note.** `io-archive.sh` gains a
+   `--ledger [--keep N]` mode that folds old stubs into a per-year index table
+   (`io/ledger/ARCHIVE-<YYYY>.md`, one row: timestamp · branch · SHA · commits ·
+   files changed) and deletes them. It is idempotent — a timestamp already indexed
+   is never appended twice. `stop.sh` calls it with `--keep 10` after writing each
+   entry, and never fails the hook over housekeeping.
+4. **The retention policy is itself enforced.** §9 fails CI if more than 30 session
+   stubs are ever committed again, which is the signal that rotation stopped.
+
+**Consequences.** The 108 stubs became 108 rows in 7.5 KB — a **312 KB → 7.5 KB**
+reduction with the audit trail intact and the full stubs still in git history. The
+README lost 77 lines of release notes from v3.5–v3.8.3 that duplicated its own
+Version History table 560 lines below, so a reader reaches the onboarding block at
+line 20 instead of line 98. Ten false claims in the spec are now true and guarded.
+
+The cost is a hard CI dependency on the counting metric: any change to what counts
+as a "file" (vendoring, submodules, generated artifacts) forces a VERSION.json
+update in the same PR. That is the intended pressure — it is exactly the discipline
+the project asks of its users.
+
+**Alternatives rejected.** *Fix the numbers without a guard* — this is the second
+time they drifted; correcting them again without enforcement just resets the clock.
+*Delete the ledger stubs outright* — cheapest, but throws away a real audit trail
+the project claims to keep. *Gitignore `io/ledger/session-*.md` and move on* — stops
+the bleeding, leaves 312 KB committed and the contradiction between the .gitignore
+note and reality visible to every reader. *Auto-generate the counts into the docs at
+build time* — CCM has no build step for markdown, and adding one to fix two numbers
+is heavier than the guard.
+
+---
+
 # ADR-039: Plan Automation + Session Mesh — `/arib-plan` + `ccm-plan.sh` (v4.2.0)
 
 **Status:** Accepted   **Date:** 2026-09-02
@@ -2018,6 +2083,7 @@ re-create the docs/disk gap v3.2 was specifically designed to close.
 | ADR-037 | Commercial-program hardening — CLA enforcement, trademark policy, pricing (v4.1.0) | Accepted | 2026-06-22 |
 | ADR-038 | Commercial-doc hardening + registered-entity identity (v4.1.1) | Accepted | 2026-06-23 |
 | ADR-039 | Plan automation + session mesh — `/arib-plan` + `ccm-plan.sh` (v4.2.0) | Accepted | 2026-09-02 |
+| ADR-040 | Self-measurement — repo-size claims + ledger retention (v4.2.1) | Accepted | 2026-10-12 |
 
 ---
 
